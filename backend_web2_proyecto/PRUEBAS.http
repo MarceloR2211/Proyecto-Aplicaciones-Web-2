@@ -1,0 +1,479 @@
+### =========================================================================
+### CONFIGURACIÓN GLOBAL DE VARIABLES
+### =========================================================================
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
+
+### =========================================================================
+### ROLES & ENTIDADES 1: USUARIO NO REGISTRADO (PÚBLICO / VISITANTE)
+### Simula la interacción de un usuario externo que navega por la Landing Page
+### =========================================================================
+
+# @name verPlanesDisponibles
+### 1. Obtener todos los planes de internet del catálogo comercial
+GET {{baseUrl}}/planes
+Content-Type: {{contentType}}
+
+# ---
+
+# @name verDetalleDeUnPlan
+### 2. Consultar las especificaciones y precios de un plan específico (Usa ID existente, ej: 1)
+GET {{baseUrl}}/planes/1
+Content-Type: {{contentType}}
+
+# ---
+
+# @name verComentariosLanding
+### 3. Cargar las reseñas y testimonios aprobados en la Landing Page
+GET {{baseUrl}}/comentarios
+Content-Type: {{contentType}}
+
+# ---
+
+# @name verUnComentarioEspecifico
+### 4. Consultar una reseña individual en detalle
+GET {{baseUrl}}/comentarios/1
+Content-Type: {{contentType}}
+
+# ---
+
+# @name enviarFormularioContacto
+### 5. Enviar mensaje de consulta/soporte preventa desde el formulario de contacto
+POST {{baseUrl}}/consultas
+Content-Type: {{contentType}}
+
+{
+    "dni": "12345678",
+    "nombre": "Juan Perez Visitante",
+    "email": "juan.visitante@gmail.com",
+    "telefono": "912345678",
+    "motivo_consulta": "Deseo solicitar información sobre la cobertura del plan Fibra Hogar 200Mbps en Ilo."
+}
+
+# ---
+
+# @name registrarNuevoUsuario
+### 6. Auto-registro / Creación de una nueva cuenta desde el portal de clientes
+POST {{baseUrl}}/usuarios
+Content-Type: {{contentType}}
+
+{
+    "username": "nuevo_cliente2026",
+    "password": "ClientePassword123*",
+    "dni": "77778888",
+    "nombre_completo": "Carlos Mendoza Tapia",
+    "email": "carlos.mendoza@gmail.com",
+    "telefono": "955666777",
+    "fecha_nacimiento": "2000-05-15",
+    "ubigeo": "180201",
+    "zona": "Pampa Inalámbrica",
+    "rol": "usuario"
+}
+
+# ---
+
+# @name loginAlSistema
+### 7. Enviar credenciales de acceso para autenticarse (usuario)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "username": "nuevo_cliente2026",
+    "password": "ClientePassword123*"
+}
+
+# @name loginAlSistema
+### 7. Enviar credenciales de acceso para autenticarse (admin)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "username": "admin_pruebas",
+    "password": "Admin123*"
+}
+
+
+### =========================================================================
+### ROLES & ENTIDADES 2: CLIENTE (USUARIO REGISTRADO)
+### Simula todas las operaciones transaccionales de un cliente con ID: 2
+### =========================================================================
+
+# @name clienteVerPerfil
+### 1. Consultar información del propio perfil (Requiere autenticación simulada)
+GET {{baseUrl}}/usuarios/2
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+# ---
+
+# @name clienteVerMisContratos
+### 2. Consultar el estado de sus contratos de internet asignados
+GET {{baseUrl}}/usuarios/2/contratos
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+# ---
+
+# @name clienteVerDashboard
+### 3. Cargar las métricas de su panel de control (consumo, estado, resumen de deuda)
+GET {{baseUrl}}/dashboard/client
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+# ---
+
+# @name clienteVerMisFacturas
+### 4. Consultar su historial de cobros y recibos de pago
+GET {{baseUrl}}/facturas/cliente/mis-facturas
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+# ---
+
+# @name clienteVerDetalleFactura
+### 5. Consultar los conceptos de cobro detallados de una factura específica
+GET {{baseUrl}}/facturas/10
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+# ---
+
+# @name clienteSubirVoucher
+### 6. Subir una imagen o archivo del comprobante/depósito bancario ejecutado
+POST {{baseUrl}}/upload/comprobante
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+{
+    "facturaId": 10,
+    "nombre_archivo_comprobante": "voucher_pago_mes_junio.png"
+}
+
+# ---
+
+# @name clienteCrearTicket
+### 7. Abrir un nuevo ticket de soporte técnico por avería de señal
+POST {{baseUrl}}/tickets
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+{
+    "titulo": "solo ando probando el sistema",
+    "descripcion": "parece que el ser humano aguanta 96 cuaks",
+    "prioridad": "baja"
+}
+
+# ---
+
+# @name clienteListarMisTickets
+### 8. Listar el estado de todos sus casos de asistencia técnica presentados
+GET {{baseUrl}}/tickets/cliente/mis-tickets
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+# ---
+
+# @name clienteVerDetalleTicket
+### 9. Inspeccionar el estado de atención de un ticket propio
+GET {{baseUrl}}/tickets/5
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+# ---
+
+# @name clienteVerMensajesTicket
+### 10. Leer la conversación interna y respuestas del técnico en el ticket
+GET {{baseUrl}}/tickets/5/mensajes
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+# ---
+
+# @name clienteResponderChatTicket
+### 11. Escribir un mensaje de seguimiento en la sala de chat del ticket
+POST {{baseUrl}}/tickets/5/mensajes
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+{
+    "mensaje": "Ya reinicié el router óptico (ONU) como me indicaron pero sigo sin acceso."
+}
+
+# ---
+
+# @name clienteCrearReseña
+### 12. Dejar un testimonio/comentario sobre la calidad del servicio (Queda como pendiente)
+POST {{baseUrl}}/comentarios
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+{
+    "comentario": "Excelente velocidad simétrica y estabilidad en la zona del Cercado de Ilo.",
+    "calificacion": 5
+}
+
+# ---
+
+# @name clienteCambiarPassword
+### 13. Actualizar credenciales de seguridad desde su panel de ajustes
+### probado cambiando a la misma contrasena debemos agregar validacion de que no se pueda cambiar a la misma contrasena pero despues cfcfcf a que ni leeran
+POST {{baseUrl}}/auth/change-password
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+{
+    "username": "nuevo_cliente2026",
+    "newPassword": "ClientePassword123*",
+    "confirmPassword": "ClientePassword123*"
+}
+
+# ---
+
+# @name clienteLogout
+### 14. Terminar la sesión activa del cliente de forma explícita
+# esto no funcionara hasta que este el frontend 
+POST {{baseUrl}}/auth/logout
+Content-Type: {{contentType}}
+x-usuario-id: 2
+x-usuario-rol: usuario
+
+
+### =========================================================================
+### ROLES & ENTIDADES 3: ADMINISTRADOR del Sistema (ID: 1)
+### Control total de auditoría, gestión comercial, transacciones e infraestructura
+### =========================================================================
+
+# @name adminVerMétricasDashboard
+### 1. Cargar estadísticas globales e ingresos de la empresa (Dashboard Admin)
+GET {{baseUrl}}/dashboard/admin
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminListarUsuariosYContratos
+### 2. Listar la nómina completa de usuarios del sistema junto con el estado de sus contratos
+GET {{baseUrl}}/usuarios
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminFiltrarUsuariosPorRol
+### 3. Filtrar el catálogo de personal o cuentas de clientes por un rol determinado ('usuario')
+GET {{baseUrl}}/usuarios/rol/usuario
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminVerPerfilCualquierUsuario
+### 4. Inspeccionar el expediente detallado de cualquier cliente por ID
+GET {{baseUrl}}/usuarios/2
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminActualizarUsuarioYContrato
+### 5. Modificar de forma transaccional los datos de un cliente y cambiar su estado a 'suspendido'
+PUT {{baseUrl}}/usuarios/2
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+{
+    "username": "nuevo_cliente2026",
+    "dni": "77778888",
+    "nombre_completo": "Carlos Mendoza Actualizado",
+    "email": "carlos.mendoza.cambiado@gmail.com",
+    "telefono": "955666888",
+    "fecha_nacimiento": "2000-05-15",
+    "ubigeo": "180201",
+    "zona": "Pampa Inalámbrica",
+    "rol": "usuario",
+    "estado_contrato": "suspendido",
+    "fecha_inicio": "2026-01-10"
+}
+
+# ---
+
+# @name adminVerConsultasContacto
+### 6. Revisar la bandeja de entrada de consultas recibidas de la Landing Page
+GET {{baseUrl}}/consultas
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminModerarConsultaContacto
+### 7. Cambiar el estado de una consulta (Ej: de 'pendiente' a 'revisado')
+PUT {{baseUrl}}/consultas/1
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+{
+    "estado": "convertido"
+}
+
+# ---
+
+# @name adminAgregarNuevoPlan
+### 8. Insertar un nuevo paquete comercial al catálogo de planes
+POST {{baseUrl}}/planes
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+{
+    "nombre_plan": "Fibra Gamer Ultra",
+    "tipo_plan": "residencial",
+    "velocidad": "600 Mbps",
+    "precio": 159.90,
+    "descripcion": "Ideal para streaming 4K y latencia ultra baja.",
+    "estado": "activo"
+}
+
+# ---
+
+# @name adminEditarPlanCatalogo
+### 9. Actualizar precio o características de un plan existente
+PUT {{baseUrl}}/planes/2
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+{
+    "nombre_plan": "Fibra Hogar Standard",
+    "tipo_plan": "empresarial",
+    "velocidad": "150 Mbps",
+    "precio": 67.90,
+    "descripcion": "Velocidad óptima para teletrabajo y familias.",
+    "estado": "activo"
+}
+
+# ---
+
+# @name adminEliminarPlanCatalogo
+### 10. Eliminar un plan obsoleto del catálogo comercial
+DELETE {{baseUrl}}/planes/3
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminModerarComentarioAprobar
+### 11. Cambiar estado de una reseña de cliente para que aparezca en la Landing Page
+PUT {{baseUrl}}/comentarios/1
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+{
+    "estado": "aprobado"
+}
+
+# ---
+
+# @name adminEliminarComentarioInapropiado
+### 12. Borrar permanentemente un testimonio de la plataforma
+DELETE {{baseUrl}}/comentarios/2
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminVerColaGlobalTickets
+### 13. Cargar la cola de atención técnica completa de la compañía (Todos los tickets de soporte)
+GET {{baseUrl}}/tickets/admin/todos
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminActualizarEstadoTicket
+### 14. Cambiar el ciclo de vida del incidente (Ej: Pasar de 'abierto' a 'en_proceso')
+PUT {{baseUrl}}/tickets/5/estado
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+{
+    "estado": "en_proceso"
+}
+
+# ---
+
+# @name adminResponderMensajeTicket
+### 15. Enviar instrucciones técnicas o coordinar la visita técnica en el chat del ticket
+POST {{baseUrl}}/tickets/5/mensajes
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+{
+    "mensaje": "Estimado cliente, personal de soporte en campo se desplazará a su zona mañana a las 9 AM para revisar la caja externa."
+}
+
+# ---
+
+# @name adminVerHistoricoFacturas
+### 16. Ver los registros históricos y de cobranza de todas las facturas emitidas por el sistema
+GET {{baseUrl}}/facturas/admin/todas
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminAuditarYConfirmarPagoFactura
+### 17. Validar manualmente el voucher cargado por el cliente y marcar la factura como 'pagada'
+PUT {{baseUrl}}/facturas/10
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+{
+    "nuevoEstado": "vencido",
+    "nombreComprobante": "voucher_pago_mes_junio.png"
+}
+
+# ---
+
+# @name adminEliminarTicketNoValido
+### 18. Remover permanentemente un registro de ticket duplicado o inválido de la base de datos
+DELETE {{baseUrl}}/tickets/6
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin
+
+# ---
+
+# @name adminEliminarUsuarioBaneado
+### 19. Borrar de forma definitiva una cuenta del sistema (Cuenta con protección anti auto-eliminación)
+DELETE {{baseUrl}}/usuarios/4
+Content-Type: {{contentType}}
+x-usuario-id: 1
+x-usuario-rol: admin

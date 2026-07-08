@@ -62,4 +62,4 @@ Debido a las restricciones de no modificar archivos globales, para visualizar es
 
 ## Notas Adicionales
 - Se han utilizado iconos de **Bootstrap Icons**. Asegúrate de tenerlos disponibles en tu proyecto o incluirlos vía CDN en el `index.html`.
-- Toda la lógica de datos es simulada, no requiere un backend real activo para funcionar visualmente.
+- El servicio `InternetDataService` está configurado para conectarse al backend real mediante `environment.apiUrl`. Asegúrate de que tu servidor backend esté corriendo para que los dashboards y la gestión de comentarios muestren datos reales.

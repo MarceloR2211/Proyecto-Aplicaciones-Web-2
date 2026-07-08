@@ -3,7 +3,13 @@ import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'planes', pathMatch: 'full' },
+  { path: '', redirectTo: 'internet-index', pathMatch: 'full' },
+
+  {
+    path: 'internet-index',
+    loadComponent: () =>
+      import('./features/views-internet/components/index-main/index-main').then((m) => m.IndexMainComponent)
+  },
 
   {
     path: 'planes',
@@ -24,14 +30,21 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { titulo: 'Panel de Administrador', roles: ['admin'] },
     loadComponent: () =>
-      import('./shared/en-construccion/en-construccion').then((m) => m.EnConstruccion)
+      import('./features/views-internet/components/dashboard-admin/dashboard-admin').then((m) => m.DashboardAdminComponent)
+  },
+  {
+    path: 'gestion-comentarios',
+    canActivate: [authGuard, roleGuard],
+    data: { titulo: 'Gestión de Comentarios', roles: ['admin'] },
+    loadComponent: () =>
+      import('./features/views-internet/components/gestion-comentarios/gestion-comentarios').then((m) => m.GestionComentariosComponent)
   },
   {
     path: 'dashboard-cliente',
     canActivate: [authGuard, roleGuard],
     data: { titulo: 'Panel de Cliente', roles: ['usuario'] },
     loadComponent: () =>
-      import('./shared/en-construccion/en-construccion').then((m) => m.EnConstruccion)
+      import('./features/views-internet/components/dashboard-cliente/dashboard-cliente').then((m) => m.DashboardClienteComponent)
   },
   {
     path: 'cambiar-password',

@@ -1,50 +1,20 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { Comentario } from '../models/comentario.model';
 import { MetricaServicio, DatosCliente } from '../models/metrica.model';
 
 /**
  * Servicio Angular para la gestión de datos de Internet
- * Simula la comunicación con un backend de Express.
+ * Conectado al backend real.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class InternetDataService {
-
-  // Mock de datos iniciales para comentarios
-  private comentariosMock: Comentario[] = [
-    {
-      id: 1,
-      usuario: 'Juan Pérez',
-      tipoCliente: 'residencial',
-      estrellas: 5,
-      texto: 'Excelente servicio, muy estable.',
-      fecha: '2023-10-01',
-      estado: 'pendiente',
-      planContratado: 'Hogar 300 Megas'
-    },
-    {
-      id: 2,
-      usuario: 'Tech Solutions S.A.',
-      tipoCliente: 'corporativo',
-      estrellas: 4,
-      texto: 'Buen soporte técnico, aunque el tiempo de respuesta puede mejorar.',
-      fecha: '2023-10-02',
-      estado: 'pendiente',
-      planContratado: 'Fibra Simétrica 1Gbps'
-    },
-    {
-      id: 3,
-      usuario: 'María García',
-      tipoCliente: 'residencial',
-      estrellas: 2,
-      texto: 'Se cae mucho el internet por las tardes.',
-      fecha: '2023-10-03',
-      estado: 'pendiente',
-      planContratado: 'Hogar 100 Megas'
-    }
-  ];
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.apiUrl;
 
   constructor() {}
 
@@ -52,64 +22,76 @@ export class InternetDataService {
    * Obtiene la lista de comentarios pendientes de aprobación
    */
   getComentariosPendientes(): Observable<Comentario[]> {
-    const pendientes = this.comentariosMock.filter(c => c.estado === 'pendiente');
-    return of(pendientes).pipe(delay(800)); // Simula latencia de red
+    return this.http.get<{error: boolean, comentarios: any[]}>(`${this.baseUrl}/comentarios`).pipe(
+      map(res => res.comentarios),
+      map(comentarios => comentarios
+        .filter(c => c.estado === 'pendiente')
+        .map(c => ({
+          id: c.id,
+          usuario: c.nombre_usuario || `Usuario ${c.usuario_id}`,
+          tipoCliente: c.tipo_usuario || 'residencial',
+          estrellas: c.calificacion,
+          texto: c.comentario,
+          fecha: c.fecha_creacion,
+          estado: c.estado,
+          planContratado: c.plan_nombre || 'Plan Estándar'
+        } as Comentario))
+      )
+    );
   }
 
   /**
    * Aprueba un comentario por ID
    */
   aprobarComentario(id: number): Observable<boolean> {
-    const index = this.comentariosMock.findIndex(c => c.id === id);
-    if (index !== -1) {
-      this.comentariosMock[index].estado = 'aprobado';
-      return of(true).pipe(delay(500));
-    }
-    return of(false);
+    return this.http.put<{error: boolean}>(`${this.baseUrl}/comentarios/${id}`, { estado: 'aprobado' }).pipe(
+      map(res => !res.error)
+    );
   }
 
   /**
    * Rechaza un comentario por ID
    */
   rechazarComentario(id: number): Observable<boolean> {
-    const index = this.comentariosMock.findIndex(c => c.id === id);
-    if (index !== -1) {
-      this.comentariosMock[index].estado = 'rechazado';
-      return of(true).pipe(delay(500));
-    }
-    return of(false);
+    // El backend permite actualizar el estado a 'rechazado' o eliminarlo
+    return this.http.put<{error: boolean}>(`${this.baseUrl}/comentarios/${id}`, { estado: 'rechazado' }).pipe(
+      map(res => !res.error)
+    );
   }
 
   /**
    * Obtiene métricas para el Dashboard de Administrador
    */
   getMetricasAdmin(): Observable<MetricaServicio> {
-    const metricas: MetricaServicio = {
-      clientesActivos: 1250,
-      ticketsPendientes: 14,
-      anchoBandaConsumidoGbps: 45.8,
-      nodosEstado: [
-        { id: 'N-01', nombre: 'Nodo Norte - Central', estado: 'Estable', ubicacion: 'Av. Libertador', cargaActual: 45 },
-        { id: 'N-02', nombre: 'Nodo Sur - Residencial', estado: 'Saturado', ubicacion: 'Calle 50', cargaActual: 92 },
-        { id: 'N-03', nombre: 'Nodo Este - Industrial', estado: 'Estable', ubicacion: 'Zona Industrial', cargaActual: 60 },
-        { id: 'N-04', nombre: 'Nodo Oeste', estado: 'Estable', ubicacion: 'Barrio Nuevo', cargaActual: 30 }
-      ]
-    };
-    return of(metricas).pipe(delay(1000));
+    return this.http.get<{error: boolean, metrics: any}>(`${this.baseUrl}/dashboard/admin`).pipe(
+      map(res => ({
+        clientesActivos: res.metrics.total_clientes || 0,
+        ticketsPendientes: res.metrics.tickets_abiertos || 0,
+        anchoBandaConsumidoGbps: res.metrics.consumo_red || 0,
+        nodosEstado: (res.metrics.nodos || []).map((n: any) => ({
+          id: n.codigo || n.id,
+          nombre: n.nombre,
+          estado: n.estado === 'activo' ? 'Estable' : 'Saturado',
+          ubicacion: n.zona,
+          cargaActual: n.carga || 0
+        }))
+      } as MetricaServicio))
+    );
   }
 
   /**
    * Obtiene datos del cliente para su dashboard personal
    */
   getDatosCliente(): Observable<DatosCliente> {
-    const datos: DatosCliente = {
-      nombre: 'Carlos Rodríguez',
-      planNombre: 'Hogar Ultra',
-      velocidadMegas: 300,
-      estadoModem: 'Online',
-      fechaVencimiento: '2023-11-15',
-      montoPagar: 45.99
-    };
-    return of(datos).pipe(delay(700));
+    return this.http.get<{error: boolean, dashboard: any}>(`${this.baseUrl}/dashboard/cliente`).pipe(
+      map(res => ({
+        nombre: res.dashboard.usuario.nombre,
+        planNombre: res.dashboard.servicio.plan,
+        velocidadMegas: res.dashboard.servicio.velocidad,
+        estadoModem: res.dashboard.servicio.estado_modem === 'online' ? 'Online' : 'Offline',
+        fechaVencimiento: res.dashboard.facturacion.proximo_vencimiento,
+        montoPagar: res.dashboard.facturacion.monto_pendiente
+      } as DatosCliente))
+    );
   }
 }

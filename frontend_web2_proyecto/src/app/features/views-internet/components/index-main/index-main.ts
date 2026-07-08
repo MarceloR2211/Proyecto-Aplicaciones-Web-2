@@ -1,40 +1,59 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { InternetDataService } from '../../services/internet-data.service';
+import { Plan } from '../../models/metrica.model';
 
 @Component({
   selector: 'app-index-main',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './index-main.html',
   styleUrls: ['./index-main.css']
 })
-export class IndexMainComponent {
-  // Lista de planes para renderizar en el grid
-  planes = [
-    {
-      nombre: 'Hogar Básico',
-      velocidad: '100 Megas',
-      descripcion: 'Ideal para navegación y redes sociales.',
-      precio: '29.99',
-      destacado: false,
-      caracteristicas: ['Fibra Óptica', 'Wifi 6', 'Soporte 24/7']
-    },
-    {
-      nombre: 'Hogar Pro',
-      velocidad: '300 Megas',
-      descripcion: 'Perfecto para streaming 4K y gaming.',
-      precio: '45.99',
-      destacado: true, // Este es el plan más vendido
-      caracteristicas: ['Fibra Óptica', 'Wifi 6 de alta gama', 'Soporte prioritario']
-    },
-    {
-      nombre: 'Corporativo Pyme',
-      velocidad: '500 Megas Simétricos',
-      descripcion: 'Para empresas que requieren máxima estabilidad.',
-      precio: '89.99',
-      destacado: false,
-      caracteristicas: ['IP Fija opcional', 'SLA 99.9%', 'Canal dedicado']
+export class IndexMainComponent implements OnInit {
+  private dataService = inject(InternetDataService);
+
+  planes: Plan[] = [];
+  isLoading = true;
+
+  // Formulario de consulta
+  consulta = {
+    nombre: '',
+    email: '',
+    telefono: '',
+    mensaje: ''
+  };
+
+  ngOnInit(): void {
+    this.cargarPlanes();
+  }
+
+  cargarPlanes(): void {
+    this.isLoading = true;
+    this.dataService.getPlanes().subscribe({
+      next: (data) => {
+        this.planes = data;
+        this.isLoading = false;
+      },
+      error: () => this.isLoading = false
+    });
+  }
+
+  enviarConsulta(): void {
+    if (!this.consulta.nombre || !this.consulta.email) {
+      alert('Por favor complete los campos obligatorios.');
+      return;
     }
-  ];
+
+    this.dataService.registrarConsulta(this.consulta).subscribe({
+      next: (success) => {
+        if (success) {
+          alert('Su consulta ha sido enviada con éxito. Un asesor lo contactará pronto.');
+          this.consulta = { nombre: '', email: '', telefono: '', mensaje: '' };
+        }
+      }
+    });
+  }
 }

@@ -1,120 +1,132 @@
-<div class="admin-layout">
-  <!-- Sidebar Lateral Izquierdo -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h4 class="mb-0 fw-bold">ADMIN PANEL</h4>
-      <small class="opacity-50">Gestión de Red</small>
+<!-- Navbar Global -->
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm navbar-corporate">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-primary d-flex align-items-center" [routerLink]="['/internet-index']">
+      <i class="bi bi-broadcast me-2"></i> INTERNET PRO <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">ADMIN</span>
+    </a>
+    <div class="collapse navbar-collapse" id="navAdmin">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/internet-index']">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link active" [routerLink]="['/dashboard-admin']">Dashboard Admin</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/gestion-comentarios']">Moderación</a></li>
+        <li class="nav-item ms-lg-3">
+          <a class="btn btn-outline-danger btn-sm" [routerLink]="['/login']">Salir</a>
+        </li>
+      </ul>
     </div>
-    <nav class="nav-admin">
-      <a [routerLink]="['/dashboard-admin']" routerLinkActive="active" class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
-      <a href="#" class="nav-link"><i class="bi bi-diagram-3"></i> Nodos de Red</a>
-      <a href="#" class="nav-link"><i class="bi bi-people"></i> Clientes</a>
-      <a href="#" class="nav-link"><i class="bi bi-ticket-perforated"></i> Soporte Tecnico</a>
-      <a [routerLink]="['/gestion-comentarios']" routerLinkActive="active" class="nav-link"><i class="bi bi-chat-left-dots"></i> Comentarios</a>
-      <hr class="mx-3 opacity-20">
-      <a [routerLink]="['/login']" class="nav-link mt-auto"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a>
+  </div>
+</nav>
+
+<div class="admin-layout d-flex">
+  <!-- Sidebar lateral izquierdo corporativo -->
+  <aside class="sidebar-admin d-none d-lg-block">
+    <div class="sidebar-header p-4">
+      <h4 class="fw-bold mb-0"><i class="bi bi-shield-lock me-2"></i> ISP ADMIN</h4>
+    </div>
+    <nav class="sidebar-nav p-3">
+      <a [routerLink]="['/dashboard-admin']" routerLinkActive="active" class="nav-link-sidebar">
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+      </a>
+      <a [routerLink]="['/gestion-comentarios']" routerLinkActive="active" class="nav-link-sidebar">
+        <i class="bi bi-chat-left-dots me-2"></i> Comentarios
+      </a>
+      <a href="#" class="nav-link-sidebar mt-4 opacity-50">
+        <i class="bi bi-gear me-2"></i> Configuración
+      </a>
     </nav>
   </aside>
 
-  <!-- Contenido Principal -->
-  <main class="main-content">
-    <header class="d-flex justify-content-between align-items-center mb-5">
+<div class="admin-container flex-grow-1 py-5 bg-light">
+  <div class="container">
+    <header class="mb-5 d-flex justify-content-between align-items-center">
       <div>
-        <h2 class="fw-bold mb-1">Resumen Operativo</h2>
-        <p class="text-muted mb-0">Estado actual de la infraestructura y servicios.</p>
+        <h2 class="fw-bold text-primary mb-1">Panel Estadístico Real</h2>
+        <p class="text-muted">Métricas consolidadas de la infraestructura y servicios.</p>
       </div>
-      <button class="btn btn-primary bg-corporate-primary border-0 px-4 py-2" (click)="cargarMetricas()">
+      <button class="btn btn-primary rounded-pill px-4" (click)="cargarMetricas()">
         <i class="bi bi-arrow-clockwise me-2"></i> Actualizar
       </button>
     </header>
 
-    <!-- Cargando Spinner -->
     <div *ngIf="isLoading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <div *ngIf="!isLoading && metricas" class="row g-4 mb-5">
+      <!-- KPIs Reales de BD -->
+      <div class="col-md-3">
+        <div class="card card-kpi p-4 border-0 shadow-sm border-start border-primary border-4">
+          <h5 class="text-muted small fw-bold mb-2">CLIENTES REGISTRADOS</h5>
+          <h2 class="fw-bold mb-0">{{metricas.clientesActivos}}</h2>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card card-kpi p-4 border-0 shadow-sm border-start border-success border-4">
+          <h5 class="text-muted small fw-bold mb-2">SERVICIOS ACTIVOS</h5>
+          <h2 class="fw-bold mb-0">{{metricas.serviciosActivos}}</h2>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card card-kpi p-4 border-0 shadow-sm border-start border-warning border-4">
+          <h5 class="text-muted small fw-bold mb-2">TICKETS ABIERTOS</h5>
+          <h2 class="fw-bold mb-0">{{metricas.ticketsPendientes}}</h2>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card card-kpi p-4 border-0 shadow-sm border-start border-danger border-4">
+          <h5 class="text-muted small fw-bold mb-2">POR COBRAR ($)</h5>
+          <h2 class="fw-bold mb-0">{{metricas.porCobrar | currency}}</h2>
+        </div>
       </div>
     </div>
 
-    <div *ngIf="!isLoading && metricas">
-      <!-- Tarjetas de KPIs Superiores -->
-      <div class="row g-4 mb-5">
-        <div class="col-md-4">
-          <div class="card kpi-card p-4">
-            <div class="kpi-icon bg-info bg-opacity-10 text-info">
-              <i class="bi bi-people-fill"></i>
-            </div>
-            <h5 class="text-muted mb-1">Clientes Activos</h5>
-            <h3 class="fw-bold">{{metricas.clientesActivos | number}}</h3>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card kpi-card p-4">
-            <div class="kpi-icon bg-warning bg-opacity-10 text-warning">
-              <i class="bi bi-exclamation-triangle-fill"></i>
-            </div>
-            <h5 class="text-muted mb-1">Tickets Pendientes</h5>
-            <h3 class="fw-bold">{{metricas.ticketsPendientes}}</h3>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card kpi-card p-4">
-            <div class="kpi-icon bg-success bg-opacity-10 text-success">
-              <i class="bi bi-graph-up-arrow"></i>
-            </div>
-            <h5 class="text-muted mb-1">Tráfico de Red (Gbps)</h5>
-            <h3 class="fw-bold">{{metricas.anchoBandaConsumidoGbps}}</h3>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tabla de Monitoreo de Nodos -->
-      <div class="table-container">
-        <h4 class="fw-bold mb-4">Estado de Nodos de Distribución</h4>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle">
-            <thead>
-              <tr>
-                <th>ID Nodo</th>
-                <th>Nombre / Ubicación</th>
-                <th>Carga Actual</th>
-                <th>Estado</th>
-                <th class="text-end">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let nodo of metricas.nodosEstado">
-                <td><span class="fw-bold">{{nodo.id}}</span></td>
-                <td>
-                  <div class="fw-bold">{{nodo.nombre}}</div>
-                  <small class="text-muted">{{nodo.ubicacion}}</small>
-                </td>
-                <td style="width: 200px;">
-                  <div class="d-flex align-items-center gap-2">
-                    <div class="progress flex-grow-1">
-                      <div class="progress-bar"
-                           [class.bg-danger]="nodo.cargaActual > 80"
-                           [class.bg-success]="nodo.cargaActual <= 80"
-                           role="progressbar"
-                           [style.width]="nodo.cargaActual + '%'"></div>
-                    </div>
-                    <small class="fw-bold">{{nodo.cargaActual}}%</small>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge rounded-pill px-3 py-2"
-                        [class.badge-stable]="nodo.estado === 'Estable'"
-                        [class.badge-saturado]="nodo.estado === 'Saturado'">
-                    {{nodo.estado}}
-                  </span>
-                </td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-secondary">Detalles</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <!-- Tabla Monitoreo Nodos -->
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+      <h4 class="fw-bold mb-4">Estado de Nodos de Distribución</h4>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="bg-light">
+            <tr>
+              <th>ID</th>
+              <th>Nodo / Zona</th>
+              <th>Carga Actual</th>
+              <th>Estatus</th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let nodo of metricas.nodosEstado">
+              <td><span class="fw-bold">#{{nodo.id}}</span></td>
+              <td>
+                <div class="fw-bold">{{nodo.nombre}}</div>
+                <small class="text-muted">{{nodo.ubicacion}}</small>
+              </td>
+              <td>
+                <div class="progress" style="height: 10px; width: 150px;">
+                  <div class="progress-bar" [class.bg-danger]="nodo.cargaActual > 80" [style.width]="nodo.cargaActual + '%'"></div>
+                </div>
+                <small class="fw-bold">{{nodo.cargaActual}}%</small>
+              </td>
+              <td>
+                <span class="badge rounded-pill" [class.bg-success]="nodo.estado === 'Estable'" [class.bg-danger]="nodo.estado === 'Saturado'">
+                  {{nodo.estado}}
+                </span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-light border">Gestionar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </main>
+  </div>
 </div>
+
+<!-- Footer Global -->
+<footer class="footer-corporate mt-auto">
+  <div class="container text-center">
+    <p class="opacity-50 small mb-0">© 2023 Internet Pro - Panel de Administración Segura.</p>
+  </div>
+</footer>
+</div> <!-- Fin de admin-layout -->

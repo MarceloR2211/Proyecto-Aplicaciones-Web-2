@@ -1,22 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { InternetDataService } from '../../services/internet-data.service';
 import { Comentario } from '../../models/comentario.model';
 
 @Component({
   selector: 'app-gestion-comentarios',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './gestion-comentarios.html',
   styleUrls: ['./gestion-comentarios.css']
 })
 export class GestionComentariosComponent implements OnInit {
+  private dataService = inject(InternetDataService);
+
   comentarios: Comentario[] = [];
   isLoading = true;
   procesandoId: number | null = null;
-
-  constructor(private dataService: InternetDataService) {}
 
   ngOnInit(): void {
     this.cargarComentarios();
@@ -29,36 +30,17 @@ export class GestionComentariosComponent implements OnInit {
         this.comentarios = data;
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('Error al cargar comentarios', err);
-        this.isLoading = false;
-      }
+      error: () => this.isLoading = false
     });
   }
 
-  aprobar(id: number): void {
+  cambiarEstado(id: number, nuevoEstado: 'aprobado' | 'rechazado'): void {
     this.procesandoId = id;
-    this.dataService.aprobarComentario(id).subscribe({
+    this.dataService.actualizarEstadoComentario(id, nuevoEstado).subscribe({
       next: (success) => {
         if (success) {
           this.comentarios = this.comentarios.filter(c => c.id !== id);
-          alert('Comentario aprobado exitosamente.');
-        }
-        this.procesandoId = null;
-      },
-      error: () => this.procesandoId = null
-    });
-  }
-
-  rechazar(id: number): void {
-    if (!confirm('¿Está seguro de rechazar este comentario?')) return;
-
-    this.procesandoId = id;
-    this.dataService.rechazarComentario(id).subscribe({
-      next: (success) => {
-        if (success) {
-          this.comentarios = this.comentarios.filter(c => c.id !== id);
-          alert('Comentario rechazado.');
+          alert(`Comentario ${nuevoEstado} con éxito.`);
         }
         this.procesandoId = null;
       },

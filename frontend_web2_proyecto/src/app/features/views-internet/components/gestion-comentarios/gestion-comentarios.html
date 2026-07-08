@@ -1,69 +1,65 @@
-<div class="gestion-container">
+<!-- Navbar Global -->
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm navbar-corporate">
   <div class="container">
-    <!-- Navegación Admin -->
-    <nav aria-label="breadcrumb" class="mb-4">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a [routerLink]="['/dashboard-admin']">Dashboard Admin</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Gestión Comentarios</li>
-      </ol>
-    </nav>
+    <a class="navbar-brand fw-bold text-primary d-flex align-items-center" [routerLink]="['/internet-index']">
+      <i class="bi bi-broadcast me-2"></i> INTERNET PRO <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">MODERACIÓN</span>
+    </a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/internet-index']">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/dashboard-admin']">Dashboard Admin</a></li>
+        <li class="nav-item"><a class="nav-link active" [routerLink]="['/gestion-comentarios']">Moderación</a></li>
+        <li class="nav-item ms-lg-3">
+          <a class="btn btn-outline-danger btn-sm" [routerLink]="['/login']">Salir</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-    <!-- Encabezado del Panel -->
-    <header class="mb-5 d-flex justify-content-between align-items-end">
-      <div>
-        <h2 class="fw-bold text-corporate-primary mb-1">Moderación de Reseñas</h2>
-        <p class="text-muted mb-0">Gestiona y aprueba los comentarios que se mostrarán en el portal público.</p>
-      </div>
-      <span class="badge bg-corporate-primary px-3 py-2">
-        {{comentarios.length}} Pendientes
-      </span>
+<div class="gestion-container py-5 bg-light min-vh-100">
+  <div class="container">
+    <header class="mb-5">
+      <h2 class="fw-bold text-primary mb-1">Moderación de Comentarios Reales</h2>
+      <p class="text-muted">Gestiona las reseñas de clientes almacenadas en la base de datos.</p>
     </header>
 
-    <!-- Estado de Carga -->
     <div *ngIf="isLoading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
-      </div>
+      <div class="spinner-border text-primary" role="status"></div>
     </div>
 
-    <!-- Lista de Comentarios -->
     <div *ngIf="!isLoading && comentarios.length > 0" class="row g-4">
       <div *ngFor="let c of comentarios" class="col-12">
-        <div class="card card-comentario p-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 card-comentario">
           <div class="row align-items-center">
-            <!-- Metadata del Usuario -->
             <div class="col-md-3 border-end">
-              <div class="d-flex align-items-center gap-3 mb-3">
-                <div class="user-avatar">{{c.usuario.charAt(0)}}</div>
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px;">
+                  {{c.usuario.charAt(0)}}
+                </div>
                 <div>
-                  <h5 class="mb-0 fw-bold">{{c.usuario}}</h5>
-                  <span class="badge badge-tipo" [class.bg-info]="c.tipoCliente === 'residencial'" [class.bg-dark]="c.tipoCliente === 'corporativo'">
-                    {{c.tipoCliente}}
-                  </span>
+                  <h6 class="mb-0 fw-bold">{{c.usuario}}</h6>
+                  <span class="badge bg-secondary" style="font-size: 0.6rem;">{{c.tipoCliente | uppercase}}</span>
                 </div>
               </div>
-              <p class="small text-muted mb-1">Plan: <strong>{{c.planContratado}}</strong></p>
-              <p class="small text-muted">Fecha: {{c.fecha | date:'dd/MM/yyyy'}}</p>
+              <p class="small text-muted mb-0">Plan: {{c.planContratado}}</p>
+              <p class="small text-muted">Fecha: {{c.fecha | date:'shortDate'}}</p>
             </div>
 
-            <!-- Contenido del Comentario -->
             <div class="col-md-6 px-md-4">
-              <div class="star-rating mb-2">
-                <i *ngFor="let star of getEstrellas(c.estrellas)" class="bi bi-star-fill me-1"></i>
+              <div class="text-warning mb-2">
+                <i *ngFor="let s of getEstrellas(c.estrellas)" class="bi bi-star-fill me-1"></i>
               </div>
               <p class="fst-italic text-secondary mb-0">"{{c.texto}}"</p>
             </div>
 
-            <!-- Acciones -->
             <div class="col-md-3 text-md-end mt-3 mt-md-0">
               <div class="d-flex flex-md-column gap-2 justify-content-end">
-                <button class="btn btn-aprobar" (click)="aprobar(c.id)" [disabled]="procesandoId === c.id">
-                  <span *ngIf="procesandoId !== c.id"><i class="bi bi-check-lg me-2"></i>Aprobar</span>
-                  <span *ngIf="procesandoId === c.id" class="spinner-border spinner-border-sm"></span>
+                <button class="btn btn-success fw-bold py-2 rounded-pill shadow-sm" (click)="cambiarEstado(c.id, 'aprobado')" [disabled]="procesandoId === c.id">
+                  APROBAR
                 </button>
-                <button class="btn btn-rechazar" (click)="rechazar(c.id)" [disabled]="procesandoId === c.id">
-                  <span *ngIf="procesandoId !== c.id"><i class="bi bi-x-lg me-2"></i>Rechazar</span>
-                  <span *ngIf="procesandoId === c.id" class="spinner-border spinner-border-sm"></span>
+                <button class="btn btn-outline-danger fw-bold py-2 rounded-pill" (click)="cambiarEstado(c.id, 'rechazado')" [disabled]="procesandoId === c.id">
+                  RECHAZAR
                 </button>
               </div>
             </div>
@@ -73,14 +69,17 @@
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="!isLoading && comentarios.length === 0" class="empty-state">
-      <div class="mb-4">
-        <i class="bi bi-chat-left-check text-muted" style="font-size: 5rem;"></i>
-      </div>
-      <h3 class="text-muted">No hay comentarios pendientes</h3>
-      <p class="text-muted">¡Buen trabajo! Has procesado todas las reseñas de los clientes.</p>
-      <button class="btn btn-outline-primary mt-3" (click)="cargarComentarios()">Recargar</button>
+    <div *ngIf="!isLoading && comentarios.length === 0" class="text-center py-5">
+      <i class="bi bi-check-circle-fill text-success display-1 mb-4 d-block"></i>
+      <h3 class="fw-bold">Todo moderado</h3>
+      <p class="text-muted">No existen comentarios pendientes en la base de datos.</p>
     </div>
-
   </div>
 </div>
+
+<!-- Footer Global -->
+<footer class="footer-corporate">
+  <div class="container text-center">
+    <p class="opacity-50 small mb-0">© 2023 Internet Pro - Control de Moderación Corporativa.</p>
+  </div>
+</footer>

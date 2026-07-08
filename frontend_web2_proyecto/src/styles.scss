@@ -29,17 +29,43 @@
 
 body {
   margin: 0;
-  font-family: var(--font-mono);
+  font-family: 'Segoe UI', Arial, sans-serif;
   color: var(--color-text);
   background: var(--color-bg);
   line-height: 1.5;
 }
 
-h1, h2, h3 {
-  font-family: var(--font-mono);
+h1, h2, h3, .nav-link, .btn {
+  font-family: 'Segoe UI', Arial, sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
   margin: 0 0 var(--space-sm);
+}
+
+/* Global Navbar Styles */
+.navbar-corporate {
+  background-color: white;
+  border-bottom: 2px solid #27187E;
+  padding: 1rem 0;
+}
+
+.navbar-corporate .nav-link {
+  color: #27187E;
+  font-weight: 600;
+  margin: 0 10px;
+}
+
+.navbar-corporate .nav-link:hover,
+.navbar-corporate .nav-link.active {
+  color: #758BFD;
+}
+
+/* Global Footer Styles */
+.footer-corporate {
+  background-color: #27187E;
+  color: white;
+  padding: 3rem 0;
+  margin-top: auto;
 }
 
 // ===== Utilidades compartidas =====

@@ -118,3 +118,28 @@
 .progress {
   height: 8px;
 }
+
+.sidebar-admin {
+  width: 280px;
+  background-color: #27187E;
+  color: white;
+  min-height: 100vh;
+}
+
+.nav-link-sidebar {
+  color: rgba(255,255,255,0.7);
+  display: block;
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.nav-link-sidebar:hover,
+.nav-link-sidebar.active {
+  color: white;
+  background-color: rgba(255,255,255,0.1);
+  box-shadow: inset 4px 0 0 #FF8600;
+}

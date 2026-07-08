@@ -1,10 +1,11 @@
 /**
- * Interfaz estricta para el modelo de Metricas de Servicio
+ * Interfaz estricta para el modelo de Metricas de Servicio (Admin Dashboard)
  */
 export interface MetricaServicio {
   clientesActivos: number;
+  serviciosActivos: number;
   ticketsPendientes: number;
-  anchoBandaConsumidoGbps: number;
+  porCobrar: number;
   nodosEstado: NodoRed[];
 }
 
@@ -12,21 +13,58 @@ export interface MetricaServicio {
  * Interfaz para el estado de los nodos de red
  */
 export interface NodoRed {
-  id: string;
+  id: string | number;
   nombre: string;
   estado: 'Estable' | 'Saturado';
   ubicacion: string;
-  cargaActual: number; // Porcentaje 0-100
+  cargaActual: number;
 }
 
 /**
- * Interfaz para los datos del cliente en su dashboard
+ * Interfaz para los datos del cliente en su dashboard (Consolidado de BD)
  */
 export interface DatosCliente {
-  nombre: string;
-  planNombre: string;
-  velocidadMegas: number;
-  estadoModem: 'Online' | 'Offline';
-  fechaVencimiento: string;
-  montoPagar: number;
+  perfil: {
+    nombre: string;
+    email: string;
+  };
+  servicio: {
+    plan: string;
+    velocidad: string;
+    precio: number;
+    estado: string;
+    fechaInicio: string;
+  };
+  facturas: Factura[];
+  tickets: Ticket[];
+}
+
+export interface Factura {
+  id: number;
+  monto: number;
+  fecha_emision: string;
+  fecha_vencimiento: string;
+  estado: 'pendiente' | 'pagado';
+}
+
+export interface Ticket {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  estado: string;
+  fecha_creacion: string;
+}
+
+/**
+ * Interfaz para la tabla 'planes'
+ */
+export interface Plan {
+  id: number;
+  nombre_plan: string;
+  tipo_plan: string;
+  velocidad: string;
+  precio: number;
+  descripcion: string;
+  estado: string;
+  destacado?: boolean;
 }

@@ -1,80 +1,81 @@
 # INSTRUCCIONES_SISTEMA - Guía Completa de Configuración y Despliegue
 
-Sigue estos pasos para instalar y ejecutar tanto el backend como el frontend del sistema de Internet Pro.
+Este documento detalla los pasos exactos para instalar y ejecutar el sistema completo (Frontend y Backend).
 
 ---
 
-## 1. Configuración del Módulo Backend (Node.js + Express)
+## 1. Módulo Backend (Node.js + Express)
 
-El servidor maneja la API, autenticación y la lógica de negocio.
+El servidor gestiona la persistencia de datos, autenticación y lógica de negocio.
 
-### Pasos de Instalación:
-1. Abre una terminal y navega al directorio del backend:
+### Requisitos Previos:
+- Node.js instalado.
+
+### Instalación:
+1. Navega a la carpeta del backend:
    ```bash
    cd backend_web2_proyecto
    ```
-2. Instala las dependencias necesarias:
+2. Instala las dependencias:
    ```bash
    npm install
    ```
-   *Nota: Se instalarán automáticamente dependencias clave como `cors`, `dotenv`, `express`, `jsonwebtoken`, `mysql2` y `bcryptjs`.*
-
-### Configuración de CORS:
-El servidor está configurado para permitir peticiones desde el puerto `4200` (Angular). Si cambias el puerto del frontend, asegúrate de actualizar la configuración en `backend_web2_proyecto/src/app.js`:
-```javascript
-app.use(cors({
-  origin: 'http://localhost:4200'
-}));
-```
 
 ### Ejecución:
-Para iniciar el servidor, ejecuta:
-```bash
-node src/app.js
-```
-El servidor estará escuchando en `http://localhost:3000` (o el puerto definido en su archivo `.env`).
+1. Inicia el servidor:
+   ```bash
+   node src/app.js
+   ```
+   *El servidor correrá en `http://localhost:3000`.*
+
+### Notas Importantes:
+- **CORS:** El backend ya tiene habilitado CORS para peticiones desde `http://localhost:4200`. Si usas un puerto diferente, actualiza `src/app.js`.
+- **Base de Datos:** Asegúrate de tener configurado el archivo `.env` con las credenciales de tu base de Datos MySQL.
 
 ---
 
-## 2. Configuración del Módulo Frontend (Angular 18+)
+## 2. Módulo Frontend (Angular 18+)
 
-La interfaz de usuario moderna y responsiva.
+Interfaz de usuario moderna integrada con Bootstrap 5.
 
-### Pasos de Instalación:
-1. Abre una nueva terminal y navega al directorio del frontend:
+### Requisitos Previos:
+- Node.js (v22.22.3+ recomendado).
+- Angular CLI (opcional, se puede usar `npm start`).
+
+### Instalación:
+1. Navega a la carpeta del frontend:
    ```bash
    cd frontend_web2_proyecto
    ```
-2. Instala las dependencias de Angular:
+2. Instala las dependencias:
    ```bash
    npm install
    ```
 
 ### Ejecución:
-Inicia el servidor de desarrollo de Angular:
-```bash
-npm start
-```
-O usando el CLI directamente:
-```bash
-ng serve
-```
-La aplicación estará disponible en `http://localhost:4200`.
+1. Inicia la aplicación:
+   ```bash
+   npm start
+   ```
+   *O alternativamente:*
+   ```bash
+   ng serve
+   ```
+2. Accede a la aplicación en `http://localhost:4200`.
 
 ---
 
-## 3. Verificación de Integración
+## 3. Integración y Uso
 
-1. Asegúrate de que el **Backend** esté corriendo primero.
-2. Una vez que el **Frontend** inicie, la página principal (`/internet-index`) cargará los datos desde la API.
-3. Puedes acceder al portal usando el botón **"Acceso Portal"** que te redirigirá al login.
-4. Las vistas están protegidas por roles:
-   - **Admin:** `/dashboard-admin` y `/gestion-comentarios`
-   - **Usuario:** `/dashboard-cliente`
+1. **Página de Inicio:** Accede a `http://localhost:4200/internet-index` para ver la landing page corporativa.
+2. **Navegación:** Utiliza el botón "Acceso Portal" para ir al Login.
+3. **Flujo de Usuario:**
+   - Inicia sesión como Admin para ver `/dashboard-admin` y `/gestion-comentarios`.
+   - Inicia sesión como Usuario para ver `/dashboard-cliente`.
+4. **Estilos:** La aplicación utiliza Bootstrap 5 y Bootstrap Icons cargados globalmente para garantizar un diseño profesional y responsivo.
 
 ---
 
-## 4. Notas Técnicas
-- **Estilos:** Se utiliza Bootstrap 5 vía CDN en `index.html` para asegurar el renderizado correcto de la grilla y componentes.
-- **Iconos:** Se utilizan Bootstrap Icons para los indicadores visuales y botones.
-- **Conectividad:** El frontend utiliza `InternetDataService` conectado a `environment.apiUrl` para interactuar con el backend de Node.js.
+## 4. Solución de Problemas
+- **UI sin Estilos:** Si la interfaz se ve como texto plano, verifica que el archivo `frontend_web2_proyecto/src/styles.scss` incluya los `@import` de Bootstrap.
+- **Error de Conexión:** Verifica que el backend esté encendido antes de navegar por los dashboards.

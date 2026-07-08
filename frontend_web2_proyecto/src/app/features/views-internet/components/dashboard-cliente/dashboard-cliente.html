@@ -7,7 +7,7 @@
           <h1 class="fw-bold h2 mb-1">Bienvenido, {{datos?.nombre || 'Cliente'}}</h1>
           <p class="opacity-75 mb-0">Gestiona tu servicio de internet desde aquí.</p>
         </div>
-        <button class="btn btn-outline-light rounded-pill px-4">Cerrar Sesión</button>
+        <button class="btn btn-outline-light rounded-pill px-4" [routerLink]="['/login']">Cerrar Sesión</button>
       </div>
     </div>
   </header>

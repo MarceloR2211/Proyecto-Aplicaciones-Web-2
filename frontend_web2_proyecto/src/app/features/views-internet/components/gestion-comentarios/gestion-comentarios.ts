@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { InternetDataService } from '../../services/internet-data.service';
 import { Comentario } from '../../models/comentario.model';
 
 @Component({
   selector: 'app-gestion-comentarios',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './gestion-comentarios.html',
   styleUrls: ['./gestion-comentarios.css']
 })

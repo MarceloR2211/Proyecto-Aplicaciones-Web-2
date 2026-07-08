@@ -7,11 +7,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item"><a class="nav-link mx-2" href="#">Servicios</a></li>
-        <li class="nav-item"><a class="nav-link mx-2" href="#">Empresas</a></li>
-        <li class="nav-item"><a class="nav-link mx-2" href="#">Cobertura</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" [routerLink]="['/planes']">Servicios</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" [routerLink]="['/internet-index']">Empresas</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" [routerLink]="['/contacto']">Cobertura</a></li>
         <li class="nav-item ms-lg-3">
-          <a class="btn btn-cta px-4" href="#">Acceso Portal</a>
+          <a class="btn btn-cta px-4" [routerLink]="['/login']">Acceso Portal</a>
         </li>
       </ul>
     </div>

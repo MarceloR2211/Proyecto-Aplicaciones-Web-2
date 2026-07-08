@@ -1,0 +1,61 @@
+<section class="consultas-page">
+  <header class="page-header">
+    <h1>Contacto</h1>
+  </header>
+
+  <div class="consultas-grid">
+    <aside class="info-box">
+      <h2>Información</h2>
+      <p><strong>Teléfono:</strong> +51 234 567 890</p>
+      <p><strong>Email:</strong> info&#64;ispinternet.com</p>
+    </aside>
+
+    <div class="form-box">
+      <h2>Mensaje</h2>
+
+      @if (exitoMsg()) {
+        <p class="alert alert-success">{{ exitoMsg() }}</p>
+      }
+      @if (errorMsg()) {
+        <p class="alert alert-error">{{ errorMsg() }}</p>
+      }
+
+      <form [formGroup]="consultaForm" (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label>Nombre *</label>
+          <input type="text" formControlName="nombre" placeholder="Lorem ipsum" />
+        </div>
+
+        <div class="field">
+          <label>Email *</label>
+          <input type="email" formControlName="email" placeholder="lorem@ipsum.com" />
+        </div>
+
+        <div class="field">
+          <label>DNI *</label>
+          <input type="text" formControlName="dni" placeholder="8 dígitos" />
+          @if (consultaForm.controls.dni.invalid && consultaForm.controls.dni.touched) {
+            <small class="field-error">Ingresa un DNI válido de 8 dígitos.</small>
+          }
+        </div>
+
+        <div class="field">
+          <label>Teléfono</label>
+          <input type="text" formControlName="telefono" placeholder="9 dígitos (opcional)" />
+        </div>
+
+        <div class="field">
+          <label>Mensaje *</label>
+          <textarea formControlName="motivo_consulta" placeholder="Lorem ipsum..."></textarea>
+          @if (consultaForm.controls.motivo_consulta.invalid && consultaForm.controls.motivo_consulta.touched) {
+            <small class="field-error">Describe tu consulta (mínimo 10 caracteres).</small>
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="enviando()">
+          {{ enviando() ? 'Enviando...' : 'Enviar' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</section>

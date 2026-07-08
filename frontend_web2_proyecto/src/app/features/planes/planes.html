@@ -1,0 +1,20 @@
+@if (!cargando() && !errorMsg()) {
+  <div class="planes-grid">
+    @for (plan of planes(); track plan.id) {
+      <article class="plan-card" [class.destacado]="$index === 1">
+        <h2>{{ plan.nombre_plan }}</h2>
+        <p class="precio">${{ plan.precio }}<span>/mes</span></p>
+
+        <ul class="features">
+          <li>X Velocidad: {{ plan.velocidad }}</li>
+          <li>X Tipo: {{ plan.tipo_plan }}</li>
+          <li>X {{ plan.descripcion }}</li>
+        </ul>
+
+        <button type="button" class="btn" [class.btn-primary]="$index === 1" [class.btn-outline]="$index !== 1">
+          Contratar
+        </button>
+      </article>
+    }
+  </div>
+}

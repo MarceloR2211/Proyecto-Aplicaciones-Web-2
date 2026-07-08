@@ -1,0 +1,63 @@
+<section class="login-wrapper">
+  <div class="tabs">
+    <button type="button" (click)="cambiarModo('login')" [class.active]="modo() === 'login'">
+      Iniciar Sesión
+    </button>
+    <button type="button" (click)="cambiarModo('registro')" [class.active]="modo() === 'registro'">
+      Registrarse
+    </button>
+  </div>
+
+  @if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+  }
+  @if (exitoRegistro()) {
+    <p class="exito">{{ exitoRegistro() }}</p>
+  }
+
+  @if (modo() === 'login') {
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
+      <label>Usuario *</label>
+      <input type="text" formControlName="username" placeholder="usuario" />
+      @if (loginForm.controls.username.invalid && loginForm.controls.username.touched) {
+        <small class="error">El usuario es obligatorio.</small>
+      }
+
+      <label>Contraseña *</label>
+      <input type="password" formControlName="password" placeholder="••••••••" />
+      @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+        <small class="error">La contraseña es obligatoria.</small>
+      }
+
+      <button type="submit" [disabled]="cargando()">
+        {{ cargando() ? 'Ingresando...' : 'Iniciar Sesión' }}
+      </button>
+    </form>
+  }
+
+  @if (modo() === 'registro') {
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmitRegistro()">
+      <label>Usuario *</label>
+      <input type="text" formControlName="username" placeholder="usuario" />
+
+      <label>Contraseña *</label>
+      <input type="password" formControlName="password" placeholder="mínimo 6 caracteres" />
+
+      <label>Nombre completo *</label>
+      <input type="text" formControlName="nombre_completo" placeholder="Nombre completo" />
+
+      <label>Email *</label>
+      <input type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+
+      <label>DNI *</label>
+      <input type="text" formControlName="dni" placeholder="8 dígitos" />
+
+      <label>Teléfono</label>
+      <input type="text" formControlName="telefono" placeholder="9 dígitos (opcional)" />
+
+      <button type="submit" [disabled]="cargando()">
+        {{ cargando() ? 'Creando cuenta...' : 'Registrarse' }}
+      </button>
+    </form>
+  }
+</section>

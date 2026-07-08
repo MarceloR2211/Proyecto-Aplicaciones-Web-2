@@ -1,0 +1,46 @@
+.consultas-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.error { color: #b91c1c; }
+.exito { color: #15803d; }
+
+.consultas-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+}
+
+.consultas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: var(--space-md);
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-box,
+.form-box {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+
+  h2 {
+    font-size: 1rem;
+    padding-bottom: var(--space-xs);
+    border-bottom: var(--border-width) solid var(--color-surface);
+  }
+}
+
+.info-box p {
+  font-size: 0.85rem;
+  margin: var(--space-xs) 0;
+}

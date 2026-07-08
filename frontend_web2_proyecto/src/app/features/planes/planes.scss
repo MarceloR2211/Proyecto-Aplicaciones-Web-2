@@ -1,0 +1,77 @@
+.planes-grid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.error { color: #b91c1c; }
+
+.planes-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+
+  .subtitle {
+    color: var(--color-text-muted);
+  }
+}
+
+.loading-text {
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.planes-grid {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.plan-card {
+  flex: 1 1 280px;
+  max-width: 320px;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .precio {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: var(--space-sm) 0;
+
+    span {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--color-text-muted);
+    }
+  }
+
+  .features {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-md) 0;
+    text-align: left;
+
+    li {
+      font-size: 0.85rem;
+      padding: var(--space-xs) 0;
+      border-bottom: var(--border-width) solid var(--color-surface);
+    }
+  }
+
+  &.destacado {
+    background: var(--color-surface);
+  }
+}

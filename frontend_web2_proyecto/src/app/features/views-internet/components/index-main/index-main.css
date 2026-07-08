@@ -1,0 +1,83 @@
+/* Paleta de Colores Corporativa */
+:host {
+  --primary: #27187E;
+  --secondary: #758BFD;
+  --accent: #AEB8FE;
+  --background: #F1F2F6;
+  --cta: #FF8600;
+}
+
+.bg-corporate-primary {
+  background-color: var(--primary);
+}
+
+.text-corporate-primary {
+  color: var(--primary);
+}
+
+.text-corporate-cta {
+  color: var(--cta);
+}
+
+.btn-cta {
+  background-color: var(--cta);
+  color: white;
+  border: none;
+  font-weight: bold;
+  transition: transform 0.2s;
+}
+
+.btn-cta:hover {
+  background-color: #e67900;
+  transform: scale(1.05);
+  color: white;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  padding: 100px 0;
+}
+
+.card-plan {
+  border: 2px solid var(--accent);
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.card-plan:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.card-plan.featured {
+  border-color: var(--cta);
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+.badge-featured {
+  background-color: var(--cta);
+  color: white;
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.navbar-brand {
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.nav-link {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: var(--secondary);
+}

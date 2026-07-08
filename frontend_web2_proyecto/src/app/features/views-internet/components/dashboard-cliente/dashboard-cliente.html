@@ -1,0 +1,103 @@
+<div class="client-dashboard">
+  <!-- Header con degradado corporativo -->
+  <header class="dashboard-header">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="fw-bold h2 mb-1">Bienvenido, {{datos?.nombre || 'Cliente'}}</h1>
+          <p class="opacity-75 mb-0">Gestiona tu servicio de internet desde aquí.</p>
+        </div>
+        <button class="btn btn-outline-light rounded-pill px-4">Cerrar Sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container" style="margin-top: 6rem;">
+    <!-- Cargando -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-white" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && datos" class="row g-4">
+
+      <!-- Resumen del Plan -->
+      <div class="col-lg-8">
+        <div class="card card-custom p-4 mb-4">
+          <h4 class="card-title-custom mb-4">Resumen del Servicio</h4>
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+              <p class="info-label mb-1">Plan Actual</p>
+              <p class="info-value mb-0">{{datos.planNombre}}</p>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <p class="info-label mb-1">Velocidad</p>
+              <p class="info-value mb-0">{{datos.velocidadMegas}} Mbps</p>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <p class="info-label mb-1">Estatus Módem</p>
+              <div class="d-flex align-items-center">
+                <span class="status-indicator" [class.status-online]="datos.estadoModem === 'Online'" [class.status-offline]="datos.estadoModem === 'Offline'"></span>
+                <p class="info-value mb-0">{{datos.estadoModem}}</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <p class="info-label mb-1">Próximo Pago</p>
+              <p class="info-value mb-0">{{datos.fechaVencimiento | date:'dd MMM yyyy'}}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seccion de Facturación -->
+        <div class="card card-custom p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="card-title-custom mb-0" style="border:none;">Estado de Cuenta</h4>
+            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2">Pendiente de Pago</span>
+          </div>
+          <div class="bg-light p-4 rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <div>
+              <p class="text-muted mb-1">Total a pagar este mes:</p>
+              <h2 class="fw-bold text-corporate-primary">${{datos.montoPagar}} USD</h2>
+            </div>
+            <button class="btn btn-payment mt-3 mt-md-0">PAGAR FACTURA AHORA</button>
+          </div>
+          <div class="mt-4">
+            <p class="text-muted small">
+              <i class="bi bi-info-circle me-1"></i> Evita cortes en el servicio pagando antes del día <strong>{{datos.fechaVencimiento | date:'dd'}}</strong> de cada mes.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acceso Directo Utilidades -->
+      <div class="col-lg-4">
+        <div class="card card-custom p-4 h-100">
+          <h4 class="card-title-custom mb-4">Centro de Ayuda</h4>
+          <div class="row g-3">
+            <div class="col-12">
+              <button class="util-btn w-100" (click)="iniciarTestVelocidad()">
+                <i class="bi bi-speedometer h2 mb-0"></i>
+                <span class="fw-bold">Iniciar Test de Velocidad</span>
+              </button>
+            </div>
+            <div class="col-12">
+              <button class="util-btn w-100" (click)="reiniciarModem()" [disabled]="modemActionLoading">
+                <i *ngIf="!modemActionLoading" class="bi bi-router h2 mb-0"></i>
+                <div *ngIf="modemActionLoading" class="spinner-border spinner-border-sm" role="status"></div>
+                <span class="fw-bold">{{ modemActionLoading ? 'Reiniciando...' : 'Reiniciar Módem Remoto' }}</span>
+              </button>
+            </div>
+            <div class="col-12">
+              <button class="util-btn w-100" style="border-color: var(--primary); color: var(--primary);">
+                <i class="bi bi-headset h2 mb-0"></i>
+                <span class="fw-bold">Contactar Soporte</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

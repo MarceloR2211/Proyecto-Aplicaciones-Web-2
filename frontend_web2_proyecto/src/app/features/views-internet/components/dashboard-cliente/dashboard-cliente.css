@@ -1,0 +1,96 @@
+:host {
+  --primary: #27187E;
+  --secondary: #758BFD;
+  --accent: #AEB8FE;
+  --background: #F1F2F6;
+  --cta: #FF8600;
+}
+
+.text-corporate-primary {
+  color: var(--primary);
+}
+
+.client-dashboard {
+  background-color: var(--background);
+  min-height: 100vh;
+  padding-bottom: 3rem;
+}
+
+.dashboard-header {
+  background-color: var(--primary);
+  color: white;
+  padding: 3rem 0;
+  margin-bottom: -4rem;
+}
+
+.card-custom {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.card-title-custom {
+  color: var(--primary);
+  font-weight: 700;
+  border-bottom: 2px solid var(--background);
+  padding-bottom: 1rem;
+}
+
+.btn-payment {
+  background-color: var(--cta);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.btn-payment:hover {
+  background-color: #e67900;
+  color: white;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.status-online { background-color: #28a745; }
+.status-offline { background-color: #dc3545; }
+
+.util-btn {
+  border: 2px solid var(--secondary);
+  color: var(--secondary);
+  background: transparent;
+  padding: 1rem;
+  border-radius: 12px;
+  transition: all 0.2s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.util-btn:hover {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.info-label {
+  color: #6c757d;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.info-value {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--primary);
+}

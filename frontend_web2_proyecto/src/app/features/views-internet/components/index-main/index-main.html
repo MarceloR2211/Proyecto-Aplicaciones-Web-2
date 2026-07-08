@@ -1,0 +1,90 @@
+<!-- Navbar Empresarial -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">INTERNET PRO</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link mx-2" href="#">Servicios</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="#">Empresas</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="#">Cobertura</a></li>
+        <li class="nav-item ms-lg-3">
+          <a class="btn btn-cta px-4" href="#">Acceso Portal</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <h1 class="display-3 fw-bold mb-4">Fibra Óptica Simétrica para tu Negocio y Hogar</h1>
+        <p class="lead mb-5 opacity-90">Experimenta la velocidad real sin límites. Conexión estable de alta capacidad con tecnología de punta.</p>
+        <div class="d-flex gap-3">
+          <button class="btn btn-cta btn-lg px-5">Ver Planes</button>
+          <button class="btn btn-outline-light btn-lg px-5">Saber Más</button>
+        </div>
+      </div>
+      <div class="col-lg-6 text-center">
+        <!-- Espacio para imagen representativa -->
+        <div class="p-5 bg-white bg-opacity-10 rounded-circle d-inline-block">
+          <i class="bi bi-cpu text-white" style="font-size: 8rem;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Planes Comerciales Grid -->
+<section class="py-5 bg-light">
+  <div class="container py-5">
+    <div class="text-center mb-5">
+      <h2 class="text-corporate-primary fw-bold">Nuestros Planes</h2>
+      <p class="text-muted">Selecciona la velocidad que mejor se adapte a tus necesidades</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      <div *ngFor="let plan of planes" class="col-md-6 col-lg-4">
+        <div class="card h-100 card-plan p-4 position-relative" [class.featured]="plan.destacado">
+          <div *ngIf="plan.destacado" class="badge-featured fw-bold">MÁS VENDIDO</div>
+
+          <div class="card-body d-flex flex-column">
+            <h3 class="card-title text-corporate-primary h4 fw-bold">{{plan.nombre}}</h3>
+            <div class="my-4">
+              <span class="display-5 fw-bold text-corporate-primary">{{plan.velocidad}}</span>
+            </div>
+            <p class="card-text text-muted mb-4">{{plan.descripcion}}</p>
+
+            <ul class="list-unstyled mb-5">
+              <li *ngFor="let feat of plan.caracteristicas" class="mb-2">
+                <i class="bi bi-check-circle-fill text-corporate-cta me-2"></i> {{feat}}
+              </li>
+            </ul>
+
+            <div class="mt-auto">
+              <div class="mb-3">
+                <span class="h2 fw-bold text-corporate-primary">${{plan.precio}}</span>
+                <span class="text-muted"> / mes</span>
+              </div>
+              <button class="btn w-100 py-3 fw-bold" [class.btn-cta]="plan.destacado" [class.btn-outline-primary]="!plan.destacado">
+                Contratar Ahora
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer Simple -->
+<footer class="bg-corporate-primary text-white py-5">
+  <div class="container text-center">
+    <p class="mb-0">© 2023 Internet Pro - Soluciones de Conectividad Avanzada</p>
+  </div>
+</footer>

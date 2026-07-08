@@ -1,0 +1,90 @@
+:host {
+  --primary: #27187E;
+  --secondary: #758BFD;
+  --accent: #AEB8FE;
+  --background: #F1F2F6;
+  --cta: #FF8600;
+}
+
+.text-corporate-primary {
+  color: var(--primary);
+}
+
+.bg-corporate-primary {
+  background-color: var(--primary);
+}
+
+.gestion-container {
+  background-color: var(--background);
+  min-height: 100vh;
+  padding: 3rem 0;
+}
+
+.card-comentario {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+  background-color: white;
+}
+
+.card-comentario:hover {
+  transform: translateY(-3px);
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  background-color: var(--accent);
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.star-rating {
+  color: #ffc107;
+}
+
+.btn-aprobar {
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.btn-aprobar:hover {
+  background-color: #5a74e6;
+  color: white;
+}
+
+.btn-rechazar {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.btn-rechazar:hover {
+  background-color: #bb2d3b;
+  color: white;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.badge-tipo {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.4rem 0.8rem;
+}

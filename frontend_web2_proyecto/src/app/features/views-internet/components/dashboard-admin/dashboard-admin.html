@@ -1,14 +1,26 @@
-<!-- Navbar Global -->
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm navbar-corporate">
   <div class="container">
-    <a class="navbar-brand fw-bold text-primary d-flex align-items-center" [routerLink]="['/internet-index']">
-      <i class="bi bi-broadcast me-2"></i> INTERNET PRO <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">ADMIN</span>
+    <a
+      class="navbar-brand fw-bold text-primary d-flex align-items-center"
+      [routerLink]="['/internet-index']"
+    >
+      <i class="bi bi-broadcast me-2"></i> INTERNET PRO
+      <span class="badge bg-danger ms-2" style="font-size: 0.6rem">ADMIN</span>
     </a>
     <div class="collapse navbar-collapse" id="navAdmin">
       <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item"><a class="nav-link" [routerLink]="['/internet-index']">Inicio Público</a></li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/internet-index']"
+            >Inicio Público</a
+          >
+        </li>
         <li class="nav-item ms-lg-3">
-          <button class="btn btn-outline-danger btn-sm" (click)="authService.logout().subscribe()">Cerrar Sesión</button>
+          <button
+            class="btn btn-outline-danger btn-sm"
+            (click)="authService.logout().subscribe()"
+          >
+            Cerrar Sesión
+          </button>
         </li>
       </ul>
     </div>
@@ -16,16 +28,25 @@
 </nav>
 
 <div class="admin-layout d-flex">
-  <!-- Sidebar lateral izquierdo corporativo -->
   <aside class="sidebar-admin d-none d-lg-block">
     <div class="sidebar-header p-4">
-      <h4 class="fw-bold mb-0"><i class="bi bi-shield-lock me-2"></i> ISP ADMIN</h4>
+      <h4 class="fw-bold mb-0">
+        <i class="bi bi-shield-lock me-2"></i> ISP ADMIN
+      </h4>
     </div>
     <nav class="sidebar-nav p-3">
-      <a [routerLink]="['/dashboard-admin']" routerLinkActive="active" class="nav-link-sidebar">
+      <a
+        [routerLink]="['/dashboard-admin']"
+        routerLinkActive="active"
+        class="nav-link-sidebar"
+      >
         <i class="bi bi-speedometer2 me-2"></i> Dashboard
       </a>
-      <a [routerLink]="['/gestion-comentarios']" routerLinkActive="active" class="nav-link-sidebar">
+      <a
+        [routerLink]="['/gestion-comentarios']"
+        routerLinkActive="active"
+        class="nav-link-sidebar"
+      >
         <i class="bi bi-chat-left-dots me-2"></i> Comentarios
       </a>
       <a href="#" class="nav-link-sidebar mt-4 opacity-50">
@@ -34,194 +55,280 @@
     </nav>
   </aside>
 
-<div class="admin-container flex-grow-1 py-5 bg-light">
-  <div class="container">
-    <header class="mb-5 d-flex justify-content-between align-items-center">
-      <div>
-        <h2 class="fw-bold text-primary mb-1">Centro Operativo ISP</h2>
-        <p class="text-muted">Gestión integral de planes, usuarios y servicios.</p>
-      </div>
-      <button class="btn btn-primary rounded-pill px-4" (click)="cargarDatos()">
-        <i class="bi bi-arrow-clockwise me-2"></i> Refrescar Datos
-      </button>
-    </header>
-
-    <!-- Pestañas de Gestión -->
-    <ul class="nav nav-pills mb-4 gap-2">
-      <li class="nav-item">
-        <button class="nav-link" [class.active]="activeTab === 'resumen'" (click)="setTab('resumen')">Resumen</button>
-      </li>
-      <li class="nav-item">
-        <button class="nav-link" [class.active]="activeTab === 'planes'" (click)="setTab('planes')">Planes</button>
-      </li>
-      <li class="nav-item">
-        <button class="nav-link" [class.active]="activeTab === 'usuarios'" (click)="setTab('usuarios')">Usuarios</button>
-      </li>
-      <li class="nav-item">
-        <button class="nav-link" [class.active]="activeTab === 'comentarios'" (click)="setTab('comentarios')">Comentarios</button>
-      </li>
-    </ul>
-
-    <div *ngIf="isLoading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status"></div>
-    </div>
-
-    <div *ngIf="!isLoading">
-      <!-- VISTA: RESUMEN -->
-      <div *ngIf="activeTab === 'resumen' && metricas" class="row g-4 mb-5">
-      <!-- KPIs Reales de BD -->
-      <div class="col-md-3">
-        <div class="card card-kpi p-4 border-0 shadow-sm border-start border-primary border-4">
-          <h5 class="text-muted small fw-bold mb-2">CLIENTES REGISTRADOS</h5>
-          <h2 class="fw-bold mb-0">{{metricas.clientesActivos}}</h2>
+  <div class="admin-container flex-grow-1 py-5 bg-light">
+    <div class="container">
+      <header class="mb-5 d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="fw-bold text-primary mb-1">Centro Operativo ISP</h2>
+          <p class="text-muted">
+            Gestión integral de planes, usuarios y servicios.
+          </p>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card card-kpi p-4 border-0 shadow-sm border-start border-success border-4">
-          <h5 class="text-muted small fw-bold mb-2">SERVICIOS ACTIVOS</h5>
-          <h2 class="fw-bold mb-0">{{metricas.serviciosActivos}}</h2>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card card-kpi p-4 border-0 shadow-sm border-start border-warning border-4">
-          <h5 class="text-muted small fw-bold mb-2">TICKETS ABIERTOS</h5>
-          <h2 class="fw-bold mb-0">{{metricas.ticketsPendientes}}</h2>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card card-kpi p-4 border-0 shadow-sm border-start border-danger border-4">
-          <h5 class="text-muted small fw-bold mb-2">POR COBRAR ($)</h5>
-          <h2 class="fw-bold mb-0">{{metricas.porCobrar | currency}}</h2>
-        </div>
-      </div>
-    </div>
+        <button
+          class="btn btn-primary rounded-pill px-4"
+          (click)="cargarDatos()"
+        >
+          <i class="bi bi-arrow-clockwise me-2"></i> Refrescar Datos
+        </button>
+      </header>
 
-      </div>
+      <ul class="nav nav-pills mb-4 gap-2">
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeTab === 'resumen'"
+            (click)="setTab('resumen')"
+          >
+            Resumen
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeTab === 'planes'"
+            (click)="setTab('planes')"
+          >
+            Planes
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeTab === 'usuarios'"
+            (click)="setTab('usuarios')"
+          >
+            Usuarios
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeTab === 'comentarios'"
+            (click)="setTab('comentarios')"
+          >
+            Comentarios
+          </button>
+        </li>
+      </ul>
 
-      <!-- VISTA: GESTIÓN DE PLANES -->
-      <div *ngIf="activeTab === 'planes'" class="card border-0 shadow-sm rounded-4 p-4 mb-5">
-        <div class="d-flex justify-content-between mb-4">
-          <h4 class="fw-bold">Catálogo de Planes</h4>
-          <button class="btn btn-success btn-sm">+ Nuevo Plan</button>
-        </div>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Velocidad</th>
-              <th>Precio</th>
-              <th class="text-end">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let p of planes">
-              <td>{{p.id}}</td>
-              <td>{{p.nombre_plan}}</td>
-              <td>{{p.velocidad}}</td>
-              <td>{{p.precio | currency}}</td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-info me-1"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" (click)="eliminarPlan(p.id)"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
       </div>
 
-      <!-- VISTA: GESTIÓN DE USUARIOS -->
-      <div *ngIf="activeTab === 'usuarios'" class="card border-0 shadow-sm rounded-4 p-4 mb-5">
-        <h4 class="fw-bold mb-4">Usuarios del Sistema</h4>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Username</th>
-              <th>Rol</th>
-              <th class="text-end">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let u of usuarios">
-              <td>{{u.id}}</td>
-              <td>{{u.nombre_completo}}</td>
-              <td>{{u.username}}</td>
-              <td><span class="badge" [class.bg-primary]="u.rol === 'admin'" [class.bg-secondary]="u.rol === 'usuario'">{{u.rol}}</span></td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-danger" (click)="eliminarUsuario(u.id)"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- VISTA: MODERACIÓN -->
-      <div *ngIf="activeTab === 'comentarios'" class="card border-0 shadow-sm rounded-4 p-4 mb-5">
-        <h4 class="fw-bold mb-4">Moderación de Reseñas</h4>
-        <div *ngFor="let c of comentarios" class="border-bottom py-3">
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <h6 class="fw-bold mb-1">{{c.usuario}} <small class="text-muted">({{c.planContratado}})</small></h6>
-              <p class="mb-0 text-secondary">"{{c.texto}}"</p>
+      <div *ngIf="!isLoading">
+        <div *ngIf="activeTab === 'resumen' && metricas" class="row g-4 mb-5">
+          <div class="col-md-3">
+            <div
+              class="card card-kpi p-4 border-0 shadow-sm border-start border-primary border-4"
+            >
+              <h5 class="text-muted small fw-bold mb-2">
+                CLIENTES REGISTRADOS
+              </h5>
+              <h2 class="fw-bold mb-0">{{metricas.clientesActivos}}</h2>
             </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-success" (click)="moderarComentario(c.id, 'aprobado')">Aprobar</button>
-              <button class="btn btn-sm btn-outline-danger" (click)="moderarComentario(c.id, 'rechazado')">Rechazar</button>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="card card-kpi p-4 border-0 shadow-sm border-start border-success border-4"
+            >
+              <h5 class="text-muted small fw-bold mb-2">SERVICIOS ACTIVOS</h5>
+              <h2 class="fw-bold mb-0">{{metricas.serviciosActivos}}</h2>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="card card-kpi p-4 border-0 shadow-sm border-start border-warning border-4"
+            >
+              <h5 class="text-muted small fw-bold mb-2">TICKETS ABIERTOS</h5>
+              <h2 class="fw-bold mb-0">{{metricas.ticketsPendientes}}</h2>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="card card-kpi p-4 border-0 shadow-sm border-start border-danger border-4"
+            >
+              <h5 class="text-muted small fw-bold mb-2">POR COBRAR ($)</h5>
+              <h2 class="fw-bold mb-0">{{metricas.porCobrar | currency}}</h2>
             </div>
           </div>
         </div>
-        <div *ngIf="comentarios.length === 0" class="text-center py-4">No hay comentarios pendientes.</div>
-      </div>
 
-    <!-- Tabla Monitoreo Nodos (Siempre visible en Resumen) -->
-    <div *ngIf="activeTab === 'resumen' && metricas" class="card border-0 shadow-sm rounded-4 p-4">
-      <h4 class="fw-bold mb-4">Estado de Nodos de Distribución</h4>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead class="bg-light">
-            <tr>
-              <th>ID</th>
-              <th>Nodo / Zona</th>
-              <th>Carga Actual</th>
-              <th>Estatus</th>
-              <th class="text-end">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let nodo of metricas?.nodosEstado">
-              <td><span class="fw-bold">#{{nodo.id}}</span></td>
-              <td>
-                <div class="fw-bold">{{nodo.nombre}}</div>
-                <small class="text-muted">{{nodo.ubicacion}}</small>
-              </td>
-              <td>
-                <div class="progress" style="height: 10px; width: 150px;">
-                  <div class="progress-bar" [class.bg-danger]="nodo.cargaActual > 80" [style.width]="nodo.cargaActual + '%'"></div>
-                </div>
-                <small class="fw-bold">{{nodo.cargaActual}}%</small>
-              </td>
-              <td>
-                <span class="badge rounded-pill" [class.bg-success]="nodo.estado === 'Estable'" [class.bg-danger]="nodo.estado === 'Saturado'">
-                  {{nodo.estado}}
-                </span>
-              </td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-light border">Gestionar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div> <!-- Fin Tabla Nodos -->
-  </div> <!-- Fin container -->
-</div> <!-- Fin admin-container -->
-</div> <!-- Fin admin-layout -->
+        <div
+          *ngIf="activeTab === 'planes'"
+          class="card border-0 shadow-sm rounded-4 p-4 mb-5"
+        >
+          <div class="d-flex justify-content-between mb-4">
+            <h4 class="fw-bold">Catálogo de Planes</h4>
+            <button class="btn btn-success btn-sm">+ Nuevo Plan</button>
+          </div>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Velocidad</th>
+                <th>Precio</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of planes">
+                <td>{{p.id}}</td>
+                <td>{{p.nombre_plan}}</td>
+                <td>{{p.velocidad}}</td>
+                <td>{{p.precio | currency}}</td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-info me-1">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-danger"
+                    (click)="eliminarPlan(p.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-<!-- Footer Global -->
+        <div
+          *ngIf="activeTab === 'usuarios'"
+          class="card border-0 shadow-sm rounded-4 p-4 mb-5"
+        >
+          <h4 class="fw-bold mb-4">Usuarios del Sistema</h4>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Username</th>
+                <th>Rol</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of usuarios">
+                <td>{{u.id}}</td>
+                <td>{{u.nombre_completo}}</td>
+                <td>{{u.username}}</td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.bg-primary]="u.rol === 'admin'"
+                    [class.bg-secondary]="u.rol === 'usuario'"
+                    >{{u.rol}}</span
+                  >
+                </td>
+                <td class="text-end">
+                  <button
+                    class="btn btn-sm btn-danger"
+                    (click)="eliminarUsuario(u.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          *ngIf="activeTab === 'comentarios'"
+          class="card border-0 shadow-sm rounded-4 p-4 mb-5"
+        >
+          <h4 class="fw-bold mb-4">Moderación de Reseñas</h4>
+          <div *ngFor="let c of comentarios" class="border-bottom py-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="fw-bold mb-1">
+                  {{c.usuario}}
+                  <small class="text-muted">({{c.planContratado}})</small>
+                </h6>
+                <p class="mb-0 text-secondary">"{{c.texto}}"</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button
+                  class="btn btn-sm btn-success"
+                  (click)="moderarComentario(c.id, 'aprobado')"
+                >
+                  Aprobar
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="moderarComentario(c.id, 'rechazado')"
+                >
+                  Rechazar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="comentarios.length === 0" class="text-center py-4">
+            No hay comentarios pendientes.
+          </div>
+        </div>
+
+        <div
+          *ngIf="activeTab === 'resumen' && metricas"
+          class="card border-0 shadow-sm rounded-4 p-4"
+        >
+          <h4 class="fw-bold mb-4">Estado de Nodos de Distribución</h4>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="bg-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Nodo / Zona</th>
+                  <th>Carga Actual</th>
+                  <th>Estatus</th>
+                  <th class="text-end">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let nodo of metricas?.nodosEstado">
+                  <td><span class="fw-bold">#{{nodo.id}}</span></td>
+                  <td>
+                    <div class="fw-bold">{{nodo.nombre}}</div>
+                    <small class="text-muted">{{nodo.ubicacion}}</small>
+                  </td>
+                  <td>
+                    <div class="progress" style="height: 10px; width: 150px">
+                      <div
+                        class="progress-bar"
+                        [class.bg-danger]="nodo.cargaActual > 80"
+                        [style.width]="nodo.cargaActual + '%'"
+                      ></div>
+                    </div>
+                    <small class="fw-bold">{{nodo.cargaActual}}%</small>
+                  </td>
+                  <td>
+                    <span
+                      class="badge rounded-pill"
+                      [class.bg-success]="nodo.estado === 'Estable'"
+                      [class.bg-danger]="nodo.estado === 'Saturado'"
+                    >
+                      {{nodo.estado}}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-light border">
+                      Gestionar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <footer class="footer-corporate mt-auto">
   <div class="container text-center">
-    <p class="opacity-50 small mb-0">© 2023 Internet Pro - Panel de Administración Segura.</p>
+    <p class="opacity-50 small mb-0">
+      © 2023 Internet Pro - Panel de Administración Segura.
+    </p>
   </div>
 </footer>
-</div> <!-- Fin de admin-layout -->

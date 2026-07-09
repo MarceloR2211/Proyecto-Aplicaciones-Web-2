@@ -4,11 +4,13 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { InternetDataService } from '../../services/internet-data.service';
 import { Comentario } from '../../models/comentario.model';
+import { NavbarComponent } from '../navbar/navbar';
+import { FooterComponent } from '../footer/footer';
 
 @Component({
   selector: 'app-gestion-comentarios',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, NavbarComponent, FooterComponent],
   templateUrl: './gestion-comentarios.html',
   styleUrls: ['./gestion-comentarios.css']
 })

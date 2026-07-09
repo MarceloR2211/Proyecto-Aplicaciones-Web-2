@@ -1,63 +1,87 @@
-<section class="login-wrapper">
-  <div class="tabs">
-    <button type="button" (click)="cambiarModo('login')" [class.active]="modo() === 'login'">
-      Iniciar Sesión
-    </button>
-    <button type="button" (click)="cambiarModo('registro')" [class.active]="modo() === 'registro'">
-      Registrarse
-    </button>
-  </div>
+<div class="w-100 min-vh-100 d-flex flex-column bg-light">
+  <app-navbar></app-navbar>
 
-  @if (errorMsg()) {
-    <p class="error">{{ errorMsg() }}</p>
-  }
-  @if (exitoRegistro()) {
-    <p class="exito">{{ exitoRegistro() }}</p>
-  }
+  <main class="flex-grow-1 d-flex align-items-center justify-content-center py-5">
+    <div class="container">
+      <div class="row justify-content-center w-100 m-0">
+        <div class="col-md-6 col-lg-4">
 
-  @if (modo() === 'login') {
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
-      <label>Usuario *</label>
-      <input type="text" formControlName="username" placeholder="usuario" />
-      @if (loginForm.controls.username.invalid && loginForm.controls.username.touched) {
-        <small class="error">El usuario es obligatorio.</small>
-      }
+          <!-- Alertas -->
+          <div *ngIf="errorMsg()" class="alert alert-danger shadow-sm border-0 mb-4 rounded-3 text-center" role="alert">
+            <small class="fw-bold">{{ errorMsg() }}</small>
+          </div>
+          <div *ngIf="exitoRegistro()" class="alert alert-success shadow-sm border-0 mb-4 rounded-3 text-center" role="alert">
+            <small class="fw-bold">{{ exitoRegistro() }}</small>
+          </div>
 
-      <label>Contraseña *</label>
-      <input type="password" formControlName="password" placeholder="••••••••" />
-      @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
-        <small class="error">La contraseña es obligatoria.</small>
-      }
+          <!-- Card de Login -->
+          <div class="card shadow border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-primary text-white text-center py-4 border-0">
+              <i class="bi bi-shield-lock display-5 mb-2"></i>
+              <h3 class="fw-bold mb-0">{{ modo() === 'login' ? 'Acceso al Sistema' : 'Nuevo Registro' }}</h3>
+            </div>
 
-      <button type="submit" [disabled]="cargando()">
-        {{ cargando() ? 'Ingresando...' : 'Iniciar Sesión' }}
-      </button>
-    </form>
-  }
+            <div class="card-body p-4 p-lg-5 bg-white">
+              <!-- FORM LOGIN -->
+              <form *ngIf="modo() === 'login'" [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control" id="logUser" placeholder="Usuario" formControlName="username">
+                  <label for="logUser"><i class="bi bi-person me-2"></i>Usuario</label>
+                </div>
+                <div class="form-floating mb-4">
+                  <input type="password" class="form-control" id="logPass" placeholder="Contraseña" formControlName="password">
+                  <label for="logPass"><i class="bi bi-key me-2"></i>Contraseña</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" [disabled]="cargando()">
+                  <span *ngIf="!cargando()">INICIAR SESIÓN</span>
+                  <div *ngIf="cargando()" class="spinner-border spinner-border-sm text-white"></div>
+                </button>
+                <div class="mt-4 text-center">
+                  <button type="button" class="btn btn-link text-decoration-none text-muted small" (click)="cambiarModo('registro')">
+                    ¿No tienes cuenta? <span class="fw-bold text-primary">Regístrate</span>
+                  </button>
+                </div>
+              </form>
 
-  @if (modo() === 'registro') {
-    <form [formGroup]="registroForm" (ngSubmit)="onSubmitRegistro()">
-      <label>Usuario *</label>
-      <input type="text" formControlName="username" placeholder="usuario" />
+              <!-- FORM REGISTRO -->
+              <form *ngIf="modo() === 'registro'" [formGroup]="registroForm" (ngSubmit)="onSubmitRegistro()">
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control" id="regFullName" placeholder="Nombre" formControlName="nombre_completo">
+                  <label for="regFullName">Nombre Completo</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control" id="regUser" placeholder="Usuario" formControlName="username">
+                  <label for="regUser">Nombre de Usuario</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="email" class="form-control" id="regEmail" placeholder="Email" formControlName="email">
+                  <label for="regEmail">Correo Electrónico</label>
+                </div>
+                <div class="form-floating mb-4">
+                  <input type="password" class="form-control" id="regPass" placeholder="Password" formControlName="password">
+                  <label for="regPass">Contraseña</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" [disabled]="cargando()">
+                  <span *ngIf="!cargando()">CREAR CUENTA</span>
+                  <div *ngIf="cargando()" class="spinner-border spinner-border-sm text-white"></div>
+                </button>
+                <div class="mt-3 text-center">
+                  <button type="button" class="btn btn-link text-decoration-none text-muted small" (click)="cambiarModo('login')">
+                    Volver al Inicio de Sesión
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
 
-      <label>Contraseña *</label>
-      <input type="password" formControlName="password" placeholder="mínimo 6 caracteres" />
+          <div class="mt-4 text-center">
+            <p class="text-muted extra-small">Cuentas de prueba: <strong>admin / 123456</strong> o <strong>user / 123456</strong></p>
+          </div>
 
-      <label>Nombre completo *</label>
-      <input type="text" formControlName="nombre_completo" placeholder="Nombre completo" />
+        </div>
+      </div>
+    </div>
+  </main>
 
-      <label>Email *</label>
-      <input type="email" formControlName="email" placeholder="correo@ejemplo.com" />
-
-      <label>DNI *</label>
-      <input type="text" formControlName="dni" placeholder="8 dígitos" />
-
-      <label>Teléfono</label>
-      <input type="text" formControlName="telefono" placeholder="9 dígitos (opcional)" />
-
-      <button type="submit" [disabled]="cargando()">
-        {{ cargando() ? 'Creando cuenta...' : 'Registrarse' }}
-      </button>
-    </form>
-  }
-</section>
+  <app-footer></app-footer>
+</div>

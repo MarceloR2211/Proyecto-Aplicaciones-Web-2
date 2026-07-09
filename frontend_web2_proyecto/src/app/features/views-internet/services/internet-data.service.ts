@@ -53,6 +53,18 @@ export class InternetDataService {
     return this.http.delete(`${this.baseUrl}/usuarios/${id}`);
   }
 
+  // ===== TICKETS (CRUD ADM) =====
+
+  getTicketsAdmin(): Observable<Ticket[]> {
+    return this.http.get<{error: boolean, tickets: Ticket[]}>(`${this.baseUrl}/tickets`).pipe(
+      map(res => res.tickets)
+    );
+  }
+
+  updateTicketStatus(id: number, estado: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/tickets/${id}`, { estado });
+  }
+
   // ===== COMENTARIOS (MODERACIÓN) =====
 
   getComentariosPendientes(): Observable<Comentario[]> {

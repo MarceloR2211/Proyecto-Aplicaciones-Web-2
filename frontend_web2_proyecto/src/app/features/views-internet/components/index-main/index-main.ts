@@ -5,11 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { InternetDataService } from '../../services/internet-data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Plan } from '../../models/metrica.model';
+import { NavbarComponent } from '../navbar/navbar';
+import { FooterComponent } from '../footer/footer';
 
 @Component({
   selector: 'app-index-main',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, NavbarComponent, FooterComponent],
   templateUrl: './index-main.html',
   styleUrls: ['./index-main.css']
 })

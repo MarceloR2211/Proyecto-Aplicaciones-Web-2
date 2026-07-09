@@ -1,142 +1,126 @@
-<!-- Navbar Global -->
-<nav class="navbar navbar-expand-lg sticky-top shadow-sm navbar-corporate">
-  <div class="container">
-    <a class="navbar-brand fw-bold text-primary d-flex align-items-center" [routerLink]="['/internet-index']">
-      <i class="bi bi-broadcast me-2"></i> INTERNET PRO
-    </a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item"><a class="nav-link" [routerLink]="['/internet-index']">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link active" [routerLink]="['/dashboard-cliente']">Mi Perfil</a></li>
-        <li class="nav-item ms-lg-3">
-          <button class="btn btn-outline-danger btn-sm" (click)="authService.logout().subscribe()">Cerrar Sesión</button>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+<div class="w-100 min-vh-100 d-flex flex-column bg-light">
+  <app-navbar></app-navbar>
 
-<div class="client-container py-5 bg-light min-vh-100">
-  <div class="container">
-    <div *ngIf="isLoading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status"></div>
-    </div>
+  <main class="flex-grow-1 py-5">
+    <div class="container">
 
-    <div *ngIf="!isLoading && datos">
-      <header class="mb-5">
-        <h2 class="fw-bold text-primary mb-1">Hola, {{datos.perfil.nombre}}</h2>
-        <p class="text-muted">Resumen de tu cuenta y servicios activos.</p>
-      </header>
-
-      <div class="row g-4">
-        <!-- Detalle Servicio Activo (Tabla contratos + planes) -->
-        <div class="col-lg-8">
-          <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-            <h4 class="fw-bold mb-4 text-primary">Servicio Contratado</h4>
-            <div class="row align-items-center">
-              <div class="col-md-7">
-                <div class="d-flex align-items-center gap-3 mb-4">
-                  <div class="bg-primary text-white p-3 rounded-4">
-                    <i class="bi bi-wifi h2 mb-0"></i>
-                  </div>
-                  <div>
-                    <h3 class="fw-bold mb-0">{{datos?.servicio?.plan}}</h3>
-                    <span class="badge" [class.bg-success]="datos?.servicio?.estado === 'activo'" [class.bg-warning]="datos?.servicio?.estado !== 'activo'">
-                      {{datos?.servicio?.estado | uppercase}}
-                    </span>
-                  </div>
-                </div>
-                <div class="row text-center text-md-start">
-                  <div class="col-6 mb-3">
-                    <small class="text-muted d-block">Velocidad</small>
-                    <span class="fw-bold">{{datos?.servicio?.velocidad}}</span>
-                  </div>
-                  <div class="col-6 mb-3">
-                    <small class="text-muted d-block">Renta Mensual</small>
-                    <span class="fw-bold">${{datos?.servicio?.precio}}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-5 border-start ps-md-4">
-                <p class="small text-muted mb-4">Activo desde: {{datos?.servicio?.fechaInicio | date:'dd MMM yyyy'}}</p>
-                <div class="d-grid gap-2">
-                  <button class="btn btn-primary rounded-pill fw-bold">MEJORAR PLAN</button>
-                  <button class="btn btn-warning rounded-pill fw-bold"><i class="bi bi-speedometer2 me-2"></i>TEST DE VELOCIDAD</button>
-                  <button class="btn btn-outline-danger rounded-pill fw-bold btn-sm"><i class="bi bi-arrow-clockwise me-2"></i>REINICIO REMOTO</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Facturación (Tabla facturas) -->
-          <div class="card border-0 shadow-sm rounded-4 p-4">
-            <h4 class="fw-bold mb-4 text-primary">Estado de Facturación</h4>
-            <div class="table-responsive">
-              <table class="table table-borderless align-middle">
-                <thead>
-                  <tr class="text-muted small">
-                    <th>ID FACTURA</th>
-                    <th>VENCIMIENTO</th>
-                    <th>MONTO</th>
-                    <th>ESTADO</th>
-                    <th class="text-end">ACCIÓN</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let f of datos?.facturas" class="border-top">
-                    <td class="fw-bold">#{{f.id}}</td>
-                    <td>{{f.fecha_vencimiento | date:'dd/MM/yyyy'}}</td>
-                    <td class="fw-bold">{{f.monto | currency}}</td>
-                    <td>
-                      <span class="badge" [class.bg-warning]="f.estado === 'pendiente'" [class.bg-success]="f.estado === 'pagado'">
-                        {{f.estado | uppercase}}
-                      </span>
-                    </td>
-                    <td class="text-end">
-                      <button *ngIf="f.estado === 'pendiente'" class="btn btn-warning btn-sm fw-bold px-3" (click)="simularPago(f.id)">PAGAR</button>
-                      <button *ngIf="f.estado === 'pagado'" class="btn btn-light btn-sm px-3" (click)="descargarComprobante(f.id)">PDF</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Columna Lateral - Perfil y Tickets -->
-        <div class="col-lg-4">
-          <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-primary text-white">
-            <h5 class="fw-bold mb-3">Tu Perfil</h5>
-            <p class="mb-1 fw-bold">{{datos?.perfil?.nombre}}</p>
-            <p class="small opacity-75 mb-0">{{datos?.perfil?.email}}</p>
-            <hr class="opacity-25">
-            <button class="btn btn-light btn-sm w-100 rounded-pill fw-bold mb-2">EDITAR PERFIL</button>
-            <button class="btn btn-outline-light btn-sm w-100 rounded-pill fw-bold" (click)="cambiarPassword()">CAMBIAR CONTRASEÑA</button>
-          </div>
-
-          <div class="card border-0 shadow-sm rounded-4 p-4">
-            <h5 class="fw-bold mb-4 text-primary">Mis Tickets</h5>
-            <div *ngIf="datos?.tickets?.length === 0" class="text-center py-4">
-              <p class="text-muted small">No tienes solicitudes pendientes.</p>
-            </div>
-            <div *ngFor="let t of datos?.tickets" class="mb-3 p-3 bg-light rounded-3">
-              <div class="d-flex justify-content-between mb-1">
-                <span class="fw-bold small">{{t.titulo}}</span>
-                <span class="badge bg-secondary" style="font-size: 0.6rem;">{{t.estado}}</span>
-              </div>
-              <p class="small text-muted mb-0 text-truncate">{{t.descripcion}}</p>
-            </div>
-            <button class="btn btn-outline-primary w-100 rounded-pill fw-bold mt-2">NUEVO TICKET</button>
-          </div>
-        </div>
+      <!-- Estado de Carga -->
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Cargando información de tu cuenta...</p>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- Footer Global -->
-<footer class="footer-corporate">
-  <div class="container text-center">
-    <p class="opacity-50 small mb-0">© 2023 Internet Pro - Portal de Autoservicio Cliente.</p>
-  </div>
-</footer>
+      <div *ngIf="!isLoading && datos">
+        <header class="mb-5">
+          <h2 class="fw-bold text-primary mb-1">Hola, {{datos?.perfil?.nombre}}</h2>
+          <p class="text-muted">Resumen de tu cuenta y servicios activos.</p>
+        </header>
+
+        <div class="row g-4">
+          <!-- Detalle Servicio Activo -->
+          <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+              <h4 class="fw-bold mb-4 text-primary">Servicio Contratado</h4>
+              <div class="row align-items-center">
+                <div class="col-md-7">
+                  <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="bg-primary text-white p-3 rounded-4">
+                      <i class="bi bi-wifi h2 mb-0"></i>
+                    </div>
+                    <div>
+                      <h3 class="fw-bold mb-0">{{datos?.servicio?.plan}}</h3>
+                      <span class="badge" [class.bg-success]="datos?.servicio?.estado === 'activo'" [class.bg-warning]="datos?.servicio?.estado !== 'activo'">
+                        {{datos?.servicio?.estado | uppercase}}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row text-center text-md-start">
+                    <div class="col-6 mb-3">
+                      <small class="text-muted d-block">Velocidad</small>
+                      <span class="fw-bold">{{datos?.servicio?.velocidad}}</span>
+                    </div>
+                    <div class="col-6 mb-3">
+                      <small class="text-muted d-block">Renta Mensual</small>
+                      <span class="fw-bold">${{datos?.servicio?.precio}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-5 border-start ps-md-4">
+                  <p class="small text-muted mb-4">Activo desde: {{datos?.servicio?.fechaInicio | date:'dd MMM yyyy'}}</p>
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-primary rounded-pill fw-bold shadow-sm">MEJORAR PLAN</button>
+                    <button class="btn btn-warning rounded-pill fw-bold shadow-sm"><i class="bi bi-speedometer2 me-2"></i>TEST VELOCIDAD</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Facturación -->
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+              <h4 class="fw-bold mb-4 text-primary">Estado de Facturación</h4>
+              <div class="table-responsive">
+                <table class="table table-borderless align-middle">
+                  <thead>
+                    <tr class="text-muted small border-bottom">
+                      <th>ID FACTURA</th>
+                      <th>VENCIMIENTO</th>
+                      <th>MONTO</th>
+                      <th>ESTADO</th>
+                      <th class="text-end">ACCIÓN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let f of datos?.facturas" class="border-bottom">
+                      <td class="fw-bold py-3">#{{f.id}}</td>
+                      <td>{{f.fecha_vencimiento | date:'dd/MM/yyyy'}}</td>
+                      <td class="fw-bold">{{f.monto | currency}}</td>
+                      <td>
+                        <span class="badge rounded-pill" [class.bg-warning]="f.estado === 'pendiente'" [class.bg-success]="f.estado === 'pagado'">
+                          {{f.estado | uppercase}}
+                        </span>
+                      </td>
+                      <td class="text-end">
+                        <button *ngIf="f.estado === 'pendiente'" class="btn btn-warning btn-sm fw-bold px-3 shadow-sm" (click)="simularPago(f.id)">PAGAR</button>
+                        <button *ngIf="f.estado === 'pagado'" class="btn btn-light btn-sm px-3 border" (click)="descargarComprobante(f.id)">PDF</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="datos?.facturas?.length === 0" class="text-center py-4 text-muted">No hay facturas registradas.</div>
+            </div>
+          </div>
+
+          <!-- Columna Lateral - Perfil y Tickets -->
+          <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-primary text-white">
+              <h5 class="fw-bold mb-3">Tu Perfil</h5>
+              <p class="mb-1 fw-bold">{{datos?.perfil?.nombre}}</p>
+              <p class="small opacity-75 mb-0">{{datos?.perfil?.email}}</p>
+              <hr class="opacity-25">
+              <button class="btn btn-light btn-sm w-100 rounded-pill fw-bold mb-2 shadow-sm">EDITAR PERFIL</button>
+              <button class="btn btn-outline-light btn-sm w-100 rounded-pill fw-bold shadow-sm" (click)="cambiarPassword()">CAMBIAR CONTRASEÑA</button>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+              <h5 class="fw-bold mb-4 text-primary">Mis Tickets</h5>
+              <div *ngIf="datos?.tickets?.length === 0" class="text-center py-4">
+                <p class="text-muted small">No tienes solicitudes de soporte.</p>
+              </div>
+              <div *ngFor="let t of datos?.tickets" class="mb-3 p-3 bg-light rounded-3 border-start border-primary border-4">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="fw-bold small">{{t.titulo}}</span>
+                  <span class="badge bg-secondary" style="font-size: 0.6rem;">{{t.estado | uppercase}}</span>
+                </div>
+                <p class="small text-muted mb-0 text-truncate">{{t.descripcion}}</p>
+              </div>
+              <button class="btn btn-outline-primary w-100 rounded-pill fw-bold mt-2">NUEVO TICKET</button>
+            </div>
+          </div>
+        </div> <!-- Fin row -->
+      </div> <!-- Fin !isLoading -->
+    </div> <!-- Fin container -->
+  </main>
+
+  <app-footer></app-footer>
+</div>

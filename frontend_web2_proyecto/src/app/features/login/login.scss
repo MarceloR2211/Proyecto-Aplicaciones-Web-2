@@ -1,69 +1,34 @@
-// Estilos base mínimos — se refina en Fase 3 siguiendo la paleta gris/negro del mockup
-.login-wrapper {
-  max-width: 420px;
-  margin: 0 auto;
+.login-page {
+  background: radial-gradient(circle at top right, #f1f2f6 0%, #aeb8fe 100%);
+  min-height: calc(100vh - 150px);
 }
 
-.error { color: #b91c1c; }
-.exito { color: #15803d; }
-
-.login-card {
-  max-width: 420px;
-  margin: 3rem auto;
-  padding: var(--space-lg);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-bg);
-
-  h1 {
-    text-align: center;
-    font-size: 1.4rem;
+.card {
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: translateY(-5px);
   }
 }
 
-.tabs {
-  display: flex;
-  border: var(--border-width) solid var(--color-border);
-  margin-bottom: var(--space-md);
+.form-control:focus {
+  border-color: #27187e;
+  box-shadow: 0 0 0 0.25rem rgba(39, 24, 126, 0.1);
+}
 
-  .tab {
-    flex: 1;
-    padding: 0.6rem;
-    background: var(--color-bg);
-    border: none;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: 0.85rem;
-    cursor: pointer;
-
-    &:first-child {
-      border-right: var(--border-width) solid var(--color-border);
-    }
-
-    &.active {
-      background: var(--color-border);
-      color: #ffffff;
-    }
+.btn-warning {
+  background-color: #ff8600;
+  border: none;
+  color: white;
+  &:hover {
+    background-color: #e67900;
+    color: white;
   }
 }
 
-.switch-link {
-  text-align: center;
-  font-size: 0.85rem;
-  margin-top: var(--space-md);
-
-  a {
-    color: var(--color-text);
-    text-decoration: underline;
-    cursor: pointer;
-  }
+.bg-primary {
+  background-color: #27187e !important;
 }
 
-.footer-note {
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  margin-top: var(--space-lg);
-  padding-top: var(--space-sm);
-  border-top: var(--border-width) solid var(--color-surface);
+.text-primary {
+  color: #27187e !important;
 }

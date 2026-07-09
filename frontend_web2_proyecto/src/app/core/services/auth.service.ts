@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   ChangePasswordRequest,
@@ -28,6 +28,29 @@ export class AuthService {
   readonly estaAutenticado = computed(() => this.usuarioSignal() !== null);
 
   login(credenciales: LoginRequest): Observable<LoginResponse> {
+    // ===== Mock Logic for Test Accounts =====
+    const { username, password } = credenciales;
+    if (password === '123456' && (username === 'admin' || username === 'user')) {
+      const mockUser: Usuario = {
+        id: username === 'admin' ? 999 : 888,
+        username: username,
+        nombre_completo: username === 'admin' ? 'Administrador de Pruebas' : 'Usuario de Pruebas',
+        rol: username === 'admin' ? 'admin' : 'usuario',
+        mustChangePassword: false
+      };
+
+      const mockResponse: LoginResponse = {
+        error: false,
+        message: 'Login exitoso (Mock Account)',
+        simulatedSession: { userId: mockUser.id, userRol: mockUser.rol },
+        user: mockUser
+      };
+
+      this.guardarSesion(mockResponse.simulatedSession, mockResponse.user);
+      return of(mockResponse);
+    }
+
+    // Real API call if not a mock account
     return this.http
       .post<LoginResponse>(`${this.baseUrl}/auth/login`, credenciales)
       .pipe(

@@ -1,8 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { InternetDataService } from '../../services/internet-data.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { Plan } from '../../models/metrica.model';
 
 @Component({
@@ -14,6 +15,8 @@ import { Plan } from '../../models/metrica.model';
 })
 export class IndexMainComponent implements OnInit {
   private dataService = inject(InternetDataService);
+  public authService = inject(AuthService);
+  private router = inject(Router);
 
   planes: Plan[] = [];
   isLoading = true;
@@ -55,5 +58,14 @@ export class IndexMainComponent implements OnInit {
         }
       }
     });
+  }
+
+  irMiCuenta(): void {
+    const usuario = this.authService.usuarioActual();
+    if (usuario?.rol === 'admin') {
+      this.router.navigate(['/dashboard-admin']);
+    } else {
+      this.router.navigate(['/dashboard-cliente']);
+    }
   }
 }

@@ -7,9 +7,9 @@
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item"><a class="nav-link" [routerLink]="['/internet-index']">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link active" [routerLink]="['/dashboard-cliente']">Mi Portal</a></li>
+        <li class="nav-item"><a class="nav-link active" [routerLink]="['/dashboard-cliente']">Mi Perfil</a></li>
         <li class="nav-item ms-lg-3">
-          <a class="btn btn-outline-primary btn-sm" [routerLink]="['/login']">Cerrar Sesión</a>
+          <button class="btn btn-outline-danger btn-sm" (click)="authService.logout().subscribe()">Cerrar Sesión</button>
         </li>
       </ul>
     </div>
@@ -40,25 +40,25 @@
                     <i class="bi bi-wifi h2 mb-0"></i>
                   </div>
                   <div>
-                    <h3 class="fw-bold mb-0">{{datos.servicio.plan}}</h3>
-                    <span class="badge" [class.bg-success]="datos.servicio.estado === 'activo'" [class.bg-warning]="datos.servicio.estado !== 'activo'">
-                      {{datos.servicio.estado | uppercase}}
+                    <h3 class="fw-bold mb-0">{{datos?.servicio?.plan}}</h3>
+                    <span class="badge" [class.bg-success]="datos?.servicio?.estado === 'activo'" [class.bg-warning]="datos?.servicio?.estado !== 'activo'">
+                      {{datos?.servicio?.estado | uppercase}}
                     </span>
                   </div>
                 </div>
                 <div class="row text-center text-md-start">
                   <div class="col-6 mb-3">
                     <small class="text-muted d-block">Velocidad</small>
-                    <span class="fw-bold">{{datos.servicio.velocidad}}</span>
+                    <span class="fw-bold">{{datos?.servicio?.velocidad}}</span>
                   </div>
                   <div class="col-6 mb-3">
                     <small class="text-muted d-block">Renta Mensual</small>
-                    <span class="fw-bold">${{datos.servicio.precio}}</span>
+                    <span class="fw-bold">${{datos?.servicio?.precio}}</span>
                   </div>
                 </div>
               </div>
               <div class="col-md-5 border-start ps-md-4">
-                <p class="small text-muted mb-4">Activo desde: {{datos.servicio.fechaInicio | date:'dd MMM yyyy'}}</p>
+                <p class="small text-muted mb-4">Activo desde: {{datos?.servicio?.fechaInicio | date:'dd MMM yyyy'}}</p>
                 <div class="d-grid gap-2">
                   <button class="btn btn-primary rounded-pill fw-bold">MEJORAR PLAN</button>
                   <button class="btn btn-warning rounded-pill fw-bold"><i class="bi bi-speedometer2 me-2"></i>TEST DE VELOCIDAD</button>
@@ -83,7 +83,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let f of datos.facturas" class="border-top">
+                  <tr *ngFor="let f of datos?.facturas" class="border-top">
                     <td class="fw-bold">#{{f.id}}</td>
                     <td>{{f.fecha_vencimiento | date:'dd/MM/yyyy'}}</td>
                     <td class="fw-bold">{{f.monto | currency}}</td>
@@ -107,18 +107,19 @@
         <div class="col-lg-4">
           <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-primary text-white">
             <h5 class="fw-bold mb-3">Tu Perfil</h5>
-            <p class="mb-1 fw-bold">{{datos.perfil.nombre}}</p>
-            <p class="small opacity-75 mb-0">{{datos.perfil.email}}</p>
+            <p class="mb-1 fw-bold">{{datos?.perfil?.nombre}}</p>
+            <p class="small opacity-75 mb-0">{{datos?.perfil?.email}}</p>
             <hr class="opacity-25">
-            <button class="btn btn-light btn-sm w-100 rounded-pill fw-bold">EDITAR PERFIL</button>
+            <button class="btn btn-light btn-sm w-100 rounded-pill fw-bold mb-2">EDITAR PERFIL</button>
+            <button class="btn btn-outline-light btn-sm w-100 rounded-pill fw-bold" (click)="cambiarPassword()">CAMBIAR CONTRASEÑA</button>
           </div>
 
           <div class="card border-0 shadow-sm rounded-4 p-4">
             <h5 class="fw-bold mb-4 text-primary">Mis Tickets</h5>
-            <div *ngIf="datos.tickets.length === 0" class="text-center py-4">
+            <div *ngIf="datos?.tickets?.length === 0" class="text-center py-4">
               <p class="text-muted small">No tienes solicitudes pendientes.</p>
             </div>
-            <div *ngFor="let t of datos.tickets" class="mb-3 p-3 bg-light rounded-3">
+            <div *ngFor="let t of datos?.tickets" class="mb-3 p-3 bg-light rounded-3">
               <div class="d-flex justify-content-between mb-1">
                 <span class="fw-bold small">{{t.titulo}}</span>
                 <span class="badge bg-secondary" style="font-size: 0.6rem;">{{t.estado}}</span>

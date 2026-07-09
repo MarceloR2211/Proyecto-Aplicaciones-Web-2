@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { Comentario } from '../models/comentario.model';
 import { MetricaServicio, DatosCliente, Plan, Factura, Ticket } from '../models/metrica.model';
+import { Usuario } from '../../../core/models/auth.model';
 
 /**
  * Servicio Angular para la gestión de datos de Internet
@@ -16,9 +17,8 @@ export class InternetDataService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
 
-  /**
-   * Obtiene todos los planes del catálogo (Tabla planes)
-   */
+  // ===== PLANES (CRUD) =====
+
   getPlanes(): Observable<Plan[]> {
     return this.http.get<{error: boolean, planes: Plan[]}>(`${this.baseUrl}/planes`).pipe(
       map(res => res.planes.map(p => ({
@@ -29,9 +29,32 @@ export class InternetDataService {
     );
   }
 
-  /**
-   * Obtiene la lista de comentarios pendientes (Tabla comentarios_publicos)
-   */
+  createPlan(plan: Partial<Plan>): Observable<any> {
+    return this.http.post(`${this.baseUrl}/planes`, plan);
+  }
+
+  updatePlan(id: number, plan: Partial<Plan>): Observable<any> {
+    return this.http.put(`${this.baseUrl}/planes/${id}`, plan);
+  }
+
+  deletePlan(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/planes/${id}`);
+  }
+
+  // ===== USUARIOS (CRUD ADM) =====
+
+  getUsers(): Observable<Usuario[]> {
+    return this.http.get<{error: boolean, usuarios: Usuario[]}>(`${this.baseUrl}/usuarios`).pipe(
+      map(res => res.usuarios)
+    );
+  }
+
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/usuarios/${id}`);
+  }
+
+  // ===== COMENTARIOS (MODERACIÓN) =====
+
   getComentariosPendientes(): Observable<Comentario[]> {
     return this.http.get<{error: boolean, comentarios: ComentarioRaw[]}>(`${this.baseUrl}/comentarios`).pipe(
       map(res => res.comentarios
@@ -51,18 +74,14 @@ export class InternetDataService {
     );
   }
 
-  /**
-   * Moderación de comentarios (PUT real a BD)
-   */
   actualizarEstadoComentario(id: number, estado: 'aprobado' | 'rechazado'): Observable<boolean> {
     return this.http.put<{error: boolean}>(`${this.baseUrl}/comentarios/${id}`, { estado }).pipe(
       map(res => !res.error)
     );
   }
 
-  /**
-   * Obtiene métricas del Admin Dashboard (Cálculos reales de BD)
-   */
+  // ===== DASHBOARDS & MÉTRICAS =====
+
   getMetricasAdmin(): Observable<MetricaServicio> {
     return this.http.get<{error: boolean, metrics: MetricsRaw}>(`${this.baseUrl}/dashboard/admin`).pipe(
       map(res => ({
@@ -78,9 +97,6 @@ export class InternetDataService {
     );
   }
 
-  /**
-   * Obtiene datos consolidados del Cliente (usuarios + contratos + facturas + tickets)
-   */
   getDatosCliente(): Observable<DatosCliente> {
     return this.http.get<{error: boolean, dashboard: DashboardRaw}>(`${this.baseUrl}/dashboard/cliente`).pipe(
       map(res => ({
@@ -104,9 +120,8 @@ export class InternetDataService {
     );
   }
 
-  /**
-   * Registra una consulta comercial (Tabla consultas)
-   */
+  // ===== CONSULTAS =====
+
   registrarConsulta(datos: { nombre: string, email: string, telefono: string, mensaje: string }): Observable<boolean> {
     return this.http.post<{error: boolean}>(`${this.baseUrl}/consultas`, {
       ...datos,

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { InternetDataService } from '../../services/internet-data.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { DatosCliente } from '../../models/metrica.model';
 
 @Component({
@@ -14,6 +15,7 @@ import { DatosCliente } from '../../models/metrica.model';
 })
 export class DashboardClienteComponent implements OnInit {
   private dataService = inject(InternetDataService);
+  public authService = inject(AuthService);
 
   datos?: DatosCliente;
   isLoading = true;
@@ -39,5 +41,10 @@ export class DashboardClienteComponent implements OnInit {
 
   descargarComprobante(facturaId: number): void {
     alert(`Generando PDF para factura #${facturaId}...`);
+  }
+
+  cambiarPassword(): void {
+    alert('Redireccionando al cambio de contraseña...');
+    // Logica real: this.router.navigate(['/cambiar-password']);
   }
 }

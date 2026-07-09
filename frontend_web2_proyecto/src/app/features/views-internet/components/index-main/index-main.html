@@ -10,13 +10,16 @@
     <div class="collapse navbar-collapse" id="navMain">
       <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item"><a class="nav-link" [routerLink]="['/internet-index']" routerLinkActive="active">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" [routerLink]="['/dashboard-cliente']" routerLinkActive="active">Mi Portal</a></li>
-        <li class="nav-item"><a class="nav-link" [routerLink]="['/dashboard-admin']" routerLinkActive="active">Administración</a></li>
-        <li class="nav-item"><a class="nav-link" [routerLink]="['/gestion-comentarios']" routerLinkActive="active">Comentarios</a></li>
+        <li class="nav-item"><a class="nav-link" href="#planes">Planes</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contacto">Consultas</a></li>
         <li class="nav-item ms-lg-3">
-          <a class="btn btn-warning fw-bold px-4 rounded-pill shadow-sm" [routerLink]="['/login']">
-            ACCESO PORTAL
+          <!-- Botón de Acción Dinámico -->
+          <a *ngIf="!authService.estaAutenticado()" class="btn btn-warning fw-bold px-4 rounded-pill shadow-sm" [routerLink]="['/login']">
+            INICIAR SESIÓN
           </a>
+          <button *ngIf="authService.estaAutenticado()" class="btn btn-primary fw-bold px-4 rounded-pill shadow-sm" (click)="irMiCuenta()">
+            <i class="bi bi-person-circle me-2"></i> MI CUENTA
+          </button>
         </li>
       </ul>
     </div>

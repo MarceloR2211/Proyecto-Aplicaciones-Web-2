@@ -66,7 +66,32 @@ export class DashboardClienteComponent implements OnInit {
   }
 
   cambiarPassword(): void {
-    alert('Redireccionando al cambio de contraseña...');
-    // Logica real: this.router.navigate(['/cambiar-password']);
+    const nueva = prompt('Ingrese su nueva contraseña:');
+    if (nueva && nueva.length >= 6) {
+      this.authService.changePassword({
+        username: this.authService.usuarioActual()?.username || '',
+        newPassword: nueva,
+        confirmPassword: nueva
+      }).subscribe({
+        next: (res) => {
+          if (!res.error) alert('Contraseña actualizada con éxito.');
+          else alert(res.message);
+        }
+      });
+    } else {
+      alert('La contraseña debe tener al menos 6 caracteres.');
+    }
+  }
+
+  actualizarPerfil(): void {
+    if (this.datos.perfil.nombre) {
+      const usuario = this.authService.usuarioActual();
+      if (usuario) {
+        this.dataService.updateUser(usuario.id, { nombre_completo: this.datos.perfil.nombre }).subscribe({
+          next: () => alert('Perfil actualizado en la base de datos.'),
+          error: () => alert('Error al actualizar perfil.')
+        });
+      }
+    }
   }
 }

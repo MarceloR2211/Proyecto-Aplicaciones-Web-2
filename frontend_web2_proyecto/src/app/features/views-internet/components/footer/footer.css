@@ -1,7 +1,22 @@
 .footer-corporate {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  letter-spacing: 0.5px;
 }
 
-.extra-small {
-  font-size: 0.75rem;
+.hover-text-light:hover {
+  color: #fff !important;
+  transition: color 0.3s ease;
+}
+
+.hover-opacity-100:hover {
+  opacity: 1 !important;
+  transition: opacity 0.3s ease;
+}
+
+.border-warning {
+  border-color: #FF8600 !important;
+}
+
+.list-unstyled li a {
+  font-size: 0.95rem;
 }

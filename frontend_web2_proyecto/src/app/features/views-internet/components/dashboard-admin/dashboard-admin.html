@@ -143,7 +143,12 @@
                     <td class="text-muted">#{{u.id}}</td>
                     <td class="fw-bold">{{u.nombre_completo}}</td>
                     <td>{{u.username}}</td>
-                    <td><span class="badge rounded-pill" [class.bg-primary]="u.rol === 'admin'" [class.bg-secondary]="u.rol === 'usuario'">{{u.rol | uppercase}}</span></td>
+                    <td>
+                      <select class="form-select form-select-sm" (change)="cambiarRolUsuario(u.id, $any($event.target).value)">
+                        <option value="admin" [selected]="u.rol === 'admin'">ADMIN</option>
+                        <option value="usuario" [selected]="u.rol === 'usuario'">USUARIO</option>
+                      </select>
+                    </td>
                     <td class="text-end">
                       <button class="btn btn-sm btn-outline-danger" (click)="eliminarUsuario(u.id)"><i class="bi bi-trash"></i></button>
                     </td>

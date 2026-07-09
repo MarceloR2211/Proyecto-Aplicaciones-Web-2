@@ -81,22 +81,56 @@ export class DashboardAdminComponent implements OnInit {
 
   // Operaciones CRUD Simples (Llamando al servicio)
   eliminarPlan(id: number): void {
-    if (confirm('¿Eliminar plan?')) {
-      this.dataService.deletePlan(id).subscribe(() => this.cargarDatos());
+    if (confirm('¿Está seguro de eliminar este plan de forma permanente?')) {
+      this.dataService.deletePlan(id).subscribe({
+        next: () => {
+          alert('Plan eliminado con éxito.');
+          this.cargarDatos();
+        },
+        error: () => alert('Error al eliminar el plan. Verifique dependencias en la BD.')
+      });
     }
   }
 
+  cambiarRolUsuario(id: number, nuevoRol: 'admin' | 'usuario'): void {
+    this.dataService.updateUser(id, { rol: nuevoRol }).subscribe({
+      next: () => {
+        alert('Rol de usuario actualizado.');
+        this.cargarDatos();
+      },
+      error: () => alert('Error al actualizar rol.')
+    });
+  }
+
   eliminarUsuario(id: number): void {
-    if (confirm('¿Eliminar usuario?')) {
-      this.dataService.deleteUser(id).subscribe(() => this.cargarDatos());
+    if (confirm('¿Eliminar usuario? Esta acción es irreversible.')) {
+      this.dataService.deleteUser(id).subscribe({
+        next: () => {
+          alert('Usuario eliminado.');
+          this.cargarDatos();
+        },
+        error: () => alert('Error al eliminar usuario.')
+      });
     }
   }
 
   moderarComentario(id: number, estado: 'aprobado' | 'rechazado'): void {
-    this.dataService.actualizarEstadoComentario(id, estado).subscribe(() => this.cargarDatos());
+    this.dataService.actualizarEstadoComentario(id, estado).subscribe({
+      next: () => {
+        alert(`Comentario ${estado}.`);
+        this.cargarDatos();
+      },
+      error: () => alert('Error en la moderación.')
+    });
   }
 
   actualizarEstadoTicket(id: number, estado: string): void {
-    this.dataService.updateTicketStatus(id, estado).subscribe(() => this.cargarDatos());
+    this.dataService.updateTicketStatus(id, estado).subscribe({
+      next: () => {
+        alert('Estado del ticket actualizado.');
+        this.cargarDatos();
+      },
+      error: () => alert('Error al actualizar ticket.')
+    });
   }
 }

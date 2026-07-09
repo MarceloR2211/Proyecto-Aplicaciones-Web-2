@@ -25,10 +25,11 @@ export class IndexMainComponent implements OnInit {
 
   // Formulario de consulta
   consulta = {
+    dni: '',
     nombre: '',
     email: '',
     telefono: '',
-    mensaje: ''
+    motivo_consulta: ''
   };
 
   ngOnInit(): void {
@@ -47,8 +48,8 @@ export class IndexMainComponent implements OnInit {
   }
 
   enviarConsulta(): void {
-    if (!this.consulta.nombre || !this.consulta.email) {
-      alert('Por favor complete los campos obligatorios.');
+    if (!this.consulta.dni || !this.consulta.nombre || !this.consulta.email) {
+      alert('Por favor complete los campos obligatorios (DNI, Nombre, Email).');
       return;
     }
 
@@ -56,7 +57,7 @@ export class IndexMainComponent implements OnInit {
       next: (success) => {
         if (success) {
           alert('Su consulta ha sido enviada con éxito. Un asesor lo contactará pronto.');
-          this.consulta = { nombre: '', email: '', telefono: '', mensaje: '' };
+          this.consulta = { dni: '', nombre: '', email: '', telefono: '', motivo_consulta: '' };
         }
       }
     });

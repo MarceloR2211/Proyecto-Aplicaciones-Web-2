@@ -78,9 +78,15 @@
         <div class="card p-4 shadow border-0 rounded-4">
           <h4 class="fw-bold mb-4">Solicitar Información</h4>
           <form (ngSubmit)="enviarConsulta()">
-            <div class="mb-3">
-              <label class="form-label small fw-bold">Nombre Completo</label>
-              <input type="text" class="form-control" name="nombre" [(ngModel)]="consulta.nombre" required>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">DNI</label>
+                <input type="text" class="form-control" name="dni" [(ngModel)]="consulta.dni" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">Nombre Completo</label>
+                <input type="text" class="form-control" name="nombre" [(ngModel)]="consulta.nombre" required>
+              </div>
             </div>
             <div class="mb-3">
               <label class="form-label small fw-bold">Correo Electrónico</label>
@@ -91,8 +97,8 @@
               <input type="text" class="form-control" name="telefono" [(ngModel)]="consulta.telefono">
             </div>
             <div class="mb-4">
-              <label class="form-label small fw-bold">Mensaje</label>
-              <textarea class="form-control" rows="3" name="mensaje" [(ngModel)]="consulta.mensaje"></textarea>
+              <label class="form-label small fw-bold">Motivo de Consulta / Interés</label>
+              <textarea class="form-control" rows="3" name="motivo_consulta" [(ngModel)]="consulta.motivo_consulta"></textarea>
             </div>
             <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold">ENVIAR SOLICITUD</button>
           </form>

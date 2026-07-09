@@ -49,6 +49,10 @@ export class InternetDataService {
     );
   }
 
+  updateUser(id: number, data: Partial<Usuario>): Observable<any> {
+    return this.http.put(`${this.baseUrl}/usuarios/${id}`, data);
+  }
+
   deleteUser(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/usuarios/${id}`);
   }
@@ -132,12 +136,11 @@ export class InternetDataService {
     );
   }
 
-  // ===== CONSULTAS =====
+  // ===== CONSULTAS (ALINEADAS A BD) =====
 
-  registrarConsulta(datos: { nombre: string, email: string, telefono: string, mensaje: string }): Observable<boolean> {
+  registrarConsulta(datos: { dni: string, nombre: string, email: string, telefono: string, motivo_consulta: string }): Observable<boolean> {
     return this.http.post<{error: boolean}>(`${this.baseUrl}/consultas`, {
       ...datos,
-      asunto: 'Interés en Plan de Internet',
       estado: 'pendiente'
     }).pipe(map(res => !res.error));
   }

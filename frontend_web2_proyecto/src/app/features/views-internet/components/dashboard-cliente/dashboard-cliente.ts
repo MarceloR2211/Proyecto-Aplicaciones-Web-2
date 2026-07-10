@@ -23,14 +23,25 @@ export class DashboardClienteComponent implements OnInit {
   nuevoTicket = { titulo: '', descripcion: '' };
   passUpdate = { actual: '', nueva: '', confirmar: '' };
 
-  datos$: Observable<DatosCliente> | null = null;
+  datos: DatosCliente | null = null;
+  isLoading = true;
 
   ngOnInit(): void {
     this.cargarDatos();
   }
 
   cargarDatos(): void {
-    this.datos$ = this.dataService.getDatosCliente();
+    this.isLoading = true;
+    this.dataService.getDatosCliente().subscribe({
+      next: (data) => {
+        this.datos = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('API Error:', err);
+        this.isLoading = false;
+      }
+    });
   }
 
   simularPago(facturaId: number): void {

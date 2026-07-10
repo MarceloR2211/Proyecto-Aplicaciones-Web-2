@@ -46,11 +46,15 @@ export class ComentariosPublic implements OnInit {
     this.enviando.set(true);
     this.dataService.crearComentario(this.nuevoComentario).subscribe({
       next: () => {
-        alert('Reseña enviada con éxito. Un administrador la revisará pronto.');
+        alert('Reseña enviada con éxito a PostgreSQL. Un administrador la revisará pronto.');
         this.nuevoComentario = { calificacion: 5, comentario: '' };
         this.enviando.set(false);
+        this.cargarComentarios();
       },
-      error: () => this.enviando.set(false)
+      error: (err) => {
+        console.error('Error al enviar reseña:', err);
+        this.enviando.set(false);
+      }
     });
   }
 

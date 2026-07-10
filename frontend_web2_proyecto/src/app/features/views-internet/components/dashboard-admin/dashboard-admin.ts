@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { InternetDataService } from '../../services/internet-data.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -44,46 +45,29 @@ export class DashboardAdminComponent implements OnInit {
 
   cargarDatos(): void {
     this.isLoading = true;
-    this.dataService.getMetricasAdmin().subscribe({
-      next: m => this.metricas = m,
-      error: () => {
-        this.metricas = { clientesActivos: 120, serviciosActivos: 95, ticketsPendientes: 4, porCobrar: 1250, nodosEstado: [] };
-      }
-    });
 
-    this.dataService.getPlanes().subscribe(p => this.planes = p);
-
-    this.dataService.getUsers().subscribe({
-      next: u => this.usuarios = u,
-      error: () => {
-        this.usuarios = [
-          { id: 1, username: 'admin', nombre_completo: 'Admin Root', rol: 'admin', mustChangePassword: false },
-          { id: 2, username: 'user1', nombre_completo: 'Juan Perez', rol: 'usuario', mustChangePassword: false },
-          { id: 3, username: 'user2', nombre_completo: 'Maria Garcia', rol: 'usuario', mustChangePassword: false }
-        ];
-      }
-    });
-
-    this.dataService.getTicketsAdmin().subscribe({
-      next: t => this.tickets = t,
-      error: () => {
-        this.tickets = [
-          { id: 1, titulo: 'Falla Internet', descripcion: 'No tengo señal desde la mañana', estado: 'abierto', fecha_creacion: '2023-11-10' },
-          { id: 2, titulo: 'Cambio Plan', descripcion: 'Quiero subir a 500 megas', estado: 'en_proceso', fecha_creacion: '2023-11-11' }
-        ];
-      }
-    });
-
-    this.dataService.getConsultas().subscribe(c => {
-      this.consultas = c;
-    });
-
-    this.dataService.getComentariosPendientes().subscribe({
-      next: c => {
-        this.comentarios = c;
+    // forkJoin para cargar todos los datos reales de PostgreSQL en paralelo
+    forkJoin({
+      metricas: this.dataService.getMetricasAdmin(),
+      planes: this.dataService.getPlanes(),
+      usuarios: this.dataService.getUsers(),
+      tickets: this.dataService.getTicketsAdmin(),
+      consultas: this.dataService.getConsultas(),
+      comentarios: this.dataService.getComentariosPendientes()
+    }).subscribe({
+      next: (res) => {
+        this.metricas = res.metricas;
+        this.planes = res.planes;
+        this.usuarios = res.usuarios;
+        this.tickets = res.tickets;
+        this.consultas = res.consultas;
+        this.comentarios = res.comentarios;
         this.isLoading = false;
       },
-      error: () => this.isLoading = false
+      error: (err) => {
+        console.error('Error cargando datos administrativos:', err);
+        this.isLoading = false;
+      }
     });
   }
 

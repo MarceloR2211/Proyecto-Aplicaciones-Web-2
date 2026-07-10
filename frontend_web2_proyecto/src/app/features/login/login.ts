@@ -88,9 +88,9 @@ export class Login {
     this.cargando.set(true);
     this.errorMsg.set(null);
 
-    const { username, ...resto } = this.registroForm.getRawValue();
+    const payload = this.registroForm.getRawValue();
 
-    this.authService.registrar({ username, ...resto }).subscribe({
+    this.authService.registrar(payload).subscribe({
       next: (res) => {
         this.cargando.set(false);
 
@@ -98,6 +98,8 @@ export class Login {
           this.errorMsg.set(res.message);
           return;
         }
+
+        alert('Cuenta creada exitosamente en PostgreSQL. Ya puedes iniciar sesión.');
 
         // Volvemos al modo login con el usuario recién creado precargado
         this.exitoRegistro.set('Cuenta creada exitosamente. Ya puedes iniciar sesión.');

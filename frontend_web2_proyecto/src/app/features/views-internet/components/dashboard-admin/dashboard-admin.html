@@ -87,34 +87,7 @@
           <div *ngIf="activeTab === 'planes'" class="card border-0 shadow-sm rounded-4 p-4 mb-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h4 class="fw-bold mb-0 text-primary">Catálogo de Planes</h4>
-            </div>
-
-            <!-- Formulario Crear/Editar -->
-            <div class="bg-light p-3 rounded-3 mb-4">
-              <h6 class="fw-bold text-muted mb-3">{{ editandoPlanId ? 'EDITAR PLAN' : 'NUEVO PLAN' }}</h6>
-              <div class="row g-2">
-                <div class="col-md-3">
-                  <input type="text" class="form-control form-control-sm" placeholder="Nombre" [(ngModel)]="nuevoPlan.nombre_plan">
-                </div>
-                <div class="col-md-2">
-                  <select class="form-select form-select-sm" [(ngModel)]="nuevoPlan.tipo_plan">
-                    <option value="residencial">Residencial</option>
-                    <option value="empresarial">Empresarial</option>
-                  </select>
-                </div>
-                <div class="col-md-2">
-                  <input type="text" class="form-control form-control-sm" placeholder="Velocidad" [(ngModel)]="nuevoPlan.velocidad">
-                </div>
-                <div class="col-md-2">
-                  <input type="number" class="form-control form-control-sm" placeholder="Precio" [(ngModel)]="nuevoPlan.precio">
-                </div>
-                <div class="col-md-3 d-flex gap-1">
-                  <button class="btn btn-primary btn-sm flex-grow-1" (click)="crearOActualizarPlan()">
-                    {{ editandoPlanId ? 'GUARDAR' : 'CREAR' }}
-                  </button>
-                  <button *ngIf="editandoPlanId" class="btn btn-secondary btn-sm" (click)="cancelarEdicionPlan()">X</button>
-                </div>
-              </div>
+              <button class="btn btn-success btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#planModal" (click)="cancelarEdicionPlan()">+ NUEVO PLAN</button>
             </div>
             <div class="table-responsive">
               <table class="table table-hover align-middle">
@@ -134,7 +107,7 @@
                     <td>{{p.velocidad}}</td>
                     <td>{{p.precio | currency}}</td>
                     <td class="text-end">
-                      <button class="btn btn-sm btn-light border me-1" (click)="editarPlan(p)"><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-light border me-1" data-bs-toggle="modal" data-bs-target="#planModal" (click)="editarPlan(p)"><i class="bi bi-pencil"></i></button>
                       <button class="btn btn-sm btn-outline-danger" (click)="eliminarPlan(p.id)"><i class="bi bi-trash"></i></button>
                     </td>
                   </tr>
@@ -268,4 +241,48 @@
   </div>
 
   <app-footer></app-footer>
+</div>
+
+<!-- Modal Planes -->
+<div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header bg-primary text-white border-0">
+        <h5 class="modal-title fw-bold">{{ editandoPlanId ? 'Actualizar Plan' : 'Crear Nuevo Plan' }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="closePlanModal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Nombre del Plan</label>
+          <input type="text" class="form-control" [(ngModel)]="nuevoPlan.nombre_plan">
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Tipo</label>
+            <select class="form-select" [(ngModel)]="nuevoPlan.tipo_plan">
+              <option value="residencial">Residencial</option>
+              <option value="empresarial">Empresarial</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Velocidad</label>
+            <input type="text" class="form-control" placeholder="Ej: 300 Mbps" [(ngModel)]="nuevoPlan.velocidad">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Precio (S/.)</label>
+          <input type="number" class="form-control" [(ngModel)]="nuevoPlan.precio">
+        </div>
+        <div class="mb-0">
+          <label class="form-label small fw-bold">Descripción</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="nuevoPlan.descripcion"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-primary rounded-pill w-100 py-3 fw-bold" (click)="crearOActualizarPlan()">
+          {{ editandoPlanId ? 'GUARDAR CAMBIOS' : 'CREAR PLAN AHORA' }}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

@@ -42,7 +42,7 @@
                 <div class="col-md-5 border-start ps-md-4">
                   <p class="small text-muted mb-4">Activo desde: {{datos?.servicio?.fechaInicio | date:'dd MMM yyyy'}}</p>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-primary rounded-pill fw-bold shadow-sm">MEJORAR PLAN</button>
+                  <button class="btn btn-primary rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#ticketModal">NUEVO TICKET</button>
                     <button class="btn btn-warning rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#speedTestModal">
                       <i class="bi bi-speedometer2 me-2"></i>TEST VELOCIDAD
                     </button>
@@ -107,7 +107,7 @@
               <p class="small opacity-75 mb-0">{{datos?.perfil?.email}}</p>
               <hr class="opacity-25">
               <button class="btn btn-light btn-sm w-100 rounded-pill fw-bold mb-2 shadow-sm" (click)="actualizarPerfil()">GUARDAR CAMBIOS</button>
-              <button class="btn btn-outline-light btn-sm w-100 rounded-pill fw-bold shadow-sm" (click)="cambiarPassword()">CAMBIAR CONTRASEÑA</button>
+              <button class="btn btn-outline-light btn-sm w-100 rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#passwordModal">CAMBIAR CONTRASEÑA</button>
             </div>
 
             <div class="card border-0 shadow-sm rounded-4 p-4">
@@ -131,6 +131,61 @@
   </main>
 
   <app-footer></app-footer>
+</div>
+
+<!-- Modal Ticket -->
+<div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header bg-primary text-white border-0">
+        <h5 class="modal-title fw-bold">Generar Nuevo Ticket</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Asunto</label>
+          <input type="text" class="form-control" [(ngModel)]="nuevoTicket.titulo">
+        </div>
+        <div class="mb-0">
+          <label class="form-label small fw-bold">Descripción del problema</label>
+          <textarea class="form-control" rows="4" [(ngModel)]="nuevoTicket.descripcion"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary rounded-pill px-4" (click)="crearTicket()">Enviar Ticket</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Password -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header bg-dark text-white border-0">
+        <h5 class="modal-title fw-bold">Cambiar Contraseña</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Contraseña Actual</label>
+          <input type="password" class="form-control" [(ngModel)]="passUpdate.actual">
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Nueva Contraseña</label>
+          <input type="password" class="form-control" [(ngModel)]="passUpdate.nueva">
+        </div>
+        <div class="mb-0">
+          <label class="form-label small fw-bold">Confirmar Nueva Contraseña</label>
+          <input type="password" class="form-control" [(ngModel)]="passUpdate.confirmar">
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-primary rounded-pill px-4" (click)="confirmarCambioPassword()">Actualizar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Modal Speed Test -->

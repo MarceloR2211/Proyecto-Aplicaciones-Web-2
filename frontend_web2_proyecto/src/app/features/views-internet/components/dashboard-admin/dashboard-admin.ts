@@ -25,10 +25,15 @@ export class DashboardAdminComponent implements OnInit {
   planes: Plan[] = [];
   usuarios: Usuario[] = [];
   comentarios: Comentario[] = [];
+  consultas: any[] = [];
 
   tickets: Ticket[] = [];
-  activeTab: 'resumen' | 'planes' | 'usuarios' | 'comentarios' | 'tickets' = 'resumen';
+  activeTab: 'resumen' | 'planes' | 'usuarios' | 'comentarios' | 'tickets' | 'consultas' = 'resumen';
   isLoading = true;
+
+  // Operaciones CRUD Planes
+  nuevoPlan: Partial<Plan> = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
+  editandoPlanId: number | null = null;
 
   ngOnInit(): void {
     this.cargarDatos();
@@ -66,6 +71,10 @@ export class DashboardAdminComponent implements OnInit {
       }
     });
 
+    this.dataService.getConsultas().subscribe(c => {
+      this.consultas = c;
+    });
+
     this.dataService.getComentariosPendientes().subscribe({
       next: c => {
         this.comentarios = c;
@@ -75,28 +84,26 @@ export class DashboardAdminComponent implements OnInit {
     });
   }
 
-  setTab(tab: 'resumen' | 'planes' | 'usuarios' | 'comentarios' | 'tickets'): void {
+  setTab(tab: 'resumen' | 'planes' | 'usuarios' | 'comentarios' | 'tickets' | 'consultas'): void {
     this.activeTab = tab;
   }
-
-  // Operaciones CRUD Planes
-  nuevoPlan: Partial<Plan> = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
-  editandoPlanId: number | null = null;
 
   crearOActualizarPlan(): void {
     if (this.editandoPlanId) {
       this.dataService.updatePlan(this.editandoPlanId, this.nuevoPlan).subscribe({
         next: () => {
-          alert('Plan actualizado.');
+          alert('Plan actualizado con éxito.');
           this.cancelarEdicionPlan();
+          document.getElementById('closePlanModal')?.click();
           this.cargarDatos();
         }
       });
     } else {
       this.dataService.createPlan(this.nuevoPlan).subscribe({
         next: () => {
-          alert('Plan creado.');
+          alert('Nuevo plan registrado en PostgreSQL.');
           this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
+          document.getElementById('closePlanModal')?.click();
           this.cargarDatos();
         }
       });
@@ -113,6 +120,7 @@ export class DashboardAdminComponent implements OnInit {
     this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
   }
 
+  // Operaciones CRUD Simples (Llamando al servicio)
   eliminarPlan(id: number): void {
     if (confirm('¿Está seguro de eliminar este plan de forma permanente?')) {
       this.dataService.deletePlan(id).subscribe({
@@ -164,6 +172,15 @@ export class DashboardAdminComponent implements OnInit {
         this.cargarDatos();
       },
       error: () => alert('Error al actualizar ticket.')
+    });
+  }
+
+  convertirConsulta(id: number): void {
+    this.dataService.updateConsultaEstado(id, 'convertido').subscribe({
+       next: () => {
+         alert('Consulta marcada como convertida.');
+         this.cargarDatos();
+       }
     });
   }
 }

@@ -19,6 +19,9 @@ export class DashboardClienteComponent implements OnInit {
   private dataService = inject(InternetDataService);
   public authService = inject(AuthService);
 
+  nuevoTicket = { titulo: '', descripcion: '' };
+  passUpdate = { actual: '', nueva: '', confirmar: '' };
+
   datos: DatosCliente = {
     perfil: { nombre: 'Cargando...', email: '...' },
     servicio: { plan: '...', velocidad: '...', precio: 0, estado: '...', fechaInicio: '' },
@@ -63,6 +66,34 @@ export class DashboardClienteComponent implements OnInit {
 
   descargarComprobante(facturaId: number): void {
     alert(`Generando PDF para factura #${facturaId}...`);
+  }
+
+  crearTicket(): void {
+    if (!this.nuevoTicket.titulo || !this.nuevoTicket.descripcion) return;
+    this.dataService.createTicket(this.nuevoTicket).subscribe({
+      next: () => {
+        alert('Ticket generado correctamente.');
+        this.nuevoTicket = { titulo: '', descripcion: '' };
+        this.cargarDatos();
+      }
+    });
+  }
+
+  confirmarCambioPassword(): void {
+    if (this.passUpdate.nueva !== this.passUpdate.confirmar) {
+      alert('Las contraseñas no coinciden.');
+      return;
+    }
+    this.authService.changePassword({
+      username: this.authService.usuarioActual()?.username || '',
+      newPassword: this.passUpdate.nueva,
+      confirmPassword: this.passUpdate.confirmar
+    }).subscribe({
+      next: (res) => {
+        if (!res.error) alert('Contraseña actualizada.');
+        this.passUpdate = { actual: '', nueva: '', confirmar: '' };
+      }
+    });
   }
 
   onFileSelected(event: any, facturaId: number): void {

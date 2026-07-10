@@ -9,7 +9,7 @@ import { Usuario } from '../../../core/models/auth.model';
 /**
  * Servicio Angular para la gestión de datos de Internet
  * Conectado a la base de datos relacional del backend.
- * Optimizado para producción (sin mock delays y con timeouts).
+ * Alineado 100% con los controladores y modelos de PostgreSQL.
  */
 @Injectable({
   providedIn: 'root'
@@ -19,18 +19,22 @@ export class InternetDataService {
   private readonly baseUrl = environment.apiUrl;
   private readonly REQ_TIMEOUT = 5000;
 
-  // ===== PLANES (CRUD) =====
+  // ===== PLANES (CRUD) - /api/planes =====
 
   getPlanes(): Observable<Plan[]> {
     return this.http.get<{error: boolean, planes: Plan[]}>(`${this.baseUrl}/planes`).pipe(
       timeout(this.REQ_TIMEOUT),
-      map(res => res.planes.map(p => ({
+      map(res => res.planes.map((p: Plan) => ({
         ...p,
         precio: Number(p.precio),
         destacado: p.nombre_plan.toLowerCase().includes('pro') || p.id === 2
       }))),
-      catchError(() => of([])) // Fallback inmediato
+      catchError(() => of([]))
     );
+  }
+
+  updateConsultaEstado(id: number, estado: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/consultas/${id}`, { estado }).pipe(timeout(this.REQ_TIMEOUT));
   }
 
   createPlan(plan: Partial<Plan>): Observable<any> {
@@ -45,7 +49,7 @@ export class InternetDataService {
     return this.http.delete(`${this.baseUrl}/planes/${id}`).pipe(timeout(this.REQ_TIMEOUT));
   }
 
-  // ===== USUARIOS (CRUD ADM) =====
+  // ===== USUARIOS (CRUD ADM) - /api/usuarios =====
 
   getUsers(): Observable<Usuario[]> {
     return this.http.get<{error: boolean, usuarios: Usuario[]}>(`${this.baseUrl}/usuarios`).pipe(
@@ -63,26 +67,39 @@ export class InternetDataService {
     return this.http.delete(`${this.baseUrl}/usuarios/${id}`).pipe(timeout(this.REQ_TIMEOUT));
   }
 
-  // ===== TICKETS (CRUD ADM) =====
+  // ===== TICKETS (CRUD ADM / USUARIO) - /api/tickets =====
 
   getTicketsAdmin(): Observable<Ticket[]> {
-    return this.http.get<{error: boolean, tickets: Ticket[]}>(`${this.baseUrl}/tickets`).pipe(
+    return this.http.get<{error: boolean, tickets: Ticket[]}>(`${this.baseUrl}/tickets/admin/todos`).pipe(
       timeout(this.REQ_TIMEOUT),
       map(res => res.tickets),
       catchError(() => of([]))
     );
   }
 
-  updateTicketStatus(id: number, estado: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/tickets/${id}`, { estado }).pipe(timeout(this.REQ_TIMEOUT));
+  getTicketsCliente(): Observable<Ticket[]> {
+    return this.http.get<{error: boolean, tickets: Ticket[]}>(`${this.baseUrl}/tickets/cliente/mis-tickets`).pipe(
+      timeout(this.REQ_TIMEOUT),
+      map(res => res.tickets),
+      catchError(() => of([]))
+    );
   }
 
-  // ===== COMENTARIOS (HÍBRIDO) =====
+  createTicket(data: { titulo: string, descripcion: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/tickets`, data).pipe(timeout(this.REQ_TIMEOUT));
+  }
+
+  updateTicketStatus(id: number, estado: string): Observable<any> {
+    // Según rutas: PUT /api/tickets/:id/estado
+    return this.http.put(`${this.baseUrl}/tickets/${id}/estado`, { estado }).pipe(timeout(this.REQ_TIMEOUT));
+  }
+
+  // ===== COMENTARIOS (HÍBRIDO) - /api/comentarios =====
 
   getComentarios(): Observable<Comentario[]> {
     return this.http.get<{error: boolean, comentarios: ComentarioRaw[]}>(`${this.baseUrl}/comentarios`).pipe(
       timeout(this.REQ_TIMEOUT),
-      map(res => res.comentarios.map(c => ({
+      map(res => res.comentarios.map((c: ComentarioRaw) => ({
           id: c.id,
           usuario_id: c.usuario_id,
           usuario: c.nombre_usuario || `Usuario ${c.usuario_id}`,
@@ -115,7 +132,7 @@ export class InternetDataService {
     );
   }
 
-  // ===== DASHBOARDS & MÉTRICAS =====
+  // ===== DASHBOARDS & MÉTRICAS - /api/dashboard =====
 
   getMetricasAdmin(): Observable<MetricaServicio> {
     return this.http.get<{error: boolean, metrics: MetricsRaw}>(`${this.baseUrl}/dashboard/admin`).pipe(
@@ -138,42 +155,50 @@ export class InternetDataService {
       timeout(this.REQ_TIMEOUT),
       map(res => ({
         perfil: {
-          nombre: res.dashboard.perfil?.nombre || 'Cliente',
-          email: res.dashboard.perfil?.email || ''
+          nombre: res.dashboard.servicio?.message ? 'Sin Perfil' : (res.dashboard.servicio.plan ? 'Cliente Activo' : 'Cargando...'),
+          email: ''
         },
         servicio: {
-          plan: res.dashboard.servicio.plan,
-          velocidad: res.dashboard.servicio.velocidad,
-          precio: Number(res.dashboard.servicio.precio),
-          estado: res.dashboard.servicio.estado,
-          fechaInicio: res.dashboard.servicio.fechaInicio
+          plan: res.dashboard.servicio.plan || 'Sin Plan',
+          velocidad: res.dashboard.servicio.velocidad || '0 Mbps',
+          precio: Number(res.dashboard.servicio.precio) || 0,
+          estado: res.dashboard.servicio.estado || 'inactivo',
+          fechaInicio: res.dashboard.servicio.fechaInicio || ''
         },
-        facturas: res.dashboard.facturas.map(f => ({
+        facturas: (res.dashboard.facturas || []).map((f: any) => ({
           ...f,
           monto: Number(f.monto)
         })),
-        tickets: res.dashboard.tickets
+        tickets: res.dashboard.tickets || []
       } as DatosCliente))
     );
   }
 
-  // ===== CONSULTAS (ALINEADAS A BD) =====
+  // ===== CONSULTAS (ALINEADAS A BD) - /api/consultas =====
 
   registrarConsulta(datos: { dni: string, nombre: string, email: string, telefono: string, motivo_consulta: string }): Observable<boolean> {
-    return this.http.post<{error: boolean}>(`${this.baseUrl}/consultas`, {
-      ...datos,
-      estado: 'pendiente'
-    }).pipe(
+    return this.http.post<{error: boolean}>(`${this.baseUrl}/consultas`, datos).pipe(
       timeout(this.REQ_TIMEOUT),
       map(res => !res.error)
     );
   }
 
+  getConsultas(): Observable<any[]> {
+    return this.http.get<{error: boolean, consultas: any[]}>(`${this.baseUrl}/consultas`).pipe(
+      timeout(this.REQ_TIMEOUT),
+      map(res => res.consultas),
+      catchError(() => of([]))
+    );
+  }
+
+  // ===== UPLOAD - /api/upload =====
+
   subirComprobantePago(facturaId: number, archivo: File): Observable<any> {
     const formData = new FormData();
     formData.append('comprobante', archivo);
-    // El backend debe tener un endpoint para subir el comprobante de una factura
-    return this.http.post(`${this.baseUrl}/facturas/${facturaId}/comprobante`, formData).pipe(
+    formData.append('facturaId', String(facturaId));
+    // Ruta backend: POST /api/upload/comprobante
+    return this.http.post(`${this.baseUrl}/upload/comprobante`, formData).pipe(
       timeout(this.REQ_TIMEOUT)
     );
   }
@@ -202,8 +227,7 @@ interface MetricsRaw {
 }
 
 interface DashboardRaw {
-  perfil: { nombre: string, email: string };
-  servicio: { plan: string, velocidad: string, precio: string | number, estado: string, fechaInicio: string };
+  servicio: { plan: string, velocidad: string, precio: string | number, estado: string, fechaInicio: string, message?: string };
   facturas: Factura[];
   tickets: Ticket[];
 }

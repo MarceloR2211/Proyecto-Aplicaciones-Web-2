@@ -33,6 +33,7 @@ export class IndexMainComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    // Forzamos carga inmediata para evitar bugs de detección de cambios
     this.cargarPlanes();
   }
 

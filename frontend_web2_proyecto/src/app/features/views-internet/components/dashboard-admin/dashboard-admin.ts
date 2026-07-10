@@ -79,7 +79,40 @@ export class DashboardAdminComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  // Operaciones CRUD Simples (Llamando al servicio)
+  // Operaciones CRUD Planes
+  nuevoPlan: Partial<Plan> = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
+  editandoPlanId: number | null = null;
+
+  crearOActualizarPlan(): void {
+    if (this.editandoPlanId) {
+      this.dataService.updatePlan(this.editandoPlanId, this.nuevoPlan).subscribe({
+        next: () => {
+          alert('Plan actualizado.');
+          this.cancelarEdicionPlan();
+          this.cargarDatos();
+        }
+      });
+    } else {
+      this.dataService.createPlan(this.nuevoPlan).subscribe({
+        next: () => {
+          alert('Plan creado.');
+          this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
+          this.cargarDatos();
+        }
+      });
+    }
+  }
+
+  editarPlan(plan: Plan): void {
+    this.editandoPlanId = plan.id;
+    this.nuevoPlan = { ...plan };
+  }
+
+  cancelarEdicionPlan(): void {
+    this.editandoPlanId = null;
+    this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
+  }
+
   eliminarPlan(id: number): void {
     if (confirm('¿Está seguro de eliminar este plan de forma permanente?')) {
       this.dataService.deletePlan(id).subscribe({

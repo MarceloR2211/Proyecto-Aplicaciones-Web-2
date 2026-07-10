@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, timeout, catchError, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { Comentario } from '../models/comentario.model';
 import { MetricaServicio, DatosCliente, Plan, Factura, Ticket } from '../models/metrica.model';
@@ -9,6 +9,7 @@ import { Usuario } from '../../../core/models/auth.model';
 /**
  * Servicio Angular para la gestión de datos de Internet
  * Conectado a la base de datos relacional del backend.
+ * Optimizado para producción (sin mock delays y con timeouts).
  */
 @Injectable({
   providedIn: 'root'
@@ -16,63 +17,71 @@ import { Usuario } from '../../../core/models/auth.model';
 export class InternetDataService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
+  private readonly REQ_TIMEOUT = 5000;
 
   // ===== PLANES (CRUD) =====
 
   getPlanes(): Observable<Plan[]> {
     return this.http.get<{error: boolean, planes: Plan[]}>(`${this.baseUrl}/planes`).pipe(
+      timeout(this.REQ_TIMEOUT),
       map(res => res.planes.map(p => ({
         ...p,
         precio: Number(p.precio),
         destacado: p.nombre_plan.toLowerCase().includes('pro') || p.id === 2
-      })))
+      }))),
+      catchError(() => of([])) // Fallback inmediato
     );
   }
 
   createPlan(plan: Partial<Plan>): Observable<any> {
-    return this.http.post(`${this.baseUrl}/planes`, plan);
+    return this.http.post(`${this.baseUrl}/planes`, plan).pipe(timeout(this.REQ_TIMEOUT));
   }
 
   updatePlan(id: number, plan: Partial<Plan>): Observable<any> {
-    return this.http.put(`${this.baseUrl}/planes/${id}`, plan);
+    return this.http.put(`${this.baseUrl}/planes/${id}`, plan).pipe(timeout(this.REQ_TIMEOUT));
   }
 
   deletePlan(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/planes/${id}`);
+    return this.http.delete(`${this.baseUrl}/planes/${id}`).pipe(timeout(this.REQ_TIMEOUT));
   }
 
   // ===== USUARIOS (CRUD ADM) =====
 
   getUsers(): Observable<Usuario[]> {
     return this.http.get<{error: boolean, usuarios: Usuario[]}>(`${this.baseUrl}/usuarios`).pipe(
-      map(res => res.usuarios)
+      timeout(this.REQ_TIMEOUT),
+      map(res => res.usuarios),
+      catchError(() => of([]))
     );
   }
 
   updateUser(id: number, data: Partial<Usuario>): Observable<any> {
-    return this.http.put(`${this.baseUrl}/usuarios/${id}`, data);
+    return this.http.put(`${this.baseUrl}/usuarios/${id}`, data).pipe(timeout(this.REQ_TIMEOUT));
   }
 
   deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/usuarios/${id}`);
+    return this.http.delete(`${this.baseUrl}/usuarios/${id}`).pipe(timeout(this.REQ_TIMEOUT));
   }
 
   // ===== TICKETS (CRUD ADM) =====
 
   getTicketsAdmin(): Observable<Ticket[]> {
     return this.http.get<{error: boolean, tickets: Ticket[]}>(`${this.baseUrl}/tickets`).pipe(
-      map(res => res.tickets)
+      timeout(this.REQ_TIMEOUT),
+      map(res => res.tickets),
+      catchError(() => of([]))
     );
   }
 
   updateTicketStatus(id: number, estado: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/tickets/${id}`, { estado });
+    return this.http.put(`${this.baseUrl}/tickets/${id}`, { estado }).pipe(timeout(this.REQ_TIMEOUT));
   }
 
   // ===== COMENTARIOS (MODERACIÓN) =====
 
   getComentariosPendientes(): Observable<Comentario[]> {
     return this.http.get<{error: boolean, comentarios: ComentarioRaw[]}>(`${this.baseUrl}/comentarios`).pipe(
+      timeout(this.REQ_TIMEOUT),
       map(res => res.comentarios
         .filter(c => c.estado === 'pendiente')
         .map(c => ({
@@ -82,16 +91,18 @@ export class InternetDataService {
           tipoCliente: c.rol || 'usuario',
           estrellas: c.calificacion,
           texto: c.comentario,
-          fecha: c.fecha_creacion,
+          fecha: c.fecha_comentario,
           estado: c.estado,
           planContratado: c.nombre_plan || 'Plan Hogar'
         } as Comentario))
-      )
+      ),
+      catchError(() => of([]))
     );
   }
 
   actualizarEstadoComentario(id: number, estado: 'aprobado' | 'rechazado'): Observable<boolean> {
     return this.http.put<{error: boolean}>(`${this.baseUrl}/comentarios/${id}`, { estado }).pipe(
+      timeout(this.REQ_TIMEOUT),
       map(res => !res.error)
     );
   }
@@ -100,6 +111,7 @@ export class InternetDataService {
 
   getMetricasAdmin(): Observable<MetricaServicio> {
     return this.http.get<{error: boolean, metrics: MetricsRaw}>(`${this.baseUrl}/dashboard/admin`).pipe(
+      timeout(this.REQ_TIMEOUT),
       map(res => ({
         clientesActivos: res.metrics.totalClientes,
         serviciosActivos: res.metrics.serviciosActivos,
@@ -115,6 +127,7 @@ export class InternetDataService {
 
   getDatosCliente(): Observable<DatosCliente> {
     return this.http.get<{error: boolean, dashboard: DashboardRaw}>(`${this.baseUrl}/dashboard/cliente`).pipe(
+      timeout(this.REQ_TIMEOUT),
       map(res => ({
         perfil: {
           nombre: res.dashboard.perfil?.nombre || 'Cliente',
@@ -142,7 +155,10 @@ export class InternetDataService {
     return this.http.post<{error: boolean}>(`${this.baseUrl}/consultas`, {
       ...datos,
       estado: 'pendiente'
-    }).pipe(map(res => !res.error));
+    }).pipe(
+      timeout(this.REQ_TIMEOUT),
+      map(res => !res.error)
+    );
   }
 }
 
@@ -156,7 +172,7 @@ interface ComentarioRaw {
   rol: string;
   calificacion: number;
   comentario: string;
-  fecha_creacion: string;
+  fecha_comentario: string;
   estado: 'pendiente' | 'aprobado' | 'rechazado';
   nombre_plan: string;
 }

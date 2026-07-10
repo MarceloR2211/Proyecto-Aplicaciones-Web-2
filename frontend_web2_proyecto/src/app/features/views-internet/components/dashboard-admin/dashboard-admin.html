@@ -95,7 +95,34 @@
           <div *ngIf="activeTab === 'planes'" class="card border-0 shadow-sm rounded-4 p-4 mb-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h4 class="fw-bold mb-0 text-primary">Catálogo de Planes</h4>
-              <button class="btn btn-success btn-sm rounded-pill px-3">+ Nuevo</button>
+            </div>
+
+            <!-- Formulario Crear/Editar -->
+            <div class="bg-light p-3 rounded-3 mb-4">
+              <h6 class="fw-bold text-muted mb-3">{{ editandoPlanId ? 'EDITAR PLAN' : 'NUEVO PLAN' }}</h6>
+              <div class="row g-2">
+                <div class="col-md-3">
+                  <input type="text" class="form-control form-control-sm" placeholder="Nombre" [(ngModel)]="nuevoPlan.nombre_plan">
+                </div>
+                <div class="col-md-2">
+                  <select class="form-select form-select-sm" [(ngModel)]="nuevoPlan.tipo_plan">
+                    <option value="residencial">Residencial</option>
+                    <option value="empresarial">Empresarial</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <input type="text" class="form-control form-control-sm" placeholder="Velocidad" [(ngModel)]="nuevoPlan.velocidad">
+                </div>
+                <div class="col-md-2">
+                  <input type="number" class="form-control form-control-sm" placeholder="Precio" [(ngModel)]="nuevoPlan.precio">
+                </div>
+                <div class="col-md-3 d-flex gap-1">
+                  <button class="btn btn-primary btn-sm flex-grow-1" (click)="crearOActualizarPlan()">
+                    {{ editandoPlanId ? 'GUARDAR' : 'CREAR' }}
+                  </button>
+                  <button *ngIf="editandoPlanId" class="btn btn-secondary btn-sm" (click)="cancelarEdicionPlan()">X</button>
+                </div>
+              </div>
             </div>
             <div class="table-responsive">
               <table class="table table-hover align-middle">
@@ -115,7 +142,7 @@
                     <td>{{p.velocidad}}</td>
                     <td>{{p.precio | currency}}</td>
                     <td class="text-end">
-                      <button class="btn btn-sm btn-light border me-1"><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-light border me-1" (click)="editarPlan(p)"><i class="bi bi-pencil"></i></button>
                       <button class="btn btn-sm btn-outline-danger" (click)="eliminarPlan(p.id)"><i class="bi bi-trash"></i></button>
                     </td>
                   </tr>

@@ -94,4 +94,8 @@ export class DashboardClienteComponent implements OnInit {
       }
     }
   }
+
+  cambiarFoto(): void {
+    alert('Función de carga de imagen de perfil activada. Seleccione su archivo (Simulado).');
+  }
 }

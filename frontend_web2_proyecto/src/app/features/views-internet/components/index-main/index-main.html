@@ -21,8 +21,8 @@
     </div>
 
     <div class="row g-4 justify-content-center">
-      <!-- Showcase strictly limited to 3 elements for the landing page -->
-      <div *ngFor="let plan of planes?.slice(0,3)" class="col-md-6 col-lg-4">
+      <!-- Carga inmediata de planes reales desde PostgreSQL -->
+      <div *ngFor="let plan of planes$ | async | slice:0:3" class="col-md-6 col-lg-4">
         <div class="card h-100 card-plan p-4" [class.featured]="plan.destacado">
           <div *ngIf="plan.destacado" class="badge-featured">MÁS POPULAR</div>
           <div class="card-body d-flex flex-column">

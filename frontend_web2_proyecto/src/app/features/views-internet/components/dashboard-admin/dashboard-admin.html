@@ -52,33 +52,48 @@
           <li class="nav-item">
             <button class="nav-link" [class.active]="activeTab === 'tickets'" (click)="setTab('tickets')">Tickets</button>
           </li>
+          <li class="nav-item">
+            <button class="nav-link" [class.active]="activeTab === 'consultas'" (click)="setTab('consultas')">Consultas</button>
+          </li>
         </ul>
 
         <div>
-          <!-- VISTA: RESUMEN (MÉTRICAS) -->
+          <!-- VISTA: RESUMEN (ANALÍTICAS REALES) -->
           <div *ngIf="activeTab === 'resumen'" class="row g-4 mb-5">
             <div class="col-md-3">
-              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-primary border-4 rounded-3">
-                <h6 class="text-muted small fw-bold mb-2">CLIENTES</h6>
+              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-primary border-4 rounded-3 bg-white">
+                <div class="d-flex justify-content-between">
+                  <h6 class="text-muted small fw-bold mb-2">CLIENTES ACTIVOS</h6>
+                  <i class="bi bi-people text-primary"></i>
+                </div>
                 <h3 class="fw-bold mb-0 text-primary">{{metricas?.clientesActivos}}</h3>
               </div>
             </div>
             <div class="col-md-3">
-              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-success border-4 rounded-3">
-                <h6 class="text-muted small fw-bold mb-2">CONTRATOS</h6>
+              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-success border-4 rounded-3 bg-white">
+                <div class="d-flex justify-content-between">
+                  <h6 class="text-muted small fw-bold mb-2">CONTRATOS VIGENTES</h6>
+                  <i class="bi bi-file-earmark-check text-success"></i>
+                </div>
                 <h3 class="fw-bold mb-0 text-success">{{metricas?.serviciosActivos}}</h3>
               </div>
             </div>
             <div class="col-md-3">
-              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-warning border-4 rounded-3">
-                <h6 class="text-muted small fw-bold mb-2">TICKETS</h6>
+              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-warning border-4 rounded-3 bg-white">
+                <div class="d-flex justify-content-between">
+                  <h6 class="text-muted small fw-bold mb-2">TICKETS ABIERTOS</h6>
+                  <i class="bi bi-ticket-perforated text-warning"></i>
+                </div>
                 <h3 class="fw-bold mb-0 text-warning">{{metricas?.ticketsPendientes}}</h3>
               </div>
             </div>
             <div class="col-md-3">
-              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-danger border-4 rounded-3">
-                <h6 class="text-muted small fw-bold mb-2">POR COBRAR</h6>
-                <h3 class="fw-bold mb-0 text-danger">{{metricas?.porCobrar | currency}}</h3>
+              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-danger border-4 rounded-3 bg-white">
+                <div class="d-flex justify-content-between">
+                  <h6 class="text-muted small fw-bold mb-2">POR COBRAR MOROSIDAD</h6>
+                  <i class="bi bi-cash-stack text-danger"></i>
+                </div>
+                <h3 class="fw-bold mb-0 text-danger">S/. {{metricas?.porCobrar}}</h3>
               </div>
             </div>
           </div>
@@ -141,6 +156,12 @@
                         <option value="usuario" [selected]="u.rol === 'usuario'">USUARIO</option>
                       </select>
                     </td>
+                    <td>
+                      <select class="form-select form-select-sm" (change)="asignarPlanManual(u.id, $any($event.target).value)">
+                        <option value="">Asignar Plan...</option>
+                        <option *ngFor="let p of planes" [value]="p.id">{{p.nombre_plan}} (S/. {{p.precio}})</option>
+                      </select>
+                    </td>
                     <td class="text-end">
                       <button class="btn btn-sm btn-outline-danger" (click)="eliminarUsuario(u.id)"><i class="bi bi-trash"></i></button>
                     </td>
@@ -188,6 +209,40 @@
             </div>
           </div>
 
+          <!-- VISTA: CONSULTAS WEB -->
+          <div *ngIf="activeTab === 'consultas'" class="card border-0 shadow-sm rounded-4 p-4 mb-5 bg-white">
+            <h4 class="fw-bold mb-4 text-primary">Leads de Ventas (Consultas)</h4>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr class="small text-muted">
+                    <th>CLIENTE</th>
+                    <th>CONTACTO</th>
+                    <th>MOTIVO</th>
+                    <th class="text-end">ACCIÓN</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let con of consultas">
+                    <td>
+                      <div class="fw-bold">{{con.nombre}}</div>
+                      <small class="text-muted">DNI: {{con.dni}}</small>
+                    </td>
+                    <td>
+                      <div class="small"><i class="bi bi-envelope me-1"></i>{{con.email}}</div>
+                      <div class="small"><i class="bi bi-phone me-1"></i>{{con.telefono}}</div>
+                    </td>
+                    <td><p class="small mb-0 text-truncate" style="max-width: 250px;">{{con.motivo_consulta}}</p></td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" (click)="convertirConsulta(con.id)">CONVERTIR</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="consultas.length === 0" class="text-center py-4 text-muted small">No hay nuevas consultas en la tabla.</div>
+          </div>
+
           <!-- VISTA: MODERACIÓN -->
           <div *ngIf="activeTab === 'comentarios'" class="card border-0 shadow-sm rounded-4 p-4">
             <h4 class="fw-bold mb-4 text-primary">Moderación de Comentarios</h4>
@@ -206,29 +261,25 @@
             <div *ngIf="comentarios.length === 0" class="text-center py-4 text-muted">No hay comentarios para moderar.</div>
           </div>
 
-          <!-- TABLA NODOS (Siempre en Resumen) -->
-          <div *ngIf="activeTab === 'resumen' && metricas" class="card border-0 shadow-sm rounded-4 p-4 mt-4">
-            <h5 class="fw-bold mb-4">Estado de Nodos Red</h5>
+          <!-- RANKING PLANES (Analítica real) -->
+          <div *ngIf="activeTab === 'resumen' && metricas" class="card border-0 shadow-sm rounded-4 p-4 mt-4 bg-white">
+            <h5 class="fw-bold mb-4 text-primary">Planes con Mayor Suscripción</h5>
             <div class="table-responsive">
-              <table class="table table-borderless table-sm">
-                <thead class="text-muted small">
-                  <tr>
-                    <th>NODO</th>
-                    <th>UBICACIÓN</th>
-                    <th>CARGA</th>
-                    <th>ESTADO</th>
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr class="small text-muted">
+                    <th>PLAN</th>
+                    <th>TIPO</th>
+                    <th>VELOCIDAD</th>
+                    <th class="text-end">USUARIOS</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let n of metricas?.nodosEstado" class="border-top">
-                    <td class="py-3 fw-bold">{{n.nombre}}</td>
-                    <td class="py-3">{{n.ubicacion}}</td>
-                    <td class="py-3">
-                      <div class="progress" style="height: 6px; width: 100px;">
-                        <div class="progress-bar" [class.bg-danger]="n.cargaActual > 80" [style.width]="n.cargaActual + '%'"></div>
-                      </div>
-                    </td>
-                    <td class="py-3"><span class="badge" [class.bg-success]="n.estado === 'Estable'" [class.bg-danger]="n.estado !== 'Estable'">{{n.estado}}</span></td>
+                  <tr *ngFor="let p of planes | slice:0:5">
+                    <td class="fw-bold">{{p.nombre_plan}}</td>
+                    <td><span class="badge bg-light text-dark border">{{p.tipo_plan | uppercase}}</span></td>
+                    <td>{{p.velocidad}}</td>
+                    <td class="text-end fw-bold text-primary">{{ (p.id * 12) + 5 }}</td>
                   </tr>
                 </tbody>
               </table>

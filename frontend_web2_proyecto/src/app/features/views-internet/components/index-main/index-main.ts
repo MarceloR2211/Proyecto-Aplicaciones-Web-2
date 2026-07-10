@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { InternetDataService } from '../../services/internet-data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Plan } from '../../models/metrica.model';
@@ -20,8 +21,7 @@ export class IndexMainComponent implements OnInit {
   public authService = inject(AuthService);
   private router = inject(Router);
 
-  planes: Plan[] = [];
-  isLoading = true;
+  planes$: Observable<Plan[]> | null = null;
 
   // Formulario de consulta
   consulta = {
@@ -33,19 +33,7 @@ export class IndexMainComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    // Forzamos carga inmediata para evitar bugs de detección de cambios
-    this.cargarPlanes();
-  }
-
-  cargarPlanes(): void {
-    this.isLoading = true;
-    this.dataService.getPlanes().subscribe({
-      next: (data) => {
-        this.planes = data;
-        this.isLoading = false;
-      },
-      error: () => this.isLoading = false
-    });
+    this.planes$ = this.dataService.getPlanes();
   }
 
   enviarConsulta(): void {

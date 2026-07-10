@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 import { InternetDataService } from '../../services/internet-data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MetricaServicio, Plan, Ticket } from '../../models/metrica.model';
@@ -20,6 +22,7 @@ import { FooterComponent } from '../footer/footer';
 export class DashboardAdminComponent implements OnInit {
   private dataService = inject(InternetDataService);
   public authService = inject(AuthService);
+  private http = inject(HttpClient);
 
   metricas?: MetricaServicio;
   planes: Plan[] = [];
@@ -181,6 +184,31 @@ export class DashboardAdminComponent implements OnInit {
          alert('Consulta marcada como convertida.');
          this.cargarDatos();
        }
+    });
+  }
+
+  asignarPlanManual(usuarioId: number, planId: string): void {
+    if (!planId) return;
+
+    // Simulación de lógica de asignación con cálculo de vencimiento (30 días)
+    const fechaInicio = new Date();
+    const fechaVencimiento = new Date();
+    fechaVencimiento.setDate(fechaInicio.getDate() + 30);
+
+    const payload = {
+      usuario_id: usuarioId,
+      plan_id: Number(planId),
+      fecha_inicio: fechaInicio.toISOString().split('T')[0],
+      estado_contrato: 'activo'
+    };
+
+    // Petición real al backend
+    this.http.post<any>(`${environment.apiUrl}/contratos`, payload).subscribe({
+      next: () => {
+        alert(`Plan asignado con éxito. Fecha de vencimiento calculada: ${fechaVencimiento.toLocaleDateString()}`);
+        this.cargarDatos();
+      },
+      error: () => alert('Error al asignar el contrato.')
     });
   }
 }

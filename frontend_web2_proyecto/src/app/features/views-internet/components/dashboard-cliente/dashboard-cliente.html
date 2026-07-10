@@ -4,9 +4,9 @@
   <main class="flex-grow-1 py-5">
     <div class="container">
 
-      <div>
+      <div *ngIf="datos$ | async as datos">
         <header class="mb-5">
-          <h2 class="fw-bold text-primary mb-1">Hola, {{datos?.perfil?.nombre}}</h2>
+          <h2 class="fw-bold text-primary mb-1">Hola, {{datos.perfil.nombre}}</h2>
           <p class="text-muted">Resumen de tu cuenta y servicios activos.</p>
         </header>
 
@@ -22,25 +22,25 @@
                       <i class="bi bi-wifi h2 mb-0"></i>
                     </div>
                     <div>
-                      <h3 class="fw-bold mb-0">{{datos?.servicio?.plan}}</h3>
-                      <span class="badge" [class.bg-success]="datos?.servicio?.estado === 'activo'" [class.bg-warning]="datos?.servicio?.estado !== 'activo'">
-                        {{datos?.servicio?.estado | uppercase}}
+                    <h3 class="fw-bold mb-0">{{datos.servicio.plan}}</h3>
+                    <span class="badge" [class.bg-success]="datos.servicio.estado === 'activo'" [class.bg-warning]="datos.servicio.estado !== 'activo'">
+                      {{datos.servicio.estado | uppercase}}
                       </span>
                     </div>
                   </div>
                   <div class="row text-center text-md-start">
                     <div class="col-6 mb-3">
                       <small class="text-muted d-block">Velocidad</small>
-                      <span class="fw-bold">{{datos?.servicio?.velocidad}}</span>
+                    <span class="fw-bold">{{datos.servicio.velocidad}}</span>
                     </div>
                     <div class="col-6 mb-3">
                       <small class="text-muted d-block">Renta Mensual</small>
-                      <span class="fw-bold">S/. {{datos?.servicio?.precio}}</span>
+                    <span class="fw-bold">S/. {{datos.servicio.precio}}</span>
                     </div>
                   </div>
                 </div>
                 <div class="col-md-5 border-start ps-md-4">
-                  <p class="small text-muted mb-4">Activo desde: {{datos?.servicio?.fechaInicio | date:'dd MMM yyyy'}}</p>
+                <p class="small text-muted mb-4">Activo desde: {{datos.servicio.fechaInicio | date:'dd MMM yyyy'}}</p>
                   <div class="d-grid gap-2">
                   <button class="btn btn-primary rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#ticketModal">NUEVO TICKET</button>
                     <button class="btn btn-warning rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#speedTestModal">
@@ -69,10 +69,10 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let f of datos?.facturas" class="border-bottom">
+                    <tr *ngFor="let f of datos.facturas" class="border-bottom">
                       <td class="fw-bold py-3">#{{f.id}}</td>
                       <td>{{f.fecha_vencimiento | date:'dd/MM/yyyy'}}</td>
-                      <td class="fw-bold">{{f.monto | currency}}</td>
+                      <td class="fw-bold">S/. {{f.monto}}</td>
                       <td>
                         <span class="badge rounded-pill" [class.bg-warning]="f.estado === 'pendiente'" [class.bg-success]="f.estado === 'pagado'">
                           {{f.estado | uppercase}}
@@ -80,11 +80,10 @@
                       </td>
                       <td class="text-end">
                       <div *ngIf="f.estado === 'pendiente'" class="d-flex justify-content-end gap-2 align-items-center">
-                        <label class="btn btn-outline-primary btn-sm mb-0">
+                        <label class="btn btn-outline-primary btn-sm mb-0 shadow-sm">
                           <i class="bi bi-file-earmark-pdf me-1"></i> REPORTAR PAGO
                           <input type="file" hidden accept="application/pdf" (change)="onFileSelected($event, f.id)">
                         </label>
-                        <button class="btn btn-warning btn-sm fw-bold px-3 shadow-sm" (click)="simularPago(f.id)">PAGAR ONLINE</button>
                       </div>
                         <button *ngIf="f.estado === 'pagado'" class="btn btn-light btn-sm px-3 border" (click)="descargarComprobante(f.id)">PDF</button>
                       </td>
@@ -104,18 +103,18 @@
                 <label class="small opacity-75 d-block mb-1">Nombre Completo</label>
                 <input type="text" class="form-control form-control-sm bg-white bg-opacity-10 text-white border-0" [(ngModel)]="datos.perfil.nombre">
               </div>
-              <p class="small opacity-75 mb-0">{{datos?.perfil?.email}}</p>
+              <p class="small opacity-75 mb-0">{{datos.perfil.email}}</p>
               <hr class="opacity-25">
-              <button class="btn btn-light btn-sm w-100 rounded-pill fw-bold mb-2 shadow-sm" (click)="actualizarPerfil()">GUARDAR CAMBIOS</button>
+              <button class="btn btn-light btn-sm w-100 rounded-pill fw-bold mb-2 shadow-sm" (click)="actualizarPerfil(datos)">GUARDAR CAMBIOS</button>
               <button class="btn btn-outline-light btn-sm w-100 rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#passwordModal">CAMBIAR CONTRASEÑA</button>
             </div>
 
             <div class="card border-0 shadow-sm rounded-4 p-4">
               <h5 class="fw-bold mb-4 text-primary">Mis Tickets</h5>
-              <div *ngIf="datos?.tickets?.length === 0" class="text-center py-4">
+              <div *ngIf="datos.tickets.length === 0" class="text-center py-4">
                 <p class="text-muted small">No tienes solicitudes de soporte.</p>
               </div>
-              <div *ngFor="let t of datos?.tickets" class="mb-3 p-3 bg-light rounded-3 border-start border-primary border-4">
+              <div *ngFor="let t of datos.tickets" class="mb-3 p-3 bg-light rounded-3 border-start border-primary border-4">
                 <div class="d-flex justify-content-between mb-1">
                   <span class="fw-bold small">{{t.titulo}}</span>
                   <span class="badge bg-secondary" style="font-size: 0.6rem;">{{t.estado | uppercase}}</span>

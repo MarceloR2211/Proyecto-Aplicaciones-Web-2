@@ -184,9 +184,10 @@ export class InternetDataService {
   }
 
   getConsultas(): Observable<any[]> {
-    return this.http.get<{error: boolean, consultas: any[]}>(`${this.baseUrl}/consultas`).pipe(
+    // El backend devuelve un array directamente o { consultas: [] }?
+    // Según consultas.controller.js: res.json(consultas) -> devuelve array.
+    return this.http.get<any[]>(`${this.baseUrl}/consultas`).pipe(
       timeout(this.REQ_TIMEOUT),
-      map(res => res.consultas),
       catchError(() => of([]))
     );
   }

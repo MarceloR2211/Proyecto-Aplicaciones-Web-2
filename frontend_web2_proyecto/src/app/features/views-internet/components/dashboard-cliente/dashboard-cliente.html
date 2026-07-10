@@ -4,13 +4,7 @@
   <main class="flex-grow-1 py-5">
     <div class="container">
 
-      <!-- Estado de Carga -->
-      <div *ngIf="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="mt-2 text-muted">Cargando información de tu cuenta...</p>
-      </div>
-
-      <div *ngIf="!isLoading && datos">
+      <div>
         <header class="mb-5">
           <h2 class="fw-bold text-primary mb-1">Hola, {{datos?.perfil?.nombre}}</h2>
           <p class="text-muted">Resumen de tu cuenta y servicios activos.</p>
@@ -41,7 +35,7 @@
                     </div>
                     <div class="col-6 mb-3">
                       <small class="text-muted d-block">Renta Mensual</small>
-                      <span class="fw-bold">${{datos?.servicio?.precio}}</span>
+                      <span class="fw-bold">S/. {{datos?.servicio?.precio}}</span>
                     </div>
                   </div>
                 </div>
@@ -85,7 +79,13 @@
                         </span>
                       </td>
                       <td class="text-end">
-                        <button *ngIf="f.estado === 'pendiente'" class="btn btn-warning btn-sm fw-bold px-3 shadow-sm" (click)="simularPago(f.id)">PAGAR</button>
+                      <div *ngIf="f.estado === 'pendiente'" class="d-flex justify-content-end gap-2 align-items-center">
+                        <label class="btn btn-outline-primary btn-sm mb-0">
+                          <i class="bi bi-file-earmark-pdf me-1"></i> REPORTAR PAGO
+                          <input type="file" hidden accept="application/pdf" (change)="onFileSelected($event, f.id)">
+                        </label>
+                        <button class="btn btn-warning btn-sm fw-bold px-3 shadow-sm" (click)="simularPago(f.id)">PAGAR ONLINE</button>
+                      </div>
                         <button *ngIf="f.estado === 'pagado'" class="btn btn-light btn-sm px-3 border" (click)="descargarComprobante(f.id)">PDF</button>
                       </td>
                     </tr>

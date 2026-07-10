@@ -1,0 +1,4 @@
+.card { transition: all 0.3s ease; }
+.card:hover { transform: translateY(-3px); }
+.extra-small { font-size: 0.75rem; }
+.sticky-top { z-index: 10; }

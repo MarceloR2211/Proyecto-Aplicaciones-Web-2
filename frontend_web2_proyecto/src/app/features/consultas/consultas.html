@@ -1,61 +1,86 @@
-<section class="consultas-page">
-  <header class="page-header">
-    <h1>Contacto</h1>
-  </header>
+<app-navbar></app-navbar>
 
-  <div class="consultas-grid">
-    <aside class="info-box">
-      <h2>Información</h2>
-      <p><strong>Teléfono:</strong> +51 234 567 890</p>
-      <p><strong>Email:</strong> info&#64;ispinternet.com</p>
-    </aside>
+<main class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="row g-0">
+          <div class="col-md-5 bg-primary text-white p-5 d-flex flex-column justify-content-center">
+            <h1 class="fw-bold mb-4">Ponte en Contacto</h1>
+            <p class="opacity-75 mb-5">Estamos aquí para resolver tus dudas sobre nuestros servicios de fibra óptica y planes corporativos.</p>
 
-    <div class="form-box">
-      <h2>Mensaje</h2>
+            <div class="d-grid gap-4">
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-telephone-fill h4 mb-0 text-warning"></i>
+                <div>
+                  <small class="d-block opacity-50">Llámanos</small>
+                  <span class="fw-bold">+51 987 654 321</span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-envelope-at-fill h4 mb-0 text-warning"></i>
+                <div>
+                  <small class="d-block opacity-50">Email</small>
+                  <span class="fw-bold">ventas@internetpro.com</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      @if (exitoMsg()) {
-        <p class="alert alert-success">{{ exitoMsg() }}</p>
-      }
-      @if (errorMsg()) {
-        <p class="alert alert-error">{{ errorMsg() }}</p>
-      }
+          <div class="col-md-7 p-5 bg-white">
+            <h2 class="fw-bold text-primary mb-4">Enviar Mensaje</h2>
 
-      <form [formGroup]="consultaForm" (ngSubmit)="onSubmit()">
-        <div class="field">
-          <label>Nombre *</label>
-          <input type="text" formControlName="nombre" placeholder="Lorem ipsum" />
+            <div *ngIf="exitoMsg()" class="alert alert-success border-0 shadow-sm mb-4 rounded-3">
+              <i class="bi bi-check-circle-fill me-2"></i> {{ exitoMsg() }}
+            </div>
+            <div *ngIf="errorMsg()" class="alert alert-danger border-0 shadow-sm mb-4 rounded-3">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMsg() }}
+            </div>
+
+            <form [formGroup]="consultaForm" (ngSubmit)="onSubmit()">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="name" placeholder="Nombre" formControlName="nombre">
+                    <label for="name">Nombre Completo</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="dni" placeholder="DNI" formControlName="dni">
+                    <label for="dni">DNI (8 dígitos)</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" placeholder="Email" formControlName="email">
+                    <label for="email">Correo Electrónico</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="tel" placeholder="Teléfono" formControlName="telefono">
+                    <label for="tel">Teléfono (opcional)</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating mb-4">
+                    <textarea class="form-control" id="msg" style="height: 120px" placeholder="Mensaje" formControlName="motivo_consulta"></textarea>
+                    <label for="msg">Motivo de consulta</label>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" [disabled]="enviando()">
+                <span *ngIf="!enviando()">ENVIAR SOLICITUD</span>
+                <div *ngIf="enviando()" class="spinner-border spinner-border-sm"></div>
+              </button>
+            </form>
+          </div>
         </div>
-
-        <div class="field">
-          <label>Email *</label>
-          <input type="email" formControlName="email" placeholder="lorem@ipsum.com" />
-        </div>
-
-        <div class="field">
-          <label>DNI *</label>
-          <input type="text" formControlName="dni" placeholder="8 dígitos" />
-          @if (consultaForm.controls.dni.invalid && consultaForm.controls.dni.touched) {
-            <small class="field-error">Ingresa un DNI válido de 8 dígitos.</small>
-          }
-        </div>
-
-        <div class="field">
-          <label>Teléfono</label>
-          <input type="text" formControlName="telefono" placeholder="9 dígitos (opcional)" />
-        </div>
-
-        <div class="field">
-          <label>Mensaje *</label>
-          <textarea formControlName="motivo_consulta" placeholder="Lorem ipsum..."></textarea>
-          @if (consultaForm.controls.motivo_consulta.invalid && consultaForm.controls.motivo_consulta.touched) {
-            <small class="field-error">Describe tu consulta (mínimo 10 caracteres).</small>
-          }
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block" [disabled]="enviando()">
-          {{ enviando() ? 'Enviando...' : 'Enviar' }}
-        </button>
-      </form>
+      </div>
     </div>
   </div>
-</section>
+</main>
+
+<app-footer></app-footer>

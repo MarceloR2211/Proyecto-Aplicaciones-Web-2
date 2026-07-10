@@ -65,6 +65,21 @@ export class DashboardClienteComponent implements OnInit {
     alert(`Generando PDF para factura #${facturaId}...`);
   }
 
+  onFileSelected(event: any, facturaId: number): void {
+    const file: File = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.dataService.subirComprobantePago(facturaId, file).subscribe({
+        next: () => {
+          alert('Comprobante subido con éxito. El administrador revisará su pago.');
+          this.cargarDatos();
+        },
+        error: () => alert('Error al subir el archivo. Intente nuevamente.')
+      });
+    } else {
+      alert('Por favor seleccione un archivo PDF válido.');
+    }
+  }
+
   cambiarPassword(): void {
     const nueva = prompt('Ingrese su nueva contraseña:');
     if (nueva && nueva.length >= 6) {

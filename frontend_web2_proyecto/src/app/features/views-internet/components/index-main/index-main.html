@@ -20,11 +20,7 @@
       <p class="text-muted">Directo de nuestro catálogo de base de datos</p>
     </div>
 
-    <div *ngIf="isLoading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status"></div>
-    </div>
-
-    <div *ngIf="!isLoading" class="row g-4 justify-content-center">
+    <div class="row g-4 justify-content-center">
       <!-- Showcase strictly limited to 3 elements for the landing page -->
       <div *ngFor="let plan of planes?.slice(0,3)" class="col-md-6 col-lg-4">
         <div class="card h-100 card-plan p-4" [class.featured]="plan.destacado">
@@ -38,7 +34,7 @@
             <p class="card-text text-muted mb-4">{{plan.descripcion}}</p>
             <div class="mt-auto pt-4 border-top">
               <div class="mb-4">
-                <span class="h2 fw-bold text-primary">${{plan.precio}}</span>
+                <span class="h2 fw-bold text-primary">S/. {{plan.precio}}</span>
                 <span class="text-muted small"> / mes</span>
               </div>
               <button class="btn w-100 py-3 rounded-pill fw-bold"

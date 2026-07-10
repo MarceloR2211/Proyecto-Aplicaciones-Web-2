@@ -1,20 +1,51 @@
-@if (!cargando() && !errorMsg()) {
-  <div class="planes-grid">
-    @for (plan of planes(); track plan.id) {
-      <article class="plan-card" [class.destacado]="$index === 1">
-        <h2>{{ plan.nombre_plan }}</h2>
-        <p class="precio">${{ plan.precio }}<span>/mes</span></p>
+<app-navbar></app-navbar>
 
-        <ul class="features">
-          <li>X Velocidad: {{ plan.velocidad }}</li>
-          <li>X Tipo: {{ plan.tipo_plan }}</li>
-          <li>X {{ plan.descripcion }}</li>
-        </ul>
-
-        <button type="button" class="btn" [class.btn-primary]="$index === 1" [class.btn-outline]="$index !== 1">
-          Contratar
-        </button>
-      </article>
-    }
+<main class="container py-5">
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary">Nuestros Planes de Fibra</h1>
+    <p class="lead text-muted">Soluciones de alta velocidad para cada necesidad.</p>
   </div>
-}
+
+  @if (!cargando() && !errorMsg()) {
+    <div class="row g-4 justify-content-center">
+      @for (plan of planes(); track plan.id; let idx = $index) {
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden" [class.border-warning]="idx === 1" [class.border-3]="idx === 1">
+            <div class="card-body p-4 d-flex flex-column">
+              <h2 class="h4 fw-bold text-primary mb-3">{{ plan.nombre_plan }}</h2>
+              <div class="mb-4">
+                <span class="display-5 fw-bold text-primary">S/. {{ plan.precio }}</span>
+                <span class="text-muted">/mes</span>
+              </div>
+              <ul class="list-unstyled mb-4">
+                <li class="mb-2"><i class="bi bi-speedometer2 text-warning me-2"></i> {{ plan.velocidad }}</li>
+                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> {{ plan.tipo_plan | titlecase }}</li>
+                <li class="text-muted small">{{ plan.descripcion }}</li>
+              </ul>
+              <button type="button" class="btn w-100 py-3 rounded-pill fw-bold mt-auto"
+                      [class.btn-warning]="idx === 1"
+                      [class.btn-outline-primary]="idx !== 1"
+                      [routerLink]="['/contacto']" [queryParams]="{plan: plan.nombre_plan}">
+                Contratar
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (cargando()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  }
+
+  @if (errorMsg()) {
+    <div class="alert alert-danger rounded-4 shadow-sm">
+      {{ errorMsg() }}
+    </div>
+  }
+</main>
+
+<app-footer></app-footer>

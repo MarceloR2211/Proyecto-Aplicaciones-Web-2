@@ -20,6 +20,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/consultas/consultas').then((m) => m.Consultas)
   },
   {
+    path: 'comentarios',
+    loadComponent: () => import('./features/comentarios/comentarios').then((m) => m.ComentariosPublic)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./features/login/login').then((m) => m.Login)
   },

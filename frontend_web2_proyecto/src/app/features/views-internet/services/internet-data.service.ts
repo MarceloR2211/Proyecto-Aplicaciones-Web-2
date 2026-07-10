@@ -77,14 +77,12 @@ export class InternetDataService {
     return this.http.put(`${this.baseUrl}/tickets/${id}`, { estado }).pipe(timeout(this.REQ_TIMEOUT));
   }
 
-  // ===== COMENTARIOS (MODERACIÓN) =====
+  // ===== COMENTARIOS (HÍBRIDO) =====
 
-  getComentariosPendientes(): Observable<Comentario[]> {
+  getComentarios(): Observable<Comentario[]> {
     return this.http.get<{error: boolean, comentarios: ComentarioRaw[]}>(`${this.baseUrl}/comentarios`).pipe(
       timeout(this.REQ_TIMEOUT),
-      map(res => res.comentarios
-        .filter(c => c.estado === 'pendiente')
-        .map(c => ({
+      map(res => res.comentarios.map(c => ({
           id: c.id,
           usuario_id: c.usuario_id,
           usuario: c.nombre_usuario || `Usuario ${c.usuario_id}`,
@@ -97,6 +95,16 @@ export class InternetDataService {
         } as Comentario))
       ),
       catchError(() => of([]))
+    );
+  }
+
+  crearComentario(data: { calificacion: number, comentario: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/comentarios`, data).pipe(timeout(this.REQ_TIMEOUT));
+  }
+
+  getComentariosPendientes(): Observable<Comentario[]> {
+    return this.getComentarios().pipe(
+      map(list => list.filter(c => c.estado === 'pendiente'))
     );
   }
 
@@ -158,6 +166,15 @@ export class InternetDataService {
     }).pipe(
       timeout(this.REQ_TIMEOUT),
       map(res => !res.error)
+    );
+  }
+
+  subirComprobantePago(facturaId: number, archivo: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('comprobante', archivo);
+    // El backend debe tener un endpoint para subir el comprobante de una factura
+    return this.http.post(`${this.baseUrl}/facturas/${facturaId}/comprobante`, formData).pipe(
+      timeout(this.REQ_TIMEOUT)
     );
   }
 }

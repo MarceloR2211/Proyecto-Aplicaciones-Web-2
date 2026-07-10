@@ -39,7 +39,6 @@
           </button>
         </header>
 
-      <div>
         <ul class="nav nav-pills mb-4 gap-2 d-lg-none overflow-auto flex-nowrap pb-2">
           <li class="nav-item">
             <button class="nav-link" [class.active]="activeTab === 'resumen'" (click)="setTab('resumen')">Resumen</button>
@@ -55,8 +54,7 @@
           </li>
         </ul>
 
-      <div>
-
+        <div>
           <!-- VISTA: RESUMEN (MÉTRICAS) -->
           <div *ngIf="activeTab === 'resumen'" class="row g-4 mb-5">
             <div class="col-md-3">

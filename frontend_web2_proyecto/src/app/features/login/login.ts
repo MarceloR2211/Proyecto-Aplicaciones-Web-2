@@ -22,6 +22,7 @@ export class Login {
   modo = signal<'login' | 'registro'>('login');
   cargando = signal(false);
   errorMsg = signal<string | null>(null);
+  exitoRegistro = signal<string | null>(null); // Añadido para sincronizar con HTML
 
   loginForm = this.fb.nonNullable.group({
     username: ['', Validators.required],
@@ -43,6 +44,7 @@ export class Login {
   cambiarModo(modo: 'login' | 'registro'): void {
     this.modo.set(modo);
     this.errorMsg.set(null);
+    this.exitoRegistro.set(null);
   }
 
   onSubmitLogin(): void {
@@ -87,6 +89,7 @@ export class Login {
           this.errorMsg.set(res.message);
           return;
         }
+        this.exitoRegistro.set('Registro exitoso. Ahora puede iniciar sesión.');
         alert('Registro exitoso. Ahora puede iniciar sesión.');
         this.modo.set('login');
       },

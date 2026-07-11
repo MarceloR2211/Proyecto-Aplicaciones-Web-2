@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { InternetDataService } from '../../services/internet-data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DatosCliente } from '../../models/metrica.model';
@@ -33,12 +32,12 @@ export class DashboardClienteComponent implements OnInit {
   cargarDatos(): void {
     this.isLoading = true;
     this.dataService.getDatosCliente().subscribe({
-      next: (data) => {
+      next: (data: DatosCliente) => {
         this.datos = data;
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('CRITICAL: Failed to load profile. Routing mismatch?', err);
+      error: (err: any) => {
+        console.error('CRITICAL: Failed to load profile.', err);
         this.isLoading = false;
       }
     });
@@ -73,7 +72,7 @@ export class DashboardClienteComponent implements OnInit {
       newPassword: this.passUpdate.nueva,
       confirmPassword: this.passUpdate.confirmar
     }).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         if (!res.error) alert('Contraseña actualizada.');
         this.passUpdate = { actual: '', nueva: '', confirmar: '' };
       }

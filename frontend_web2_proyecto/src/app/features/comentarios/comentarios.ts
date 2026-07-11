@@ -29,8 +29,8 @@ export class ComentariosPublic implements OnInit {
   }
 
   cargarComentarios(): void {
-    this.dataService.getComentarios().subscribe(c => {
-      this.comentarios.set(c.filter(x => x.estado === 'aprobado'));
+    this.dataService.getComentarios().subscribe((c: Comentario[]) => {
+      this.comentarios.set(c.filter((x: Comentario) => x.estado === 'aprobado'));
     });
   }
 
@@ -51,7 +51,7 @@ export class ComentariosPublic implements OnInit {
         this.enviando.set(false);
         this.cargarComentarios();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al enviar reseña:', err);
         this.enviando.set(false);
       }

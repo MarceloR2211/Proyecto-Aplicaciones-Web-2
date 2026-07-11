@@ -1,8 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { InternetDataService } from '../../services/internet-data.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -32,9 +31,10 @@ export class DashboardAdminComponent implements OnInit {
 
   tickets: Ticket[] = [];
   activeTab: 'resumen' | 'planes' | 'usuarios' | 'comentarios' | 'tickets' | 'consultas' = 'resumen';
-  isLoading = true;
+  isLoading = signal(true);
+  isSubmitting = signal(false);
 
-  nuevoPlan: Partial<Plan> = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
+  nuevoPlan: Partial<Plan> = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '', estado: 'activo' };
   editandoPlanId: number | null = null;
 
   // Estado para modales de feedback
@@ -47,7 +47,7 @@ export class DashboardAdminComponent implements OnInit {
   }
 
   cargarDatos(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     forkJoin({
       metricas: this.dataService.getMetricasAdmin(),
       planes: this.dataService.getPlanes(),
@@ -63,11 +63,11 @@ export class DashboardAdminComponent implements OnInit {
         this.tickets = res.tickets;
         this.consultas = res.consultas;
         this.comentarios = res.comentarios;
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
-      error: () => {
-        this.mostrarFeedback('Error', 'No se pudieron cargar los datos del servidor.', false);
-        this.isLoading = false;
+      error: (err: any) => {
+        this.mostrarFeedback('Error', err.error?.message || 'No se pudieron cargar los datos del servidor.', false);
+        this.isLoading.set(false);
       }
     });
   }
@@ -82,51 +82,73 @@ export class DashboardAdminComponent implements OnInit {
   }
 
   convertirConsulta(id: number): void {
+    this.isSubmitting.set(true);
     this.dataService.updateConsultaEstado(id, 'convertido').subscribe({
        next: () => {
+         this.isSubmitting.set(false);
          this.cargarDatos();
          this.mostrarFeedback('Éxito', 'La consulta ha sido marcada como atendida.', true);
        },
-       error: () => this.mostrarFeedback('Error', 'Hubo un fallo al actualizar la consulta.', false)
+       error: (err: any) => {
+         this.isSubmitting.set(false);
+         this.mostrarFeedback('Error', err.error?.message || 'Hubo un fallo al actualizar la consulta.', false);
+       }
     });
   }
 
   moderarComentario(id: number, estado: 'aprobado' | 'rechazado'): void {
+    this.isSubmitting.set(true);
     this.dataService.actualizarEstadoComentario(id, estado).subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         this.cargarDatos();
         this.mostrarFeedback('Moderación', `Comentario ${estado} correctamente.`, true);
       },
-      error: () => this.mostrarFeedback('Error', 'No se pudo procesar la moderación.', false)
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        this.mostrarFeedback('Error', err.error?.message || 'No se pudo procesar la moderación.', false);
+      }
     });
   }
 
   eliminarPlan(id: number): void {
     if(confirm('¿Está seguro de eliminar este plan?')) {
+      this.isSubmitting.set(true);
       this.dataService.deletePlan(id).subscribe({
         next: () => {
+          this.isSubmitting.set(false);
           this.cargarDatos();
           this.mostrarFeedback('Eliminado', 'El plan ha sido removido del catálogo.', true);
         },
-        error: () => this.mostrarFeedback('Error', 'No se pudo eliminar el plan.', false)
+        error: (err: any) => {
+          this.isSubmitting.set(false);
+          this.mostrarFeedback('Error', err.error?.message || 'No se pudo eliminar el plan.', false);
+        }
       });
     }
   }
 
   crearOActualizarPlan(): void {
+    if (!this.nuevoPlan.nombre_plan || !this.nuevoPlan.precio) return;
+
+    this.isSubmitting.set(true);
     const obs = this.editandoPlanId
       ? this.dataService.updatePlan(this.editandoPlanId, this.nuevoPlan)
       : this.dataService.createPlan(this.nuevoPlan);
 
     obs.subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         this.cargarDatos();
         this.mostrarFeedback('Guardado', 'Los cambios en el plan se han persistido en la BD.', true);
-        this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
+        this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '', estado: 'activo' };
         this.editandoPlanId = null;
         this.cerrarModal('planModal');
       },
-      error: () => this.mostrarFeedback('Error', 'Error al guardar el plan.', false)
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        this.mostrarFeedback('Error', err.error?.message || 'Error al guardar el plan.', false);
+      }
     });
   }
 

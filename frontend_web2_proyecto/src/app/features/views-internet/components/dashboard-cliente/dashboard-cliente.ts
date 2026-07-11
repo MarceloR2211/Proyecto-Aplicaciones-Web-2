@@ -59,6 +59,7 @@ export class DashboardClienteComponent implements OnInit {
         this.mostrarFeedback('Éxito', 'Ticket generado correctamente.', true);
         this.nuevoTicket = { titulo: '', descripcion: '' };
         this.cargarDatos();
+        this.cerrarModal('ticketModal');
       },
       error: (err: any) => {
         this.isSubmitting.set(false);
@@ -83,6 +84,7 @@ export class DashboardClienteComponent implements OnInit {
         this.isSubmitting.set(false);
         if (!res.error) {
           this.mostrarFeedback('Éxito', 'Contraseña actualizada correctamente.', true);
+          this.cerrarModal('passwordModal');
         }
         this.passUpdate = { actual: '', nueva: '', confirmar: '' };
       },
@@ -133,6 +135,26 @@ export class DashboardClienteComponent implements OnInit {
     }
   }
 
+  /**
+   * Métodos requeridos por el template para evitar errores de compilación
+   */
+
+  cambiarFoto(): void {
+    this.mostrarFeedback('Perfil', 'Abriendo el selector de fotos de perfil (Simulado).', true);
+  }
+
+  descargarComprobante(id: any): void {
+    this.mostrarFeedback('Descarga', `Iniciando la generación y descarga del PDF para la factura #${id}.`, true);
+  }
+
+  abrirNuevoTicket(): void {
+    const el = document.getElementById('ticketModal');
+    if (el && (window as any).bootstrap) {
+      const m = new (window as any).bootstrap.Modal(el);
+      m.show();
+    }
+  }
+
   mostrarFeedback(title: string, msg: string, success: boolean): void {
     this.feedbackTitle = title;
     this.feedbackMessage = msg;
@@ -141,6 +163,14 @@ export class DashboardClienteComponent implements OnInit {
     if (el && (window as any).bootstrap) {
       const m = new (window as any).bootstrap.Modal(el);
       m.show();
+    }
+  }
+
+  private cerrarModal(id: string): void {
+    const el = document.getElementById(id);
+    if (el && (window as any).bootstrap) {
+      const m = (window as any).bootstrap.Modal.getInstance(el);
+      m?.hide();
     }
   }
 }

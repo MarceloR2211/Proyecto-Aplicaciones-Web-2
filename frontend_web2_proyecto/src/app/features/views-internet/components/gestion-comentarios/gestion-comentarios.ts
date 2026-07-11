@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -18,36 +18,58 @@ export class GestionComentariosComponent implements OnInit {
   private dataService = inject(InternetDataService);
 
   comentarios: Comentario[] = [];
-  isLoading = true;
-  procesandoId: number | null = null;
+  isLoading = signal(true);
+  procesandoId = signal<number | null>(null);
+
+  // Feedback UI
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isSuccess = true;
 
   ngOnInit(): void {
     this.cargarComentarios();
   }
 
   cargarComentarios(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.dataService.getComentariosPendientes().subscribe({
-      next: (data) => {
+      next: (data: Comentario[]) => {
         this.comentarios = data;
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
-      error: () => this.isLoading = false
+      error: (err: any) => {
+        this.isLoading.set(false);
+        this.mostrarFeedback('Error', err.error?.message || 'Error al cargar comentarios.', false);
+      }
     });
   }
 
-  cambiarEstado(id: number, nuevoEstado: 'aprobado' | 'rechazado'): void {
-    this.procesandoId = id;
+  cambiarEstado(id: number, nuevoEstado: string): void {
+    this.procesandoId.set(id);
     this.dataService.actualizarEstadoComentario(id, nuevoEstado).subscribe({
-      next: (success) => {
+      next: (success: any) => {
         if (success) {
           this.comentarios = this.comentarios.filter(c => c.id !== id);
-          alert(`Comentario ${nuevoEstado} con éxito.`);
+          this.mostrarFeedback('Moderación', `Comentario ${nuevoEstado} con éxito.`, true);
         }
-        this.procesandoId = null;
+        this.procesandoId.set(null);
       },
-      error: () => this.procesandoId = null
+      error: (err: any) => {
+        this.procesandoId.set(null);
+        this.mostrarFeedback('Error', err.error?.message || 'Error al moderar comentario.', false);
+      }
     });
+  }
+
+  mostrarFeedback(title: string, msg: string, success: boolean): void {
+    this.feedbackTitle = title;
+    this.feedbackMessage = msg;
+    this.isSuccess = success;
+    const el = document.getElementById('feedbackModal');
+    if (el && (window as any).bootstrap) {
+      const m = new (window as any).bootstrap.Modal(el);
+      m.show();
+    }
   }
 
   getEstrellas(count: number): number[] {

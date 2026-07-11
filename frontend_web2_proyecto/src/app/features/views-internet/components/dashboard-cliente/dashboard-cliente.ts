@@ -38,7 +38,7 @@ export class DashboardClienteComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('API Error:', err);
+        console.error('CRITICAL: Failed to load profile. Routing mismatch?', err);
         this.isLoading = false;
       }
     });

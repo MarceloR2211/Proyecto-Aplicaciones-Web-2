@@ -294,6 +294,27 @@
   <app-footer></app-footer>
 </div>
 
+<!-- Modal de Confirmación Genérico -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header bg-danger text-white border-0">
+        <h5 class="modal-title fw-bold">Confirmar Acción</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <i class="bi bi-exclamation-triangle display-4 text-danger mb-3 d-block"></i>
+        <p class="mb-0 fw-bold">{{ confirmMessage }}</p>
+        <p class="text-muted small">Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger rounded-pill px-4" (click)="ejecutarConfirmacion()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Planes -->
 <div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">

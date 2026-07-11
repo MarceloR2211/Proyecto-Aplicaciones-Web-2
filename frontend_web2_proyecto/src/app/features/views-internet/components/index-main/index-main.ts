@@ -45,7 +45,7 @@ export class IndexMainComponent implements OnInit {
     this.dataService.registrarConsulta(this.consulta).subscribe({
       next: (success) => {
         if (success) {
-          alert('Su consulta ha sido enviada con éxito. Un asesor lo contactará pronto.');
+          (window as any).bootstrap?.Modal.getOrCreateInstance(document.getElementById('successModal')).show();
           this.consulta = { dni: '', nombre: '', email: '', telefono: '', motivo_consulta: '' };
         }
       }

@@ -107,9 +107,25 @@ export class DashboardAdminComponent implements OnInit {
     this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '' };
   }
 
-  // Operaciones CRUD Simples (Llamando al servicio)
+  // Sistema de Confirmación por Modal
+  confirmMessage = '';
+  private pendingAction: (() => void) | null = null;
+
+  abrirConfirmacion(msg: string, action: () => void): void {
+    this.confirmMessage = msg;
+    this.pendingAction = action;
+    (window as any).bootstrap?.Modal.getOrCreateInstance(document.getElementById('confirmModal')).show();
+  }
+
+  ejecutarConfirmacion(): void {
+    if (this.pendingAction) this.pendingAction();
+    this.pendingAction = null;
+    (window as any).bootstrap?.Modal.getOrCreateInstance(document.getElementById('confirmModal')).hide();
+  }
+
+  // Operaciones CRUD Planes
   eliminarPlan(id: number): void {
-    if (confirm('¿Está seguro de eliminar este plan de forma permanente?')) {
+    this.abrirConfirmacion('¿Está seguro de eliminar este plan de forma permanente?', () => {
       this.dataService.deletePlan(id).subscribe({
         next: () => {
           alert('Plan eliminado con éxito.');
@@ -117,7 +133,7 @@ export class DashboardAdminComponent implements OnInit {
         },
         error: () => alert('Error al eliminar el plan. Verifique dependencias en la BD.')
       });
-    }
+    });
   }
 
   cambiarRolUsuario(id: number, nuevoRol: 'admin' | 'usuario'): void {
@@ -131,7 +147,7 @@ export class DashboardAdminComponent implements OnInit {
   }
 
   eliminarUsuario(id: number): void {
-    if (confirm('¿Eliminar usuario? Esta acción es irreversible.')) {
+    this.abrirConfirmacion('¿Eliminar usuario? Esta acción es irreversible.', () => {
       this.dataService.deleteUser(id).subscribe({
         next: () => {
           alert('Usuario eliminado.');
@@ -139,7 +155,7 @@ export class DashboardAdminComponent implements OnInit {
         },
         error: () => alert('Error al eliminar usuario.')
       });
-    }
+    });
   }
 
   moderarComentario(id: number, estado: 'aprobado' | 'rechazado'): void {

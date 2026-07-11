@@ -37,7 +37,9 @@ export class Login {
     nombre_completo: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     dni: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
-    telefono: ['', Validators.pattern(/^\d{9}$/)]
+    telefono: ['', Validators.pattern(/^\d{9}$/)],
+    ubigeo: [''],
+    zona: ['']
   });
 
   cambiarModo(modo: 'login' | 'registro'): void {

@@ -16,6 +16,6 @@ const roleMiddleware = require('../middlewares/role.middleware');
 router.get('/admin', authMiddleware, roleMiddleware(['admin']), getAdminDashboard);
 
 // 2. Dashboard del Cliente: Acceso para rol 'usuario' 
-router.get('/client', authMiddleware, roleMiddleware(['usuario']), getClientDashboard);
+router.get('/cliente', authMiddleware, roleMiddleware(['usuario']), getClientDashboard);
 
 module.exports = router;

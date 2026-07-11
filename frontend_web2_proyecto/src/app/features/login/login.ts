@@ -22,22 +22,22 @@ export class Login {
   modo = signal<'login' | 'registro'>('login');
   cargando = signal(false);
   errorMsg = signal<string | null>(null);
-  exitoRegistro = signal<string | null>(null); // Añadido para sincronizar con HTML
+  exitoRegistro = signal<string | null>(null);
 
   loginForm = this.fb.nonNullable.group({
     username: ['', Validators.required],
     password: ['', Validators.required]
   });
 
-  // Estructura sincronizada con PostgreSQL: DNI, Ubigeo, Zona, email, password
+  // Estructura SINCRONIZADA con PostgreSQL: llaves en minúsculas para coincidir con backend
   registroForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(4)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     nombre_completo: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    DNI: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
-    Ubigeo: ['', Validators.required],
-    Zona: ['', Validators.required],
+    dni: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
+    ubigeo: ['', Validators.required],
+    zona: ['', Validators.required],
     telefono: ['', Validators.pattern(/^\d{9}$/)]
   });
 
@@ -48,7 +48,10 @@ export class Login {
   }
 
   onSubmitLogin(): void {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+       this.loginForm.markAllAsTouched();
+       return;
+    }
 
     this.cargando.set(true);
     this.errorMsg.set(null);
@@ -79,7 +82,7 @@ export class Login {
     this.cargando.set(true);
     this.errorMsg.set(null);
 
-    // Payload limpio para PostgreSQL
+    // Payload sincronizado con el controlador de usuarios del backend
     const payload = this.registroForm.getRawValue();
 
     this.authService.registrar(payload).subscribe({
@@ -90,7 +93,6 @@ export class Login {
           return;
         }
         this.exitoRegistro.set('Registro exitoso. Ahora puede iniciar sesión.');
-        alert('Registro exitoso. Ahora puede iniciar sesión.');
         this.modo.set('login');
       },
       error: (err: HttpErrorResponse) => {

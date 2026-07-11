@@ -96,7 +96,10 @@
               <label class="form-label small fw-bold">Motivo de Consulta / Interés</label>
               <textarea class="form-control" rows="3" name="motivo_consulta" [(ngModel)]="consulta.motivo_consulta"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold">ENVIAR SOLICITUD</button>
+            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold" [disabled]="isSubmitting()">
+              <span *ngIf="!isSubmitting()">ENVIAR SOLICITUD</span>
+              <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm"></span>
+            </button>
           </form>
         </div>
       </div>
@@ -106,17 +109,20 @@
 
 <app-footer></app-footer>
 
-<!-- Modal de Confirmación Global -->
-<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+<!-- Modal de Feedback (Éxito/Error) -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4 shadow">
-      <div class="modal-body text-center p-5">
-        <div class="text-success display-1 mb-4">
-          <i class="bi bi-check-circle-fill"></i>
-        </div>
-        <h4 class="fw-bold text-primary mb-2">¡Enviado con Éxito!</h4>
-        <p class="text-muted">La información ha sido procesada y registrada en PostgreSQL.</p>
-        <button type="button" class="btn btn-primary rounded-pill px-5 py-2 mt-3" data-bs-dismiss="modal">ACEPTAR</button>
+      <div class="modal-header border-0" [class.bg-success]="isSuccess" [class.bg-danger]="!isSuccess">
+        <h5 class="modal-title fw-bold text-white">{{feedbackTitle}}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <i class="bi fs-1 mb-3 d-block" [class.bi-check-circle-fill]="isSuccess" [class.bi-x-circle-fill]="!isSuccess" [class.text-success]="isSuccess" [class.text-danger]="!isSuccess"></i>
+        <p class="mb-0 fw-medium">{{feedbackMessage}}</p>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn rounded-pill px-4" [class.btn-success]="isSuccess" [class.btn-danger]="!isSuccess" data-bs-dismiss="modal">Entendido</button>
       </div>
     </div>
   </div>

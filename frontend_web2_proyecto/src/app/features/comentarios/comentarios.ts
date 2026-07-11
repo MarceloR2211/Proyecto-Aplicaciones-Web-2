@@ -24,6 +24,11 @@ export class ComentariosPublic implements OnInit {
   nuevoComentario = { calificacion: 5, comentario: '' };
   enviando = signal(false);
 
+  // Feedback UI
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isSuccess = true;
+
   ngOnInit(): void {
     this.cargarComentarios();
   }
@@ -36,7 +41,7 @@ export class ComentariosPublic implements OnInit {
 
   enviarComentario(): void {
     if (!this.authService.estaAutenticado()) {
-      alert('Debes iniciar sesión para dejar una reseña.');
+      this.mostrarFeedback('Acceso Requerido', 'Debes iniciar sesión para dejar una reseña.', false);
       this.router.navigate(['/login']);
       return;
     }
@@ -46,16 +51,27 @@ export class ComentariosPublic implements OnInit {
     this.enviando.set(true);
     this.dataService.crearComentario(this.nuevoComentario).subscribe({
       next: () => {
-        alert('Reseña enviada con éxito a PostgreSQL. Un administrador la revisará pronto.');
-        this.nuevoComentario = { calificacion: 5, comentario: '' };
         this.enviando.set(false);
+        this.mostrarFeedback('¡Gracias!', 'Tu reseña ha sido enviada para moderación.', true);
+        this.nuevoComentario = { calificacion: 5, comentario: '' };
         this.cargarComentarios();
       },
       error: (err: any) => {
-        console.error('Error al enviar reseña:', err);
         this.enviando.set(false);
+        this.mostrarFeedback('Error', err.error?.message || 'Hubo un fallo al enviar la reseña.', false);
       }
     });
+  }
+
+  mostrarFeedback(title: string, msg: string, success: boolean): void {
+    this.feedbackTitle = title;
+    this.feedbackMessage = msg;
+    this.isSuccess = success;
+    const el = document.getElementById('feedbackModal');
+    if (el && (window as any).bootstrap) {
+      const m = new (window as any).bootstrap.Modal(el);
+      m.show();
+    }
   }
 
   getEstrellas(n: number) { return Array(n).fill(0); }

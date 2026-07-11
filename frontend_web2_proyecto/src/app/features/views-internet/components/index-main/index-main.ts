@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -32,24 +32,48 @@ export class IndexMainComponent implements OnInit {
     motivo_consulta: ''
   };
 
+  isSubmitting = signal(false);
+
+  // Feedback UI
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isSuccess = true;
+
   ngOnInit(): void {
     this.planes$ = this.dataService.getPlanes();
   }
 
   enviarConsulta(): void {
     if (!this.consulta.dni || !this.consulta.nombre || !this.consulta.email) {
-      alert('Por favor complete los campos obligatorios (DNI, Nombre, Email).');
+      this.mostrarFeedback('Campos Obligatorios', 'Por favor complete DNI, Nombre y Email.', false);
       return;
     }
 
+    this.isSubmitting.set(true);
     this.dataService.registrarConsulta(this.consulta).subscribe({
       next: (success) => {
+        this.isSubmitting.set(false);
         if (success) {
-          (window as any).bootstrap?.Modal.getOrCreateInstance(document.getElementById('successModal')).show();
+          this.mostrarFeedback('Consulta Enviada', '¡Gracias! Nos pondremos en contacto pronto.', true);
           this.consulta = { dni: '', nombre: '', email: '', telefono: '', motivo_consulta: '' };
         }
+      },
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        this.mostrarFeedback('Error', err.error?.message || 'Error al enviar la consulta.', false);
       }
     });
+  }
+
+  mostrarFeedback(title: string, msg: string, success: boolean): void {
+    this.feedbackTitle = title;
+    this.feedbackMessage = msg;
+    this.isSuccess = success;
+    const el = document.getElementById('feedbackModal');
+    if (el && (window as any).bootstrap) {
+      const m = new (window as any).bootstrap.Modal(el);
+      m.show();
+    }
   }
 
   irMiCuenta(): void {

@@ -1,10 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { InternetDataService } from '../../services/internet-data.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { DatosCliente } from '../../models/metrica.model';
+import { DatosCliente, Ticket } from '../../models/metrica.model';
 import { NavbarComponent } from '../navbar/navbar';
 import { FooterComponent } from '../footer/footer';
 
@@ -23,58 +23,72 @@ export class DashboardClienteComponent implements OnInit {
   passUpdate = { actual: '', nueva: '', confirmar: '' };
 
   datos: DatosCliente | null = null;
-  isLoading = true;
+  isLoading = signal(true);
+  isSubmitting = signal(false);
+
+  // Feedback UI
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isSuccess = true;
 
   ngOnInit(): void {
     this.cargarDatos();
   }
 
   cargarDatos(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.dataService.getDatosCliente().subscribe({
       next: (data: DatosCliente) => {
         this.datos = data;
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
       error: (err: any) => {
-        console.error('CRITICAL: Failed to load profile.', err);
-        this.isLoading = false;
+        this.mostrarFeedback('Error', err.error?.message || 'No se pudo cargar el perfil.', false);
+        this.isLoading.set(false);
       }
     });
   }
 
-  simularPago(facturaId: number): void {
-    alert(`Redireccionando a pasarela de pago para factura #${facturaId}...`);
-  }
-
-  descargarComprobante(facturaId: number): void {
-    alert(`Generando PDF para factura #${facturaId}...`);
-  }
-
   crearTicket(): void {
     if (!this.nuevoTicket.titulo || !this.nuevoTicket.descripcion) return;
+
+    this.isSubmitting.set(true);
     this.dataService.createTicket(this.nuevoTicket).subscribe({
       next: () => {
-        alert('Ticket generado correctamente.');
+        this.isSubmitting.set(false);
+        this.mostrarFeedback('Éxito', 'Ticket generado correctamente.', true);
         this.nuevoTicket = { titulo: '', descripcion: '' };
         this.cargarDatos();
+      },
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        this.mostrarFeedback('Error', err.error?.message || 'Error al crear ticket.', false);
       }
     });
   }
 
   confirmarCambioPassword(): void {
     if (this.passUpdate.nueva !== this.passUpdate.confirmar) {
-      alert('Las contraseñas no coinciden.');
+      this.mostrarFeedback('Validación', 'Las contraseñas no coinciden.', false);
       return;
     }
+
+    this.isSubmitting.set(true);
     this.authService.changePassword({
       username: this.authService.usuarioActual()?.username || '',
       newPassword: this.passUpdate.nueva,
       confirmPassword: this.passUpdate.confirmar
     }).subscribe({
       next: (res: any) => {
-        if (!res.error) alert('Contraseña actualizada.');
+        this.isSubmitting.set(false);
+        if (!res.error) {
+          this.mostrarFeedback('Éxito', 'Contraseña actualizada correctamente.', true);
+        }
         this.passUpdate = { actual: '', nueva: '', confirmar: '' };
+      },
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        this.mostrarFeedback('Error', err.error?.message || 'Error al actualizar contraseña.', false);
       }
     });
   }
@@ -82,36 +96,51 @@ export class DashboardClienteComponent implements OnInit {
   onFileSelected(event: any, facturaId: number): void {
     const file: File = event.target.files[0];
     if (file && file.type === 'application/pdf') {
+      this.isSubmitting.set(true);
       this.dataService.subirComprobantePago(facturaId, file).subscribe({
         next: () => {
-          alert('Comprobante subido con éxito. El administrador revisará su pago.');
+          this.isSubmitting.set(false);
+          this.mostrarFeedback('Archivo Recibido', 'Comprobante subido con éxito.', true);
           this.cargarDatos();
         },
-        error: () => alert('Error al subir el archivo. Intente nuevamente.')
+        error: (err: any) => {
+          this.isSubmitting.set(false);
+          this.mostrarFeedback('Error', err.error?.message || 'Error al subir archivo.', false);
+        }
       });
     } else {
-      alert('Por favor seleccione un archivo PDF válido.');
+      this.mostrarFeedback('Archivo Inválido', 'Por favor seleccione un archivo PDF.', false);
     }
   }
 
   actualizarPerfil(datos: DatosCliente): void {
-    if (datos.perfil.nombre) {
-      const usuario = this.authService.usuarioActual();
-      if (usuario) {
-        this.dataService.updateUser(usuario.id, {
-          nombre_completo: datos.perfil.nombre
-        }).subscribe({
-          next: () => {
-             alert('Perfil actualizado con éxito en PostgreSQL.');
-             this.cargarDatos();
-          },
-          error: () => alert('Error al actualizar perfil.')
-        });
-      }
+    const usuario = this.authService.usuarioActual();
+    if (usuario && datos.perfil.nombre) {
+      this.isSubmitting.set(true);
+      this.dataService.updateUser(usuario.id, {
+        nombre_completo: datos.perfil.nombre
+      }).subscribe({
+        next: () => {
+           this.isSubmitting.set(false);
+           this.mostrarFeedback('Éxito', 'Perfil actualizado correctamente.', true);
+           this.cargarDatos();
+        },
+        error: (err: any) => {
+          this.isSubmitting.set(false);
+          this.mostrarFeedback('Error', err.error?.message || 'Error al actualizar perfil.', false);
+        }
+      });
     }
   }
 
-  cambiarFoto(): void {
-    alert('Función de carga de imagen de perfil activada. Seleccione su archivo (Simulado).');
+  mostrarFeedback(title: string, msg: string, success: boolean): void {
+    this.feedbackTitle = title;
+    this.feedbackMessage = msg;
+    this.isSuccess = success;
+    const el = document.getElementById('feedbackModal');
+    if (el && (window as any).bootstrap) {
+      const m = new (window as any).bootstrap.Modal(el);
+      m.show();
+    }
   }
 }

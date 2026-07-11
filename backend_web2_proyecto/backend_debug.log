@@ -1,0 +1,139 @@
+◇ injected env (5) from src/config/.env // tip: ◈ encrypted .env [www.dotenvx.com]
+[---] Cron Job de facturación cargado y estructurado en MVC . . .
+Servidor ejecutándose en http://localhost:3000
+Error crítico en PostgreSQL:
+Error en usuariosModel.crearUsuario: AggregateError [ECONNREFUSED]:
+    at /app/backend_web2_proyecto/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Object.crearUsuario (/app/backend_web2_proyecto/src/models/usuarios.model.js:85:24)
+    at async crearUsuario (/app/backend_web2_proyecto/src/controllers/usuarios.controller.js:54:30) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Error en controlador crearUsuario: AggregateError [ECONNREFUSED]:
+    at /app/backend_web2_proyecto/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Object.crearUsuario (/app/backend_web2_proyecto/src/models/usuarios.model.js:85:24)
+    at async crearUsuario (/app/backend_web2_proyecto/src/controllers/usuarios.controller.js:54:30) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Error en usuariosModel.crearUsuario: AggregateError [ECONNREFUSED]:
+    at /app/backend_web2_proyecto/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Object.crearUsuario (/app/backend_web2_proyecto/src/models/usuarios.model.js:85:24)
+    at async crearUsuario (/app/backend_web2_proyecto/src/controllers/usuarios.controller.js:54:30) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Error en controlador crearUsuario: AggregateError [ECONNREFUSED]:
+    at /app/backend_web2_proyecto/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Object.crearUsuario (/app/backend_web2_proyecto/src/models/usuarios.model.js:85:24)
+    at async crearUsuario (/app/backend_web2_proyecto/src/controllers/usuarios.controller.js:54:30) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Error en obtenerTodos (planes): AggregateError [ECONNREFUSED]:
+    at /app/backend_web2_proyecto/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Object.obtenerTodos (/app/backend_web2_proyecto/src/models/planes.model.js:8:20)
+    at async obtenerTodos (/app/backend_web2_proyecto/src/controllers/planes.controller.js:6:24) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:1678:14)
+        at afterConnectMultiple (node:net:1708:16) {
+      errno: -111,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}

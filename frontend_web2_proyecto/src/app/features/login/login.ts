@@ -19,40 +19,34 @@ export class Login {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  // ===== Estado UI =====
   modo = signal<'login' | 'registro'>('login');
   cargando = signal(false);
   errorMsg = signal<string | null>(null);
-  exitoRegistro = signal<string | null>(null);
 
-  // ===== Formularios =====
   loginForm = this.fb.nonNullable.group({
     username: ['', Validators.required],
     password: ['', Validators.required]
   });
 
+  // Estructura sincronizada con PostgreSQL: DNI, Ubigeo, Zona, email, password
   registroForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(4)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     nombre_completo: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    dni: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
-    telefono: ['', Validators.pattern(/^\d{9}$/)],
-    ubigeo: [''],
-    zona: ['']
+    DNI: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
+    Ubigeo: ['', Validators.required],
+    Zona: ['', Validators.required],
+    telefono: ['', Validators.pattern(/^\d{9}$/)]
   });
 
   cambiarModo(modo: 'login' | 'registro'): void {
     this.modo.set(modo);
     this.errorMsg.set(null);
-    this.exitoRegistro.set(null);
   }
 
   onSubmitLogin(): void {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
+    if (this.loginForm.invalid) return;
 
     this.cargando.set(true);
     this.errorMsg.set(null);
@@ -60,23 +54,16 @@ export class Login {
     this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: (res) => {
         this.cargando.set(false);
-
         if (res.error) {
           this.errorMsg.set(res.message);
           return;
         }
-
-        if (res.user.mustChangePassword) {
-          this.router.navigate(['/cambiar-password']);
-          return;
-        }
-
         const destino = res.user.rol === 'admin' ? '/dashboard-admin' : '/dashboard-cliente';
         this.router.navigate([destino]);
       },
       error: (err: HttpErrorResponse) => {
         this.cargando.set(false);
-        this.errorMsg.set(err.error?.message ?? 'Error al iniciar sesión. Intenta nuevamente.');
+        this.errorMsg.set(err.error?.message ?? 'Error de conexión con el servidor.');
       }
     });
   }
@@ -90,28 +77,22 @@ export class Login {
     this.cargando.set(true);
     this.errorMsg.set(null);
 
+    // Payload limpio para PostgreSQL
     const payload = this.registroForm.getRawValue();
 
     this.authService.registrar(payload).subscribe({
       next: (res) => {
         this.cargando.set(false);
-
         if (res.error) {
           this.errorMsg.set(res.message);
           return;
         }
-
-        alert('Cuenta creada exitosamente en PostgreSQL. Ya puedes iniciar sesión.');
-
-        // Volvemos al modo login con el usuario recién creado precargado
-        this.exitoRegistro.set('Cuenta creada exitosamente. Ya puedes iniciar sesión.');
-        this.loginForm.patchValue({ username: res.usuario.username, password: '' });
-        this.registroForm.reset();
+        alert('Registro exitoso. Ahora puede iniciar sesión.');
         this.modo.set('login');
       },
       error: (err: HttpErrorResponse) => {
         this.cargando.set(false);
-        this.errorMsg.set(err.error?.message ?? 'Error al registrar la cuenta. Intenta nuevamente.');
+        this.errorMsg.set(err.error?.message ?? 'Error al registrar usuario.');
       }
     });
   }

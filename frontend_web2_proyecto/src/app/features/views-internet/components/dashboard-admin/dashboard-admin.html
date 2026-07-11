@@ -1,326 +1,295 @@
-<div class="w-100 min-vh-100 d-flex flex-column bg-light">
+<div class="admin-layout min-vh-100 bg-light">
+  <!-- Navbar Global -->
   <app-navbar></app-navbar>
 
-  <div class="admin-layout d-flex flex-grow-1">
-    <!-- Sidebar lateral izquierdo corporativo -->
-    <aside class="sidebar-admin d-none d-lg-block shadow-sm">
-      <div class="sidebar-header p-4 border-bottom">
-        <h5 class="fw-bold mb-0 text-white"><i class="bi bi-shield-lock me-2"></i> PANEL CONTROL</h5>
-      </div>
-      <nav class="sidebar-nav p-3">
-        <a href="javascript:void(0)" (click)="setTab('resumen')" [class.active]="activeTab === 'resumen'" class="nav-link-sidebar">
-          <i class="bi bi-speedometer2 me-2"></i> Resumen
-        </a>
-        <a href="javascript:void(0)" (click)="setTab('planes')" [class.active]="activeTab === 'planes'" class="nav-link-sidebar">
-          <i class="bi bi-card-list me-2"></i> Planes
-        </a>
-        <a href="javascript:void(0)" (click)="setTab('usuarios')" [class.active]="activeTab === 'usuarios'" class="nav-link-sidebar">
-          <i class="bi bi-people me-2"></i> Usuarios
-        </a>
-        <a href="javascript:void(0)" (click)="setTab('tickets')" [class.active]="activeTab === 'tickets'" class="nav-link-sidebar">
-          <i class="bi bi-ticket-perforated me-2"></i> Soporte
-        </a>
-        <a href="javascript:void(0)" (click)="setTab('comentarios')" [class.active]="activeTab === 'comentarios'" class="nav-link-sidebar">
-          <i class="bi bi-chat-left-dots me-2"></i> Moderación
-        </a>
-      </nav>
-    </aside>
+  <div class="container-fluid py-4">
+    <div class="row g-4">
 
-    <!-- Contenedor de Contenido Principal -->
-    <main class="flex-grow-1 p-4 overflow-auto">
-      <div class="container-fluid">
-        <header class="mb-5 d-flex justify-content-between align-items-center">
-          <div>
-            <h2 class="fw-bold text-primary mb-1">Centro Operativo ISP</h2>
-            <p class="text-muted">Gestión integral de planes, usuarios y servicios.</p>
+      <!-- Sidebar de Navegación -->
+      <aside class="col-lg-3 col-xl-2">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 80px;">
+          <div class="card-body p-0">
+            <div class="bg-primary text-white p-4">
+              <h5 class="mb-0 fw-bold">Admin ISP</h5>
+              <small class="opacity-75">Panel de Gestión</small>
+            </div>
+            <div class="list-group list-group-flush">
+              <button (click)="setTab('resumen')" class="list-group-item list-group-item-action border-0 py-3 d-flex align-items-center" [class.active]="activeTab === 'resumen'">
+                <i class="bi bi-speedometer2 me-3"></i> Resumen Operativo
+              </button>
+              <button (click)="setTab('planes')" class="list-group-item list-group-item-action border-0 py-3 d-flex align-items-center" [class.active]="activeTab === 'planes'">
+                <i class="bi bi-wifi me-3"></i> Catálogo de Planes
+              </button>
+              <button (click)="setTab('usuarios')" class="list-group-item list-group-item-action border-0 py-3 d-flex align-items-center" [class.active]="activeTab === 'usuarios'">
+                <i class="bi bi-people me-3"></i> Usuarios & Roles
+              </button>
+              <button (click)="setTab('tickets')" class="list-group-item list-group-item-action border-0 py-3 d-flex align-items-center" [class.active]="activeTab === 'tickets'">
+                <i class="bi bi-ticket-perforated me-3"></i> Tickets de Soporte
+              </button>
+              <button (click)="setTab('consultas')" class="list-group-item list-group-item-action border-0 py-3 d-flex align-items-center" [class.active]="activeTab === 'consultas'">
+                <i class="bi bi-envelope-paper me-3"></i> Gestión de Consultas
+              </button>
+              <button (click)="setTab('comentarios')" class="list-group-item list-group-item-action border-0 py-3 d-flex align-items-center" [class.active]="activeTab === 'comentarios'">
+                <i class="bi bi-chat-quote me-3"></i> Moderación Reseñas
+              </button>
+            </div>
           </div>
-          <button class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="cargarDatos()">
-            <i class="bi bi-arrow-clockwise me-2"></i> Refrescar Datos
-          </button>
-        </header>
+        </div>
+      </aside>
 
-        <ul class="nav nav-pills mb-4 gap-2 d-lg-none overflow-auto flex-nowrap pb-2">
-          <li class="nav-item">
-            <button class="nav-link" [class.active]="activeTab === 'resumen'" (click)="setTab('resumen')">Resumen</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" [class.active]="activeTab === 'planes'" (click)="setTab('planes')">Planes</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" [class.active]="activeTab === 'usuarios'" (click)="setTab('usuarios')">Usuarios</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" [class.active]="activeTab === 'tickets'" (click)="setTab('tickets')">Tickets</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" [class.active]="activeTab === 'consultas'" (click)="setTab('consultas')">Consultas</button>
-          </li>
-        </ul>
+      <!-- Área de Contenido -->
+      <main class="col-lg-9 col-xl-10">
 
-        <div>
-          <!-- VISTA: RESUMEN (ANALÍTICAS REALES) -->
-          <div *ngIf="activeTab === 'resumen'" class="row g-4 mb-5">
-            <div class="col-md-3">
-              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-primary border-4 rounded-3 bg-white">
-                <div class="d-flex justify-content-between">
-                  <h6 class="text-muted small fw-bold mb-2">CLIENTES ACTIVOS</h6>
-                  <i class="bi bi-people text-primary"></i>
+        <!-- KPIs Superiores -->
+        <div class="row g-4 mb-4" *ngIf="metricas">
+          <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-primary border-4">
+              <div class="d-flex align-items-center">
+                <div class="flex-shrink-0 bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+                  <i class="bi bi-people-fill fs-4"></i>
                 </div>
-                <h3 class="fw-bold mb-0 text-primary">{{metricas?.clientesActivos}}</h3>
+                <div class="flex-grow-1 ms-3">
+                  <h4 class="mb-0 fw-bold">{{metricas.clientesActivos}}</h4>
+                  <p class="text-muted small mb-0">Clientes Totales</p>
+                </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-success border-4 rounded-3 bg-white">
-                <div class="d-flex justify-content-between">
-                  <h6 class="text-muted small fw-bold mb-2">CONTRATOS VIGENTES</h6>
-                  <i class="bi bi-file-earmark-check text-success"></i>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-success border-4">
+              <div class="d-flex align-items-center">
+                <div class="flex-shrink-0 bg-success bg-opacity-10 p-3 rounded-3 text-success">
+                  <i class="bi bi-check-circle-fill fs-4"></i>
                 </div>
-                <h3 class="fw-bold mb-0 text-success">{{metricas?.serviciosActivos}}</h3>
+                <div class="flex-grow-1 ms-3">
+                  <h4 class="mb-0 fw-bold">{{metricas.serviciosActivos}}</h4>
+                  <p class="text-muted small mb-0">Servicios Activos</p>
+                </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-warning border-4 rounded-3 bg-white">
-                <div class="d-flex justify-content-between">
-                  <h6 class="text-muted small fw-bold mb-2">TICKETS ABIERTOS</h6>
-                  <i class="bi bi-ticket-perforated text-warning"></i>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-warning border-4">
+              <div class="d-flex align-items-center">
+                <div class="flex-shrink-0 bg-warning bg-opacity-10 p-3 rounded-3 text-warning">
+                  <i class="bi bi-exclamation-triangle-fill fs-4"></i>
                 </div>
-                <h3 class="fw-bold mb-0 text-warning">{{metricas?.ticketsPendientes}}</h3>
+                <div class="flex-grow-1 ms-3">
+                  <h4 class="mb-0 fw-bold">{{metricas.ticketsPendientes}}</h4>
+                  <p class="text-muted small mb-0">Tickets de Soporte</p>
+                </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card card-kpi p-4 border-0 shadow-sm border-start border-danger border-4 rounded-3 bg-white">
-                <div class="d-flex justify-content-between">
-                  <h6 class="text-muted small fw-bold mb-2">POR COBRAR MOROSIDAD</h6>
-                  <i class="bi bi-cash-stack text-danger"></i>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-danger border-4">
+              <div class="d-flex align-items-center">
+                <div class="flex-shrink-0 bg-danger bg-opacity-10 p-3 rounded-3 text-danger">
+                  <i class="bi bi-cash-stack fs-4"></i>
                 </div>
-                <h3 class="fw-bold mb-0 text-danger">S/. {{metricas?.porCobrar}}</h3>
+                <div class="flex-grow-1 ms-3">
+                  <h4 class="mb-0 fw-bold">S/. {{metricas.porCobrar | number:'1.2-2'}}</h4>
+                  <p class="text-muted small mb-0">Por Cobrar</p>
+                </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section fade-in">
+
+          <!-- VISTA: CONSULTAS (REQUERIDA) -->
+          <div *ngIf="activeTab === 'consultas'" class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="fw-bold text-primary mb-0">Gestión de Consultas</h4>
+              <span class="badge bg-light text-primary border px-3 py-2 rounded-pill">{{consultas.length}} Leads en Cola</span>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="bg-light">
+                  <tr class="small text-muted text-uppercase">
+                    <th class="border-0">Cliente</th>
+                    <th class="border-0">Correo / Teléfono</th>
+                    <th class="border-0 text-center">Fecha</th>
+                    <th class="border-0">Asunto</th>
+                    <th class="border-0 text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let c of consultas">
+                    <td>
+                      <div class="fw-bold">{{c.nombre}}</div>
+                      <small class="text-muted">DNI: {{c.dni}}</small>
+                    </td>
+                    <td>
+                      <div class="small"><i class="bi bi-envelope me-1"></i>{{c.email}}</div>
+                      <div class="small"><i class="bi bi-telephone me-1"></i>{{c.telefono}}</div>
+                    </td>
+                    <td class="text-center small">{{c.fecha_consulta | date:'shortDate'}}</td>
+                    <td><span class="text-truncate d-inline-block" style="max-width: 150px;">{{c.motivo_consulta}}</span></td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm me-2" (click)="verConsulta(c)">Ver Detalle</button>
+                      <button class="btn btn-sm btn-outline-success rounded-pill px-3" (click)="convertirConsulta(c.id)">Atendido</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="consultas.length === 0" class="text-center py-5">
+              <i class="bi bi-inbox fs-1 text-muted opacity-50 d-block mb-3"></i>
+              <p class="text-muted">No hay consultas registradas actualmente.</p>
             </div>
           </div>
 
           <!-- VISTA: PLANES -->
-          <div *ngIf="activeTab === 'planes'" class="card border-0 shadow-sm rounded-4 p-4 mb-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h4 class="fw-bold mb-0 text-primary">Catálogo de Planes</h4>
-              <button class="btn btn-success btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#planModal" (click)="cancelarEdicionPlan()">+ NUEVO PLAN</button>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nombre Plan</th>
-                    <th>Velocidad</th>
-                    <th>Renta</th>
-                    <th class="text-end">Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let p of planes">
-                    <td class="text-muted">#{{p.id}}</td>
-                    <td class="fw-bold">{{p.nombre_plan}}</td>
-                    <td>{{p.velocidad}}</td>
-                    <td>{{p.precio | currency}}</td>
-                    <td class="text-end">
-                      <button class="btn btn-sm btn-light border me-1" data-bs-toggle="modal" data-bs-target="#planModal" (click)="editarPlan(p)"><i class="bi bi-pencil"></i></button>
-                      <button class="btn btn-sm btn-outline-danger" (click)="eliminarPlan(p.id)"><i class="bi bi-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <div *ngIf="activeTab === 'planes'" class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+             <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold text-primary mb-0">Catálogo de Planes</h4>
+                <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#planModal">
+                  <i class="bi bi-plus-lg me-2"></i>Nuevo Plan
+                </button>
+             </div>
+             <!-- Tabla de planes similar a la anterior pero estilizada -->
+             <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr class="small text-muted">
+                      <th>Plan</th>
+                      <th>Tipo</th>
+                      <th>Velocidad</th>
+                      <th>Precio</th>
+                      <th class="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let p of planes">
+                      <td class="fw-bold text-dark">{{p.nombre_plan}}</td>
+                      <td><span class="badge bg-light text-dark border">{{p.tipo_plan | uppercase}}</span></td>
+                      <td>{{p.velocidad}}</td>
+                      <td class="fw-bold">S/. {{p.precio}}</td>
+                      <td class="text-end">
+                        <button class="btn btn-sm btn-outline-danger border-0" (click)="eliminarPlan(p.id)"><i class="bi bi-trash"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+             </div>
           </div>
 
           <!-- VISTA: USUARIOS -->
-          <div *ngIf="activeTab === 'usuarios'" class="card border-0 shadow-sm rounded-4 p-4 mb-5">
-            <h4 class="fw-bold mb-4 text-primary">Usuarios Registrados</h4>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nombre Completo</th>
-                    <th>Usuario</th>
-                    <th>Rol</th>
-                    <th class="text-end">Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let u of usuarios">
-                    <td class="text-muted">#{{u.id}}</td>
-                    <td class="fw-bold">{{u.nombre_completo}}</td>
-                    <td>{{u.username}}</td>
-                    <td>
-                      <select class="form-select form-select-sm" (change)="cambiarRolUsuario(u.id, $any($event.target).value)">
-                        <option value="admin" [selected]="u.rol === 'admin'">ADMIN</option>
-                        <option value="usuario" [selected]="u.rol === 'usuario'">USUARIO</option>
-                      </select>
-                    </td>
-                    <td>
-                      <select class="form-select form-select-sm" (change)="asignarPlanManual(u.id, $any($event.target).value)">
-                        <option value="">Asignar Plan...</option>
-                        <option *ngFor="let p of planes" [value]="p.id">{{p.nombre_plan}} (S/. {{p.precio}})</option>
-                      </select>
-                    </td>
-                    <td class="text-end">
-                      <button class="btn btn-sm btn-outline-danger" (click)="eliminarUsuario(u.id)"><i class="bi bi-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- VISTA: TICKETS -->
-          <div *ngIf="activeTab === 'tickets'" class="card border-0 shadow-sm rounded-4 p-4 mb-5">
-            <h4 class="fw-bold mb-4 text-primary">Gestión de Tickets</h4>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr>
-                    <th>Ticket</th>
-                    <th>Asunto / Descripción</th>
-                    <th>Estado</th>
-                    <th class="text-end">Actualizar</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let t of tickets">
-                    <td><span class="badge bg-dark">#{{t.id}}</span></td>
-                    <td>
-                      <div class="fw-bold">{{t.titulo}}</div>
-                      <small class="text-muted text-truncate d-inline-block" style="max-width: 300px;">{{t.descripcion}}</small>
-                    </td>
-                    <td>
-                      <span class="badge" [class.bg-warning]="t.estado === 'abierto'" [class.bg-info]="t.estado === 'en_proceso'" [class.bg-success]="t.estado === 'resuelto'">
-                        {{t.estado | uppercase}}
-                      </span>
-                    </td>
-                    <td class="text-end">
-                      <select class="form-select form-select-sm" (change)="actualizarEstadoTicket(t.id, $any($event.target).value)">
-                        <option value="abierto" [selected]="t.estado === 'abierto'">Abierto</option>
-                        <option value="en_proceso" [selected]="t.estado === 'en_proceso'">En Proceso</option>
-                        <option value="resuelto" [selected]="t.estado === 'resuelto'">Resuelto</option>
-                      </select>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- VISTA: CONSULTAS WEB -->
-          <div *ngIf="activeTab === 'consultas'" class="card border-0 shadow-sm rounded-4 p-4 mb-5 bg-white">
-            <h4 class="fw-bold mb-4 text-primary">Leads de Ventas (Consultas)</h4>
+          <div *ngIf="activeTab === 'usuarios'" class="card border-0 shadow-sm rounded-4 p-4">
+            <h4 class="fw-bold text-primary mb-4">Usuarios del Sistema</h4>
             <div class="table-responsive">
               <table class="table table-hover align-middle">
                 <thead>
                   <tr class="small text-muted">
-                    <th>CLIENTE</th>
-                    <th>CONTACTO</th>
-                    <th>MOTIVO</th>
-                    <th class="text-end">ACCIÓN</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let con of consultas">
-                    <td>
-                      <div class="fw-bold">{{con.nombre}}</div>
-                      <small class="text-muted">DNI: {{con.dni}}</small>
-                    </td>
-                    <td>
-                      <div class="small"><i class="bi bi-envelope me-1"></i>{{con.email}}</div>
-                      <div class="small"><i class="bi bi-phone me-1"></i>{{con.telefono}}</div>
-                    </td>
-                    <td><p class="small mb-0 text-truncate" style="max-width: 250px;">{{con.motivo_consulta}}</p></td>
-                    <td class="text-end">
-                      <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" (click)="convertirConsulta(con.id)">CONVERTIR</button>
-                    </td>
+                  <tr *ngFor="let u of usuarios">
+                    <td class="fw-bold">{{u.username}}</td>
+                    <td><span class="badge" [class.bg-primary]="u.rol === 'admin'" [class.bg-info]="u.rol === 'usuario'">{{u.rol | uppercase}}</span></td>
+                    <td><span class="badge bg-success">Activo</span></td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div *ngIf="consultas.length === 0" class="text-center py-4 text-muted small">No hay nuevas consultas en la tabla.</div>
           </div>
 
-          <!-- VISTA: MODERACIÓN -->
+          <!-- VISTA: COMENTARIOS -->
           <div *ngIf="activeTab === 'comentarios'" class="card border-0 shadow-sm rounded-4 p-4">
-            <h4 class="fw-bold mb-4 text-primary">Moderación de Comentarios</h4>
+            <h4 class="fw-bold text-primary mb-4">Moderación de Reseñas</h4>
             <div *ngFor="let c of comentarios" class="border-bottom py-3">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h6 class="fw-bold mb-1">{{c.usuario}} <small class="text-muted">({{c.planContratado}})</small></h6>
-                  <p class="mb-0 text-secondary fst-italic">"{{c.texto}}"</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="fw-bold mb-1">{{c.usuario}} <small class="text-muted ms-2">{{c.planContratado}}</small></h6>
+                  <p class="mb-0 text-secondary">"{{c.texto}}"</p>
                 </div>
-                <div class="col-auto">
+                <div class="ms-3">
                   <button class="btn btn-sm btn-success rounded-pill px-3 me-2" (click)="moderarComentario(c.id, 'aprobado')">Aprobar</button>
                   <button class="btn btn-sm btn-outline-danger rounded-pill px-3" (click)="moderarComentario(c.id, 'rechazado')">Rechazar</button>
                 </div>
               </div>
             </div>
-            <div *ngIf="comentarios.length === 0" class="text-center py-4 text-muted">No hay comentarios para moderar.</div>
-          </div>
-
-          <!-- RANKING PLANES (Analítica real) -->
-          <div *ngIf="activeTab === 'resumen' && metricas" class="card border-0 shadow-sm rounded-4 p-4 mt-4 bg-white">
-            <h5 class="fw-bold mb-4 text-primary">Planes con Mayor Suscripción</h5>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr class="small text-muted">
-                    <th>PLAN</th>
-                    <th>TIPO</th>
-                    <th>VELOCIDAD</th>
-                    <th class="text-end">USUARIOS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let p of planes | slice:0:5">
-                    <td class="fw-bold">{{p.nombre_plan}}</td>
-                    <td><span class="badge bg-light text-dark border">{{p.tipo_plan | uppercase}}</span></td>
-                    <td>{{p.velocidad}}</td>
-                    <td class="text-end fw-bold text-primary">{{ (p.id * 12) + 5 }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
 
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   </div>
 
   <app-footer></app-footer>
 </div>
 
-<!-- Modal de Confirmación Genérico -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+<!-- Modal de Feedback (Éxito/Error) -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4 shadow">
-      <div class="modal-header bg-danger text-white border-0">
-        <h5 class="modal-title fw-bold">Confirmar Acción</h5>
+      <div class="modal-header border-0" [class.bg-success]="isSuccess" [class.bg-danger]="!isSuccess">
+        <h5 class="modal-title fw-bold text-white">{{feedbackTitle}}</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-4 text-center">
-        <i class="bi bi-exclamation-triangle display-4 text-danger mb-3 d-block"></i>
-        <p class="mb-0 fw-bold">{{ confirmMessage }}</p>
-        <p class="text-muted small">Esta acción no se puede deshacer.</p>
+        <i class="bi fs-1 mb-3 d-block" [class.bi-check-circle-fill]="isSuccess" [class.bi-x-circle-fill]="!isSuccess" [class.text-success]="isSuccess" [class.text-danger]="!isSuccess"></i>
+        <p class="mb-0 fw-medium">{{feedbackMessage}}</p>
       </div>
       <div class="modal-footer border-0">
-        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-danger rounded-pill px-4" (click)="ejecutarConfirmacion()">Confirmar</button>
+        <button type="button" class="btn rounded-pill px-4" [class.btn-success]="isSuccess" [class.btn-danger]="!isSuccess" data-bs-dismiss="modal">Entendido</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Planes -->
+<!-- Modal Detalle de Consulta -->
+<div class="modal fade" id="consultaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header bg-primary text-white border-0">
+        <h5 class="modal-title fw-bold">Detalle de Consulta</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4" *ngIf="consultaSeleccionada">
+        <div class="mb-4">
+          <label class="small text-muted fw-bold d-block mb-1">Nombre del Cliente</label>
+          <div class="h6 fw-bold">{{consultaSeleccionada.nombre}}</div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-6">
+            <label class="small text-muted fw-bold d-block mb-1">DNI</label>
+            <div class="fw-bold">{{consultaSeleccionada.dni}}</div>
+          </div>
+          <div class="col-6">
+            <label class="small text-muted fw-bold d-block mb-1">Teléfono</label>
+            <div class="fw-bold">{{consultaSeleccionada.telefono}}</div>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="small text-muted fw-bold d-block mb-1">Correo Electrónico</label>
+          <div class="fw-bold text-primary">{{consultaSeleccionada.email}}</div>
+        </div>
+        <div class="p-3 bg-light rounded-3 border-start border-primary border-4">
+          <label class="small text-muted fw-bold d-block mb-2">Mensaje / Motivo</label>
+          <p class="mb-0 text-dark">{{consultaSeleccionada.motivo_consulta}}</p>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cerrar Ventana</button>
+        <button type="button" class="btn btn-primary rounded-pill px-4" (click)="convertirConsulta(consultaSeleccionada?.id)" data-bs-dismiss="modal">Marcar como Atendido</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Planes (Reutilizado) -->
 <div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4 shadow">
       <div class="modal-header bg-primary text-white border-0">
-        <h5 class="modal-title fw-bold">{{ editandoPlanId ? 'Actualizar Plan' : 'Crear Nuevo Plan' }}</h5>
+        <h5 class="modal-title fw-bold">Gestión de Plan</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="closePlanModal"></button>
       </div>
       <div class="modal-body p-4">
@@ -338,22 +307,16 @@
           </div>
           <div class="col-md-6">
             <label class="form-label small fw-bold">Velocidad</label>
-            <input type="text" class="form-control" placeholder="Ej: 300 Mbps" [(ngModel)]="nuevoPlan.velocidad">
+            <input type="text" class="form-control" [(ngModel)]="nuevoPlan.velocidad">
           </div>
         </div>
         <div class="mb-3">
           <label class="form-label small fw-bold">Precio (S/.)</label>
           <input type="number" class="form-control" [(ngModel)]="nuevoPlan.precio">
         </div>
-        <div class="mb-0">
-          <label class="form-label small fw-bold">Descripción</label>
-          <textarea class="form-control" rows="3" [(ngModel)]="nuevoPlan.descripcion"></textarea>
-        </div>
       </div>
       <div class="modal-footer border-0">
-        <button type="button" class="btn btn-primary rounded-pill w-100 py-3 fw-bold" (click)="crearOActualizarPlan()">
-          {{ editandoPlanId ? 'GUARDAR CAMBIOS' : 'CREAR PLAN AHORA' }}
-        </button>
+        <button type="button" class="btn btn-primary rounded-pill w-100 py-3 fw-bold" (click)="crearOActualizarPlan()">GUARDAR PLAN</button>
       </div>
     </div>
   </div>

@@ -1,26 +1,33 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
 
 /**
- * No existe JWT real: el backend valida mediante los headers
- * x-usuario-id / x-usuario-rol (ver auth.middleware.js).
- * Este interceptor los adjunta automáticamente si hay sesión activa.
+ * Interceptor de Autenticación para el Sistema ISP.
+ * Recupera explícitamente el ID y el Rol del usuario desde el LocalStorage
+ * e inyecta las cabeceras requeridas por el Backend para evitar errores 403.
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const sesion = authService.obtenerSesion();
+  // Recuperar la sesión persistida
+  const sesionRaw = localStorage.getItem('isp_sesion');
 
-  if (!sesion) {
-    return next(req);
+  if (sesionRaw) {
+    try {
+      const sesion = JSON.parse(sesionRaw);
+      const userId = sesion.userId;
+      const userRol = sesion.userRol;
+
+      // Inyectar cabeceras x-usuario-id y x-usuario-rol
+      const reqClonada = req.clone({
+        setHeaders: {
+          'x-usuario-id': String(userId),
+          'x-usuario-rol': String(userRol)
+        }
+      });
+      return next(reqClonada);
+    } catch (e) {
+      console.error('Error al parsear la sesión en el interceptor:', e);
+    }
   }
 
-  const reqConHeaders = req.clone({
-    setHeaders: {
-      'x-usuario-id': String(sesion.userId),
-      'x-usuario-rol': sesion.userRol
-    }
-  });
-
-  return next(reqConHeaders);
+  // Si no hay sesión, continuar con la petición original
+  return next(req);
 };

@@ -20,3 +20,19 @@
 .list-unstyled li a {
   font-size: 0.95rem;
 }
+
+.footer-corporate .text-muted {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.footer-corporate p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-corporate a {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.footer-corporate a:hover {
+  color: #ffffff;
+}

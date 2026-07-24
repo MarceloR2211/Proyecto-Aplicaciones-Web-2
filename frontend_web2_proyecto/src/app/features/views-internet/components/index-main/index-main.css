@@ -82,3 +82,30 @@
   color: var(--secondary);
 }
 
+.btn-purple {
+  background-color: #27187e;
+  color: #ffffff;
+  border: 1px solid #27187e;
+  box-shadow: 0 4px 10px rgba(39, 24, 126, 0.3);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.btn-purple:hover {
+  background-color: #3d2ca3;
+  border-color: #3d2ca3;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 16px rgba(39, 24, 126, 0.45);
+}
+
+.btn-purple:focus,
+.btn-purple:active {
+  background-color: #1d125f !important;
+  border-color: #1d125f !important;
+  color: #ffffff !important;
+}
+

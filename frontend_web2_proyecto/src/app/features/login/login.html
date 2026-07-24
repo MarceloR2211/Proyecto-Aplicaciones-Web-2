@@ -1,93 +1,1070 @@
-<div class="w-100 min-vh-100 d-flex flex-column bg-light">
+<div class="login-page w-100 min-vh-100 d-flex flex-column">
   <app-navbar></app-navbar>
 
-  <main class="flex-grow-1 d-flex align-items-center justify-content-center py-5">
+  <main
+    class="flex-grow-1 d-flex align-items-center justify-content-center py-5"
+  >
     <div class="container">
       <div class="row justify-content-center w-100 m-0">
-        <div class="col-md-6 col-lg-4">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
 
-          <!-- Alertas -->
-          <div *ngIf="errorMsg()" class="alert alert-danger shadow-sm border-0 mb-4 rounded-3 text-center" role="alert">
-            <small class="fw-bold">{{ errorMsg() }}</small>
-          </div>
-          <div *ngIf="exitoRegistro()" class="alert alert-success shadow-sm border-0 mb-4 rounded-3 text-center" role="alert">
-            <small class="fw-bold">{{ exitoRegistro() }}</small>
+          <!-- MENSAJE DE ERROR -->
+          <div
+            *ngIf="errorMsg()"
+            class="alert alert-danger shadow-sm border-0 mb-4 rounded-3"
+            role="alert"
+          >
+            <div class="d-flex align-items-center gap-2">
+              <i
+                class="bi bi-exclamation-triangle-fill"
+                aria-hidden="true"
+              ></i>
+
+              <small class="fw-bold">
+                {{ errorMsg() }}
+              </small>
+            </div>
           </div>
 
-          <!-- Card de Login -->
-          <div class="card shadow border-0 rounded-4 overflow-hidden">
-            <div class="card-header bg-primary text-white text-center py-4 border-0">
-              <i class="bi bi-shield-lock display-5 mb-2"></i>
-              <h3 class="fw-bold mb-0">{{ modo() === 'login' ? 'Acceso al Sistema' : 'Nuevo Registro' }}</h3>
+          <!-- MENSAJE DE REGISTRO EXITOSO -->
+          <div
+            *ngIf="exitoRegistro()"
+            class="alert alert-success shadow-sm border-0 mb-4 rounded-3"
+            role="alert"
+          >
+            <div class="d-flex align-items-center gap-2">
+              <i
+                class="bi bi-check-circle-fill"
+                aria-hidden="true"
+              ></i>
+
+              <small class="fw-bold">
+                {{ exitoRegistro() }}
+              </small>
+            </div>
+          </div>
+
+          <!-- TARJETA -->
+          <div
+            class="card login-card border-0 rounded-4 overflow-hidden"
+          >
+            <div
+              class="card-header bg-primary text-white text-center py-4 border-0"
+            >
+              <i
+                class="bi bi-shield-lock display-5 mb-2"
+                aria-hidden="true"
+              ></i>
+
+              <h3 class="fw-bold mb-0">
+                {{
+                  modo() === 'login'
+                    ? 'Acceso al Sistema'
+                    : 'Nuevo Registro'
+                }}
+              </h3>
+
+              <p class="mb-0 mt-2 opacity-75 small">
+                {{
+                  modo() === 'login'
+                    ? 'Ingresa tus credenciales para continuar'
+                    : 'Completa tus datos para crear una cuenta'
+                }}
+              </p>
             </div>
 
             <div class="card-body p-4 p-lg-5 bg-white">
-              <!-- FORM LOGIN -->
-              <form *ngIf="modo() === 'login'" [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
+
+              <!-- ========================================
+                   FORMULARIO DE INICIO DE SESIÓN
+                   ======================================== -->
+              <form
+                *ngIf="modo() === 'login'"
+                [formGroup]="loginForm"
+                (ngSubmit)="onSubmitLogin()"
+                novalidate
+              >
+                <!-- USUARIO -->
                 <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="logUser" placeholder="Usuario" formControlName="username">
-                  <label for="logUser"><i class="bi bi-person me-2"></i>Usuario</label>
+                  <input
+                    type="text"
+                    id="logUser"
+                    class="form-control"
+                    placeholder="Usuario"
+                    formControlName="username"
+                    maxlength="30"
+                    autocomplete="username"
+                    [class.is-invalid]="
+                      loginCampoInvalido('username')
+                    "
+                    [class.is-valid]="
+                      loginCampoValido('username')
+                    "
+                  />
+
+                  <label for="logUser">
+                    <i
+                      class="bi bi-person me-2"
+                      aria-hidden="true"
+                    ></i>
+
+                    Usuario
+                  </label>
+
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="loginCampoInvalido('username')"
+                  >
+                    <span
+                      *ngIf="
+                        loginForm.controls.username.hasError('required')
+                      "
+                    >
+                      El nombre de usuario es obligatorio.
+                    </span>
+
+                    <span
+                      *ngIf="
+                        loginForm.controls.username.hasError('minlength')
+                      "
+                    >
+                      El usuario debe tener al menos 4 caracteres.
+                    </span>
+
+                    <span
+                      *ngIf="
+                        loginForm.controls.username.hasError('maxlength')
+                      "
+                    >
+                      El usuario no puede superar los 30 caracteres.
+                    </span>
+
+                    <span
+                      *ngIf="
+                        loginForm.controls.username.hasError('pattern')
+                      "
+                    >
+                      Solo se permiten letras, números, puntos,
+                      guiones y guiones bajos.
+                    </span>
+
+                    <span
+                      *ngIf="
+                        loginForm.controls.username.hasError(
+                          'soloEspacios'
+                        )
+                      "
+                    >
+                      El usuario no puede contener solamente espacios.
+                    </span>
+                  </div>
                 </div>
-                <div class="form-floating mb-4">
-                  <input type="password" class="form-control" id="logPass" placeholder="Contraseña" formControlName="password">
-                  <label for="logPass"><i class="bi bi-key me-2"></i>Contraseña</label>
+
+                <!-- CONTRASEÑA -->
+                <div class="password-field mb-4">
+                  <div class="form-floating">
+                    <input
+                      [type]="
+                        mostrarPasswordLogin()
+                          ? 'text'
+                          : 'password'
+                      "
+                      id="logPass"
+                      class="form-control password-input"
+                      placeholder="Contraseña"
+                      formControlName="password"
+                      maxlength="72"
+                      autocomplete="current-password"
+                      [class.is-invalid]="
+                        loginCampoInvalido('password')
+                      "
+                      [class.is-valid]="
+                        loginCampoValido('password')
+                      "
+                    />
+
+                    <label for="logPass">
+                      <i
+                        class="bi bi-key me-2"
+                        aria-hidden="true"
+                      ></i>
+
+                      Contraseña
+                    </label>
+
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      (click)="
+                        mostrarPasswordLogin.set(
+                          !mostrarPasswordLogin()
+                        )
+                      "
+                      [attr.aria-label]="
+                        mostrarPasswordLogin()
+                          ? 'Ocultar contraseña'
+                          : 'Mostrar contraseña'
+                      "
+                    >
+                      <i
+                        class="bi"
+                        [class.bi-eye-fill]="
+                          !mostrarPasswordLogin()
+                        "
+                        [class.bi-eye-slash-fill]="
+                          mostrarPasswordLogin()
+                        "
+                        aria-hidden="true"
+                      ></i>
+                    </button>
+
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="loginCampoInvalido('password')"
+                    >
+                      <span
+                        *ngIf="
+                          loginForm.controls.password.hasError(
+                            'required'
+                          )
+                        "
+                      >
+                        La contraseña es obligatoria.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          loginForm.controls.password.hasError(
+                            'minlength'
+                          )
+                        "
+                      >
+                        La contraseña debe tener al menos 6 caracteres.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          loginForm.controls.password.hasError(
+                            'maxlength'
+                          )
+                        "
+                      >
+                        La contraseña es demasiado extensa.
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" [disabled]="cargando()">
-                  <span *ngIf="!cargando()">INICIAR SESIÓN</span>
-                  <div *ngIf="cargando()" class="spinner-border spinner-border-sm text-white"></div>
+
+                <!-- BOTÓN LOGIN -->
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm"
+                  [disabled]="loginForm.invalid || cargando()"
+                >
+                  <span *ngIf="!cargando()">
+                    <i
+                      class="bi bi-box-arrow-in-right me-2"
+                      aria-hidden="true"
+                    ></i>
+
+                    INICIAR SESIÓN
+                  </span>
+
+                  <span
+                    *ngIf="cargando()"
+                    class="d-inline-flex align-items-center gap-2"
+                  >
+                    <span
+                      class="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+
+                    INGRESANDO...
+                  </span>
                 </button>
+
+                <p
+                  *ngIf="loginForm.invalid && !cargando()"
+                  class="form-helper text-center mt-3 mb-0"
+                >
+                  Completa correctamente los datos para habilitar
+                  el botón.
+                </p>
+
                 <div class="mt-4 text-center">
-                  <button type="button" class="btn btn-link text-decoration-none text-muted small" (click)="cambiarModo('registro')">
-                    ¿No tienes cuenta? <span class="fw-bold text-primary">Regístrate</span>
+                  <button
+                    type="button"
+                    class="btn btn-link text-decoration-none text-muted small"
+                    (click)="cambiarModo('registro')"
+                  >
+                    ¿No tienes cuenta?
+
+                    <span class="fw-bold text-primary">
+                      Regístrate
+                    </span>
                   </button>
                 </div>
               </form>
 
-              <!-- FORM REGISTRO -->
-              <form *ngIf="modo() === 'registro'" [formGroup]="registroForm" (ngSubmit)="onSubmitRegistro()">
-                <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="regFullName" placeholder="Nombre" formControlName="nombre_completo">
-                  <label for="regFullName">Nombre Completo</label>
+              <!-- ========================================
+                   FORMULARIO DE REGISTRO
+                   ======================================== -->
+              <form
+                *ngIf="modo() === 'registro'"
+                [formGroup]="registroForm"
+                (ngSubmit)="onSubmitRegistro()"
+                novalidate
+              >
+                <p class="campos-obligatorios mb-4">
+                  Los campos marcados con
+                  <span class="required-mark">*</span>
+                  son obligatorios.
+                </p>
+
+                <div class="row g-3">
+
+                  <!-- NOMBRE COMPLETO -->
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        id="regFullName"
+                        class="form-control"
+                        placeholder="Nombre completo"
+                        formControlName="nombre_completo"
+                        maxlength="80"
+                        autocomplete="name"
+                        [class.is-invalid]="
+                          registroCampoInvalido(
+                            'nombre_completo'
+                          )
+                        "
+                        [class.is-valid]="
+                          registroCampoValido(
+                            'nombre_completo'
+                          )
+                        "
+                      />
+
+                      <label for="regFullName">
+                        Nombre completo
+                        <span class="required-mark">*</span>
+                      </label>
+
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          registroCampoInvalido(
+                            'nombre_completo'
+                          )
+                        "
+                      >
+                        <span
+                          *ngIf="
+                            registroForm.controls.nombre_completo
+                              .hasError('required')
+                          "
+                        >
+                          El nombre completo es obligatorio.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.nombre_completo
+                              .hasError('minlength')
+                          "
+                        >
+                          Debe contener al menos 3 caracteres.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.nombre_completo
+                              .hasError('maxlength')
+                          "
+                        >
+                          No puede superar los 80 caracteres.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.nombre_completo
+                              .hasError('pattern')
+                          "
+                        >
+                          Solo puede contener letras y espacios.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.nombre_completo
+                              .hasError('soloEspacios')
+                          "
+                        >
+                          No puede contener únicamente espacios.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- DNI -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        id="regDni"
+                        class="form-control"
+                        placeholder="DNI"
+                        formControlName="dni"
+                        maxlength="8"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        (input)="
+                          soloNumeros($event, 'dni', 8)
+                        "
+                        [class.is-invalid]="
+                          registroCampoInvalido('dni')
+                        "
+                        [class.is-valid]="
+                          registroCampoValido('dni')
+                        "
+                      />
+
+                      <label for="regDni">
+                        DNI (8 dígitos)
+                        <span class="required-mark">*</span>
+                      </label>
+
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="registroCampoInvalido('dni')"
+                      >
+                        <span
+                          *ngIf="
+                            registroForm.controls.dni.hasError(
+                              'required'
+                            )
+                          "
+                        >
+                          El DNI es obligatorio.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.dni.hasError(
+                              'pattern'
+                            )
+                          "
+                        >
+                          Debe contener exactamente 8 números.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- TELÉFONO -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        id="regTelefono"
+                        class="form-control"
+                        placeholder="Teléfono"
+                        formControlName="telefono"
+                        maxlength="9"
+                        inputmode="numeric"
+                        autocomplete="tel"
+                        (input)="
+                          soloNumeros($event, 'telefono', 9)
+                        "
+                        [class.is-invalid]="
+                          registroCampoInvalido('telefono')
+                        "
+                        [class.is-valid]="
+                          registroCampoValido('telefono')
+                        "
+                      />
+
+                      <label for="regTelefono">
+                        Teléfono (9 dígitos)
+                        <span class="required-mark">*</span>
+                      </label>
+
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          registroCampoInvalido('telefono')
+                        "
+                      >
+                        <span
+                          *ngIf="
+                            registroForm.controls.telefono.hasError(
+                              'required'
+                            )
+                          "
+                        >
+                          El teléfono es obligatorio.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.telefono.hasError(
+                              'pattern'
+                            )
+                          "
+                        >
+                          Debe contener exactamente 9 números.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- UBIGEO -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        id="regUbigeo"
+                        class="form-control"
+                        placeholder="Ubigeo"
+                        formControlName="ubigeo"
+                        maxlength="6"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        (input)="
+                          soloNumeros($event, 'ubigeo', 6)
+                        "
+                        [class.is-invalid]="
+                          registroCampoInvalido('ubigeo')
+                        "
+                        [class.is-valid]="
+                          registroCampoValido('ubigeo')
+                        "
+                      />
+
+                      <label for="regUbigeo">
+                        Ubigeo (6 dígitos)
+                        <span class="required-mark">*</span>
+                      </label>
+
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          registroCampoInvalido('ubigeo')
+                        "
+                      >
+                        <span
+                          *ngIf="
+                            registroForm.controls.ubigeo.hasError(
+                              'required'
+                            )
+                          "
+                        >
+                          El ubigeo es obligatorio.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.ubigeo.hasError(
+                              'pattern'
+                            )
+                          "
+                        >
+                          Debe contener exactamente 6 números.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ZONA -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        id="regZona"
+                        class="form-control"
+                        placeholder="Zona"
+                        formControlName="zona"
+                        maxlength="80"
+                        autocomplete="address-level3"
+                        [class.is-invalid]="
+                          registroCampoInvalido('zona')
+                        "
+                        [class.is-valid]="
+                          registroCampoValido('zona')
+                        "
+                      />
+
+                      <label for="regZona">
+                        Zona
+                        <span class="required-mark">*</span>
+                      </label>
+
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="registroCampoInvalido('zona')"
+                      >
+                        <span
+                          *ngIf="
+                            registroForm.controls.zona.hasError(
+                              'required'
+                            )
+                          "
+                        >
+                          La zona es obligatoria.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.zona.hasError(
+                              'minlength'
+                            )
+                          "
+                        >
+                          Debe contener al menos 3 caracteres.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.zona.hasError(
+                              'maxlength'
+                            )
+                          "
+                        >
+                          No puede superar los 80 caracteres.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.zona.hasError(
+                              'pattern'
+                            )
+                          "
+                        >
+                          La zona contiene caracteres no permitidos.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.zona.hasError(
+                              'soloEspacios'
+                            )
+                          "
+                        >
+                          No puede contener únicamente espacios.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- USUARIO -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        id="regUser"
+                        class="form-control"
+                        placeholder="Usuario"
+                        formControlName="username"
+                        maxlength="30"
+                        autocomplete="username"
+                        [class.is-invalid]="
+                          registroCampoInvalido('username')
+                        "
+                        [class.is-valid]="
+                          registroCampoValido('username')
+                        "
+                      />
+
+                      <label for="regUser">
+                        Nombre de usuario
+                        <span class="required-mark">*</span>
+                      </label>
+
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          registroCampoInvalido('username')
+                        "
+                      >
+                        <span
+                          *ngIf="
+                            registroForm.controls.username.hasError(
+                              'required'
+                            )
+                          "
+                        >
+                          El usuario es obligatorio.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.username.hasError(
+                              'minlength'
+                            )
+                          "
+                        >
+                          Debe tener al menos 4 caracteres.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.username.hasError(
+                              'maxlength'
+                            )
+                          "
+                        >
+                          No puede superar los 30 caracteres.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.username.hasError(
+                              'pattern'
+                            )
+                          "
+                        >
+                          Solo se permiten letras, números, puntos,
+                          guiones y guiones bajos.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- CORREO -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        id="regEmail"
+                        class="form-control"
+                        placeholder="Correo electrónico"
+                        formControlName="email"
+                        maxlength="100"
+                        autocomplete="email"
+                        [class.is-invalid]="
+                          registroCampoInvalido('email')
+                        "
+                        [class.is-valid]="
+                          registroCampoValido('email')
+                        "
+                      />
+
+                      <label for="regEmail">
+                        Correo electrónico
+                        <span class="required-mark">*</span>
+                      </label>
+
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          registroCampoInvalido('email')
+                        "
+                      >
+                        <span
+                          *ngIf="
+                            registroForm.controls.email.hasError(
+                              'required'
+                            )
+                          "
+                        >
+                          El correo electrónico es obligatorio.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.email.hasError(
+                              'email'
+                            )
+                          "
+                        >
+                          Ingresa un correo electrónico válido.
+                        </span>
+
+                        <span
+                          *ngIf="
+                            registroForm.controls.email.hasError(
+                              'maxlength'
+                            )
+                          "
+                        >
+                          El correo no puede superar 100 caracteres.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- CONTRASEÑA -->
+                  <div class="col-12">
+                    <div class="password-field">
+                      <div class="form-floating">
+                        <input
+                          [type]="
+                            mostrarPasswordRegistro()
+                              ? 'text'
+                              : 'password'
+                          "
+                          id="regPass"
+                          class="form-control password-input"
+                          placeholder="Contraseña"
+                          formControlName="password"
+                          maxlength="72"
+                          autocomplete="new-password"
+                          [class.is-invalid]="
+                            registroCampoInvalido('password')
+                          "
+                          [class.is-valid]="
+                            registroCampoValido('password')
+                          "
+                        />
+
+                        <label for="regPass">
+                          Contraseña
+                          <span class="required-mark">*</span>
+                        </label>
+
+                        <button
+                          type="button"
+                          class="password-toggle"
+                          (click)="
+                            mostrarPasswordRegistro.set(
+                              !mostrarPasswordRegistro()
+                            )
+                          "
+                          [attr.aria-label]="
+                            mostrarPasswordRegistro()
+                              ? 'Ocultar contraseña'
+                              : 'Mostrar contraseña'
+                          "
+                        >
+                          <i
+                            class="bi"
+                            [class.bi-eye-fill]="
+                              !mostrarPasswordRegistro()
+                            "
+                            [class.bi-eye-slash-fill]="
+                              mostrarPasswordRegistro()
+                            "
+                            aria-hidden="true"
+                          ></i>
+                        </button>
+
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            registroCampoInvalido('password')
+                          "
+                        >
+                          <span
+                            *ngIf="
+                              registroForm.controls.password.hasError(
+                                'required'
+                              )
+                            "
+                          >
+                            La contraseña es obligatoria.
+                          </span>
+
+                          <span
+                            *ngIf="
+                              registroForm.controls.password.hasError(
+                                'minlength'
+                              )
+                            "
+                          >
+                            Debe tener al menos 8 caracteres.
+                          </span>
+
+                          <span
+                            *ngIf="
+                              registroForm.controls.password.hasError(
+                                'maxlength'
+                              )
+                            "
+                          >
+                            La contraseña es demasiado extensa.
+                          </span>
+
+                          <span
+                            *ngIf="
+                              registroForm.controls.password.hasError(
+                                'pattern'
+                              )
+                            "
+                          >
+                            Debe incluir mayúscula, minúscula, número y
+                            carácter especial.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <small class="password-rules d-block mt-2">
+                      Usa al menos 8 caracteres, una mayúscula, una
+                      minúscula, un número y un símbolo.
+                    </small>
+                  </div>
+
+                  <!-- CONFIRMAR CONTRASEÑA -->
+                  <div class="col-12">
+                    <div class="password-field">
+                      <div class="form-floating">
+                        <input
+                          [type]="
+                            mostrarConfirmacion()
+                              ? 'text'
+                              : 'password'
+                          "
+                          id="regConfirmPass"
+                          class="form-control password-input"
+                          placeholder="Confirmar contraseña"
+                          formControlName="confirmar_password"
+                          maxlength="72"
+                          autocomplete="new-password"
+                          [class.is-invalid]="
+                            confirmacionInvalida()
+                          "
+                          [class.is-valid]="
+                            confirmacionValida()
+                          "
+                        />
+
+                        <label for="regConfirmPass">
+                          Confirmar contraseña
+                          <span class="required-mark">*</span>
+                        </label>
+
+                        <button
+                          type="button"
+                          class="password-toggle"
+                          (click)="
+                            mostrarConfirmacion.set(
+                              !mostrarConfirmacion()
+                            )
+                          "
+                          [attr.aria-label]="
+                            mostrarConfirmacion()
+                              ? 'Ocultar contraseña'
+                              : 'Mostrar contraseña'
+                          "
+                        >
+                          <i
+                            class="bi"
+                            [class.bi-eye-fill]="
+                              !mostrarConfirmacion()
+                            "
+                            [class.bi-eye-slash-fill]="
+                              mostrarConfirmacion()
+                            "
+                            aria-hidden="true"
+                          ></i>
+                        </button>
+
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="confirmacionInvalida()"
+                        >
+                          <span
+                            *ngIf="
+                              registroForm.controls
+                                .confirmar_password
+                                .hasError('required')
+                            "
+                          >
+                            Debes confirmar la contraseña.
+                          </span>
+
+                          <span
+                            *ngIf="
+                              registroForm.hasError(
+                                'passwordsNoCoinciden'
+                              ) &&
+                              !registroForm.controls
+                                .confirmar_password
+                                .hasError('required')
+                            "
+                          >
+                            Las contraseñas no coinciden.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
-                <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="regDni" placeholder="DNI" formControlName="dni">
-                  <label for="regDni">DNI (8 dígitos)</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="regUbigeo" placeholder="Ubigeo" formControlName="ubigeo">
-                  <label for="regUbigeo">Ubigeo</label>
-                </div>
-                <div class="form-floating mb-4">
-                  <input type="text" class="form-control" id="regZona" placeholder="Zona" formControlName="zona">
-                  <label for="regZona">Zona</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="regUser" placeholder="Usuario" formControlName="username">
-                  <label for="regUser">Nombre de Usuario</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="email" class="form-control" id="regEmail" placeholder="Email" formControlName="email">
-                  <label for="regEmail">Correo Electrónico</label>
-                </div>
-                <div class="form-floating mb-4">
-                  <input type="password" class="form-control" id="regPass" placeholder="Password" formControlName="password">
-                  <label for="regPass">Contraseña</label>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" [disabled]="cargando()">
-                  <span *ngIf="!cargando()">CREAR CUENTA</span>
-                  <div *ngIf="cargando()" class="spinner-border spinner-border-sm text-white"></div>
+
+                <!-- BOTÓN REGISTRO -->
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100 py-3 mt-4 rounded-pill fw-bold shadow-sm"
+                  [disabled]="registroForm.invalid || cargando()"
+                >
+                  <span *ngIf="!cargando()">
+                    <i
+                      class="bi bi-person-plus-fill me-2"
+                      aria-hidden="true"
+                    ></i>
+
+                    CREAR CUENTA
+                  </span>
+
+                  <span
+                    *ngIf="cargando()"
+                    class="d-inline-flex align-items-center gap-2"
+                  >
+                    <span
+                      class="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+
+                    REGISTRANDO...
+                  </span>
                 </button>
+
+                <p
+                  *ngIf="registroForm.invalid && !cargando()"
+                  class="form-helper text-center mt-3 mb-0"
+                >
+                  Completa correctamente todos los campos para habilitar
+                  el botón.
+                </p>
+
                 <div class="mt-3 text-center">
-                  <button type="button" class="btn btn-link text-decoration-none text-muted small" (click)="cambiarModo('login')">
-                    Volver al Inicio de Sesión
+                  <button
+                    type="button"
+                    class="btn btn-link text-decoration-none text-muted small"
+                    (click)="cambiarModo('login')"
+                  >
+                    <i
+                      class="bi bi-arrow-left me-1"
+                      aria-hidden="true"
+                    ></i>
+
+                    Volver al inicio de sesión
                   </button>
                 </div>
               </form>
+
             </div>
           </div>
 
+          <!-- CUENTAS DE PRUEBA -->
           <div class="mt-4 text-center">
-            <p class="text-muted extra-small">Cuentas de prueba: <strong>admin_pruebas / Admin123*</strong> o <strong>user / 123456</strong></p>
+            <p class="text-muted extra-small">
+              Cuentas de prueba:
+
+              <strong>
+                admin_pruebas / Admin123*
+              </strong>
+
+              o
+
+              <strong>
+                user / 123456
+              </strong>
+            </p>
           </div>
 
         </div>

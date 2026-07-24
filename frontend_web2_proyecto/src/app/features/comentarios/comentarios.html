@@ -1,80 +1,317 @@
 <app-navbar></app-navbar>
 
-<main class="container py-5">
-  <div class="row g-5">
-    <div class="col-lg-8">
-      <h2 class="fw-bold text-primary mb-4">Reseñas de nuestros Clientes</h2>
+<main class="comentarios-main">
 
-      <div *ngFor="let c of comentarios()" class="card border-0 shadow-sm rounded-4 p-4 mb-3 bg-white">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 45px; height: 45px;">
-            {{c.usuario.charAt(0)}}
-          </div>
-          <div>
-            <h6 class="mb-0 fw-bold">{{c.usuario}}</h6>
-            <div class="text-warning small">
-              <i *ngFor="let s of getEstrellas(c.estrellas)" class="bi bi-star-fill me-1"></i>
+  <!-- CONTENIDO DE LA PÁGINA -->
+  <div class="container py-5">
+    <div class="row g-5">
+
+      <!-- LISTA DE COMENTARIOS -->
+      <div class="col-lg-8">
+
+        <h2 class="fw-bold text-primary mb-4">
+          Reseñas de nuestros clientes
+        </h2>
+
+        <div
+          *ngFor="let c of comentarios()"
+          class="card comentario-card border-0 shadow-sm rounded-4 p-4 mb-3 bg-white"
+        >
+          <div class="d-flex align-items-center gap-3 mb-3">
+
+            <!-- AVATAR -->
+            <div
+              class="avatar-comentario bg-primary text-white rounded-circle
+                     d-flex align-items-center justify-content-center fw-bold"
+            >
+              {{ c.usuario.charAt(0) }}
             </div>
-          </div>
-          <span class="ms-auto text-muted extra-small">{{c.fecha | date:'shortDate'}}</span>
-        </div>
-        <p class="mb-0 text-secondary">"{{c.texto}}"</p>
-      </div>
 
-      <div *ngIf="comentarios().length === 0" class="text-center py-5">
-        <p class="text-muted">Aún no hay reseñas aprobadas. ¡Sé el primero!</p>
-      </div>
-    </div>
+            <!-- USUARIO Y CALIFICACIÓN -->
+            <div>
+              <h6 class="mb-0 fw-bold">
+                {{ c.usuario }}
+              </h6>
 
-    <div class="col-lg-4">
-      <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top" style="top: 100px;">
-        <h4 class="fw-bold mb-4 text-primary">Danos tu opinión</h4>
+              <div class="text-warning small">
+                <i
+                  *ngFor="let s of getEstrellas(c.estrellas)"
+                  class="bi bi-star-fill me-1"
+                  aria-hidden="true"
+                ></i>
+              </div>
+            </div>
 
-        <form (ngSubmit)="enviarComentario()">
-          <div class="mb-3">
-            <label class="form-label small fw-bold">Calificación</label>
-            <select class="form-select" [(ngModel)]="nuevoComentario.calificacion" name="stars">
-              <option value="5">⭐⭐⭐⭐ (Excelente)</option>
-              <option value="4">⭐⭐⭐⭐ (Muy Bueno)</option>
-              <option value="3">⭐⭐⭐ (Regular)</option>
-              <option value="2">⭐⭐ (Malo)</option>
-              <option value="1">⭐ (Muy Malo)</option>
-            </select>
+            <!-- FECHA -->
+            <span class="ms-auto text-muted extra-small">
+              {{ c.fecha | date:'shortDate' }}
+            </span>
+
           </div>
-          <div class="mb-4">
-            <label class="form-label small fw-bold">Tu comentario</label>
-            <textarea class="form-control" rows="4" placeholder="Cuéntanos tu experiencia..." [(ngModel)]="nuevoComentario.comentario" name="text" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-warning w-100 py-3 rounded-pill fw-bold shadow-sm" [disabled]="enviando()">
-            <span *ngIf="!enviando()">PUBLICAR RESEÑA</span>
-            <span *ngIf="enviando()" class="spinner-border spinner-border-sm"></span>
-          </button>
-          <p *ngIf="!authService.estaAutenticado()" class="text-center text-muted small mt-3">
-            Inicia sesión para poder comentar.
+
+          <!-- TEXTO DEL COMENTARIO -->
+          <p class="mb-0 text-secondary">
+            “{{ c.texto }}”
           </p>
-        </form>
+        </div>
+
+        <!-- CUANDO NO HAY COMENTARIOS -->
+        <div
+          *ngIf="comentarios().length === 0"
+          class="sin-comentarios text-center py-5"
+        >
+          <i
+            class="bi bi-chat-square-text display-5 text-muted"
+            aria-hidden="true"
+          ></i>
+
+          <p class="text-muted mt-3 mb-0">
+            Aún no hay reseñas aprobadas. ¡Sé el primero!
+          </p>
+        </div>
+
       </div>
+
+      <!-- FORMULARIO DE COMENTARIOS -->
+      <div class="col-lg-4">
+
+        <div
+          class="card formulario-comentario-card border-0 shadow-lg
+                 rounded-4 p-4 sticky-top"
+        >
+          <h4 class="fw-bold mb-4 text-primary">
+            Danos tu opinión
+          </h4>
+
+          <form (ngSubmit)="enviarComentario()">
+
+            <!-- CALIFICACIÓN -->
+            <div class="mb-3">
+              <label
+                for="calificacion"
+                class="form-label small fw-bold"
+              >
+                Calificación
+              </label>
+
+              <select
+                id="calificacion"
+                class="form-select"
+                [(ngModel)]="nuevoComentario.calificacion"
+                name="stars"
+              >
+                <option [ngValue]="5">
+                  ⭐⭐⭐⭐⭐ (Excelente)
+                </option>
+
+                <option [ngValue]="4">
+                  ⭐⭐⭐⭐ (Muy bueno)
+                </option>
+
+                <option [ngValue]="3">
+                  ⭐⭐⭐ (Regular)
+                </option>
+
+                <option [ngValue]="2">
+                  ⭐⭐ (Malo)
+                </option>
+
+                <option [ngValue]="1">
+                  ⭐ (Muy malo)
+                </option>
+              </select>
+            </div>
+
+            <!-- COMENTARIO -->
+            <div class="mb-4">
+              <label
+                for="comentario"
+                class="form-label small fw-bold"
+              >
+                Tu comentario
+              </label>
+
+              <textarea
+                id="comentario"
+                class="form-control"
+                rows="4"
+                maxlength="500"
+                placeholder="Cuéntanos tu experiencia..."
+                [(ngModel)]="nuevoComentario.comentario"
+                name="text"
+                required
+              ></textarea>
+
+              <!-- CONTADOR -->
+              <div class="text-end mt-1">
+                <small class="text-muted">
+                  {{ nuevoComentario.comentario.length }}/500
+                </small>
+              </div>
+            </div>
+
+            <!-- BOTÓN PUBLICAR -->
+            <button
+              type="submit"
+              class="btn btn-warning w-100 py-3 rounded-pill fw-bold shadow-sm"
+              [disabled]="
+                enviando() ||
+                nuevoComentario.comentario.trim().length === 0
+              "
+            >
+              <span *ngIf="!enviando()">
+                <i
+                  class="bi bi-send-fill me-2"
+                  aria-hidden="true"
+                ></i>
+
+                PUBLICAR RESEÑA
+              </span>
+
+              <span
+                *ngIf="enviando()"
+                class="d-inline-flex align-items-center gap-2"
+              >
+                <span
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+
+                ENVIANDO...
+              </span>
+            </button>
+
+          </form>
+        </div>
+
+      </div>
+
     </div>
   </div>
+
+  <!--
+    AVISO QUE CUBRE SOLO EL CONTENIDO DE COMENTARIOS.
+    NO CUBRE EL NAVBAR NI EL FOOTER.
+  -->
+  <div
+    *ngIf="!authService.estaAutenticado()"
+    class="login-content-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="login-required-title"
+    aria-describedby="login-required-description"
+  >
+    <div class="login-required-card">
+
+      <!-- ICONO -->
+      <div class="login-required-icon">
+        <i
+          class="bi bi-person-lock"
+          aria-hidden="true"
+        ></i>
+      </div>
+
+      <!-- TÍTULO -->
+      <h2
+        id="login-required-title"
+        class="fw-bold text-primary mt-4 mb-3"
+      >
+        Inicia sesión para comentar
+      </h2>
+
+      <!-- DESCRIPCIÓN -->
+      <p
+        id="login-required-description"
+        class="text-secondary mb-4"
+      >
+        Necesitas tener una cuenta e iniciar sesión para publicar
+        comentarios y reseñas sobre nuestros servicios.
+      </p>
+
+      <!-- BOTÓN DE INICIO DE SESIÓN -->
+      <a
+        routerLink="/login"
+        class="btn btn-login w-100 py-3 rounded-pill fw-bold"
+      >
+        <i
+          class="bi bi-box-arrow-in-right me-2"
+          aria-hidden="true"
+        ></i>
+
+        INICIAR SESIÓN
+      </a>
+
+      <small class="d-block text-muted mt-3">
+
+      </small>
+
+    </div>
+  </div>
+
 </main>
 
 <app-footer></app-footer>
 
-<!-- Modal de Feedback -->
-<div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+<!-- MODAL DE RESPUESTA -->
+<div
+  class="modal fade"
+  id="feedbackModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-centered">
+
     <div class="modal-content border-0 rounded-4 shadow">
-      <div class="modal-header border-0" [class.bg-success]="isSuccess" [class.bg-danger]="!isSuccess">
-        <h5 class="modal-title fw-bold text-white">{{feedbackTitle}}</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+      <div
+        class="modal-header border-0"
+        [class.bg-success]="isSuccess"
+        [class.bg-danger]="!isSuccess"
+      >
+        <h5 class="modal-title fw-bold text-white">
+          {{ feedbackTitle }}
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
       </div>
+
       <div class="modal-body p-4 text-center">
-        <i class="bi fs-1 mb-3 d-block" [class.bi-check-circle-fill]="isSuccess" [class.bi-x-circle-fill]="!isSuccess" [class.text-success]="isSuccess" [class.text-danger]="!isSuccess"></i>
-        <p class="mb-0 fw-medium">{{feedbackMessage}}</p>
+
+        <i
+          class="bi fs-1 mb-3 d-block"
+          [class.bi-check-circle-fill]="isSuccess"
+          [class.bi-x-circle-fill]="!isSuccess"
+          [class.text-success]="isSuccess"
+          [class.text-danger]="!isSuccess"
+          aria-hidden="true"
+        ></i>
+
+        <p class="mb-0 fw-medium">
+          {{ feedbackMessage }}
+        </p>
+
       </div>
+
       <div class="modal-footer border-0">
-        <button type="button" class="btn rounded-pill px-4" [class.btn-success]="isSuccess" [class.btn-danger]="!isSuccess" data-bs-dismiss="modal">Cerrar</button>
+
+        <button
+          type="button"
+          class="btn rounded-pill px-4"
+          [class.btn-success]="isSuccess"
+          [class.btn-danger]="!isSuccess"
+          data-bs-dismiss="modal"
+        >
+          Cerrar
+        </button>
+
       </div>
+
     </div>
   </div>
 </div>

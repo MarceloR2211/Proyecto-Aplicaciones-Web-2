@@ -1,4 +1,297 @@
-.card { transition: all 0.3s ease; }
-.card:hover { transform: translateY(-3px); }
-.extra-small { font-size: 0.75rem; }
-.sticky-top { z-index: 10; }
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+   ===================================================== */
+
+.comentarios-main {
+  position: relative;
+
+  /*
+    Permite que el aviso ocupe toda el área central,
+    pero no el navbar ni el footer.
+  */
+  min-height: 650px;
+}
+
+
+/* =====================================================
+   TARJETAS
+   ===================================================== */
+
+.card {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.comentario-card:hover {
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+
+/* =====================================================
+   AVATAR Y TEXTOS
+   ===================================================== */
+
+.avatar-comentario {
+  width: 45px;
+  height: 45px;
+  min-width: 45px;
+
+  text-transform: uppercase;
+}
+
+.extra-small {
+  font-size: 0.75rem;
+}
+
+.sin-comentarios {
+  min-height: 250px;
+}
+
+
+/* =====================================================
+   FORMULARIO LATERAL
+   ===================================================== */
+
+.formulario-comentario-card {
+  top: 100px;
+  z-index: 10;
+
+  background-color: #ffffff;
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #4d3bbd;
+
+  box-shadow:
+    0 0 0 0.2rem rgba(77, 59, 189, 0.18);
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+button[type='submit']:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+
+/* =====================================================
+   AVISO QUE CUBRE SOLO EL CONTENIDO CENTRAL
+   ===================================================== */
+
+.login-content-overlay {
+  /*
+    Absolute hace que el aviso se limite al elemento
+    .comentarios-main.
+  */
+  position: absolute;
+  inset: 0;
+
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background-color: rgba(18, 13, 48, 0.78);
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+
+  animation: aparecerOverlay 0.35s ease;
+}
+
+
+/* =====================================================
+   TARJETA CENTRAL DEL AVISO
+   ===================================================== */
+
+.login-required-card {
+  width: 100%;
+  max-width: 470px;
+
+  padding: 42px 38px;
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+
+  background-color: rgba(255, 255, 255, 0.98);
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.35),
+    0 6px 18px rgba(0, 0, 0, 0.2);
+
+  animation: aparecerTarjeta 0.4s ease;
+}
+
+.login-required-card h2 {
+  font-size: 1.75rem;
+}
+
+.login-required-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   ICONO DEL AVISO
+   ===================================================== */
+
+.login-required-icon {
+  width: 88px;
+  height: 88px;
+
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background-color: rgba(39, 24, 126, 0.12);
+  color: #27187e;
+
+  font-size: 2.5rem;
+}
+
+
+/* =====================================================
+   BOTÓN INICIAR SESIÓN
+   ===================================================== */
+
+.btn-login {
+  background-color: #27187e;
+  border: 1px solid #27187e;
+  color: #ffffff;
+
+  box-shadow:
+    0 6px 14px rgba(39, 24, 126, 0.3);
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.btn-login:hover {
+  background-color: #3d2ca3;
+  border-color: #3d2ca3;
+  color: #ffffff;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 9px 20px rgba(39, 24, 126, 0.4);
+}
+
+.btn-login:focus,
+.btn-login:active {
+  background-color: #1d125f !important;
+  border-color: #1d125f !important;
+  color: #ffffff !important;
+}
+
+
+/* =====================================================
+   ANIMACIONES
+   ===================================================== */
+
+@keyframes aparecerOverlay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes aparecerTarjeta {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =====================================================
+   TABLETS
+   ===================================================== */
+
+@media (max-width: 991px) {
+  .formulario-comentario-card.sticky-top {
+    position: relative !important;
+    top: auto !important;
+  }
+
+  .comentarios-main {
+    min-height: 750px;
+  }
+}
+
+
+/* =====================================================
+   CELULARES
+   ===================================================== */
+
+@media (max-width: 576px) {
+  .login-content-overlay {
+    padding: 18px;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+
+  .login-required-card {
+    padding: 32px 22px;
+    border-radius: 20px;
+  }
+
+  .login-required-icon {
+    width: 74px;
+    height: 74px;
+
+    font-size: 2rem;
+  }
+
+  .login-required-card h2 {
+    font-size: 1.4rem;
+  }
+
+  .login-required-card p {
+    font-size: 0.92rem;
+  }
+}

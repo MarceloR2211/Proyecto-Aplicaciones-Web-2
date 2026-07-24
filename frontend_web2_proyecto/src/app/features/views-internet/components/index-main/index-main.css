@@ -1,12 +1,13 @@
-/* Paleta de Colores Corporativa */
+/* PALETA DE COLORES CORPORATIVA */
 :host {
-  --primary: #27187E;
-  --secondary: #758BFD;
-  --accent: #AEB8FE;
-  --background: #F1F2F6;
-  --cta: #FF8600;
+  --primary: #27187e;
+  --secondary: #758bfd;
+  --accent: #aeb8fe;
+  --background: #f1f2f6;
+  --cta: #ff8600;
 }
 
+/* COLORES GENERALES */
 .bg-corporate-primary {
   background-color: var(--primary);
 }
@@ -19,35 +20,57 @@
   color: var(--cta);
 }
 
+/* BOTÓN CTA */
 .btn-cta {
   background-color: var(--cta);
-  color: white;
+  color: #ffffff;
   border: none;
   font-weight: bold;
-  transition: transform 0.2s;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .btn-cta:hover {
   background-color: #e67900;
+  color: #ffffff;
   transform: scale(1.05);
-  color: white;
 }
 
+/* HERO */
 .hero-section {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  color: white;
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary) 0%,
+      var(--secondary) 100%
+    );
+
+  color: #ffffff;
   padding: 100px 0;
 }
 
+/* TARJETAS DE PLANES */
 .card-plan {
+  position: relative;
+
   border: 2px solid var(--accent);
   border-radius: 15px;
-  transition: all 0.3s ease;
-  background-color: white;
+
+  background-color: #ffffff;
+
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
 
 .card-plan:hover {
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card-plan.featured {
@@ -56,21 +79,33 @@
   z-index: 1;
 }
 
+.card-plan.featured:hover {
+  transform: scale(1.05) translateY(-4px);
+}
+
+/* ETIQUETA DESTACADA */
 .badge-featured {
-  background-color: var(--cta);
-  color: white;
   position: absolute;
   top: -15px;
   left: 50%;
+
   transform: translateX(-50%);
+
   padding: 5px 15px;
+
   border-radius: 20px;
+
+  background-color: var(--cta);
+  color: #ffffff;
+
   font-size: 0.8rem;
+  white-space: nowrap;
 }
 
+/* NAVEGACIÓN */
 .navbar-brand {
-  font-weight: 800;
   color: var(--primary);
+  font-weight: 800;
 }
 
 .nav-link {
@@ -82,11 +117,15 @@
   color: var(--secondary);
 }
 
+/* BOTÓN MORADO */
 .btn-purple {
   background-color: #27187e;
   color: #ffffff;
   border: 1px solid #27187e;
-  box-shadow: 0 4px 10px rgba(39, 24, 126, 0.3);
+
+  box-shadow:
+    0 4px 10px rgba(39, 24, 126, 0.3);
+
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease,
@@ -98,8 +137,11 @@
   background-color: #3d2ca3;
   border-color: #3d2ca3;
   color: #ffffff;
+
   transform: translateY(-2px);
-  box-shadow: 0 7px 16px rgba(39, 24, 126, 0.45);
+
+  box-shadow:
+    0 7px 16px rgba(39, 24, 126, 0.45);
 }
 
 .btn-purple:focus,
@@ -109,3 +151,184 @@
   color: #ffffff !important;
 }
 
+/* TARJETA DEL FORMULARIO */
+.contact-form-card {
+  background-color: #ffffff;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.14),
+    0 20px 45px rgba(0, 0, 0, 0.12);
+
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.contact-form-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.18),
+    0 26px 55px rgba(0, 0, 0, 0.16);
+}
+
+/* CAMPOS DEL FORMULARIO */
+.contact-form-card .form-control {
+  min-height: 48px;
+
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.contact-form-card textarea.form-control {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.contact-form-card .form-control:hover:not(:disabled) {
+  border-color: #968bd4;
+}
+
+.contact-form-card .form-control:focus {
+  border-color: #4d3bbd;
+
+  box-shadow:
+    0 0 0 0.2rem rgba(77, 59, 189, 0.18);
+}
+
+/* CAMPO INVÁLIDO */
+.contact-form-card .form-control.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+  padding-right: 0.75rem;
+}
+
+.contact-form-card .form-control.is-invalid:focus {
+  border-color: #dc3545;
+
+  box-shadow:
+    0 0 0 0.2rem rgba(220, 53, 69, 0.16);
+}
+
+/* CAMPO VÁLIDO */
+.contact-form-card .form-control.is-valid {
+  border-color: #198754;
+  background-image: none;
+  padding-right: 0.75rem;
+}
+
+.contact-form-card .form-control.is-valid:focus {
+  border-color: #198754;
+
+  box-shadow:
+    0 0 0 0.2rem rgba(25, 135, 84, 0.16);
+}
+
+/* MENSAJES DE ERROR */
+.contact-form-card .invalid-feedback {
+  display: block;
+
+  margin-top: 6px;
+  padding-left: 3px;
+
+  color: #dc3545;
+
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* CAMPOS OBLIGATORIOS */
+.required-mark {
+  color: #dc3545;
+}
+
+/* CONTADOR DEL MOTIVO */
+.character-counter {
+  color: #6c757d;
+  font-size: 0.78rem;
+}
+
+/* BOTÓN DE ENVÍO */
+.contact-form-card button[type='submit'] {
+  min-height: 50px;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.contact-form-card button[type='submit']:not(:disabled):hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 16px rgba(13, 110, 253, 0.3);
+}
+
+.contact-form-card button[type='submit']:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* BOTÓN DESHABILITADO */
+.contact-form-card button[type='submit']:disabled {
+  background-color: #9b95bd;
+  border-color: #9b95bd;
+  color: rgba(255, 255, 255, 0.82);
+
+  cursor: not-allowed;
+  opacity: 0.68;
+
+  transform: none;
+  box-shadow: none;
+}
+
+/* TEXTO DE AYUDA */
+.form-helper-message {
+  color: #6c757d;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* RESPONSIVE */
+@media (max-width: 767px) {
+  .hero-section {
+    padding: 65px 0;
+  }
+
+  .hero-section h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-section .btn {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .card-plan.featured,
+  .card-plan.featured:hover {
+    transform: none;
+  }
+
+  .contact-form-card:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .contact-form-card {
+    padding: 1.5rem !important;
+  }
+}

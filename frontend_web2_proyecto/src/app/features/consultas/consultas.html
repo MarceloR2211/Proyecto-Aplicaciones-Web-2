@@ -3,82 +3,523 @@
 <main class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-10">
+
       <div class="card consultas-card border-0 rounded-4 overflow-hidden">
         <div class="row g-0">
-          <div class="col-md-5 bg-primary text-white p-5 d-flex flex-column justify-content-center">
-            <h1 class="fw-bold mb-4">Ponte en Contacto</h1>
-            <p class="opacity-75 mb-5">Estamos aquí para resolver tus dudas sobre nuestros servicios de fibra óptica y planes corporativos.</p>
+
+          <!-- INFORMACIÓN DE CONTACTO -->
+          <div
+            class="col-md-5 bg-primary text-white p-5
+                   d-flex flex-column justify-content-center"
+          >
+            <h1 class="fw-bold mb-4">
+              Ponte en Contacto
+            </h1>
+
+            <p class="opacity-75 mb-5">
+              Estamos aquí para resolver tus dudas sobre nuestros servicios
+              de fibra óptica y planes corporativos.
+            </p>
 
             <div class="d-grid gap-4">
+
               <div class="d-flex align-items-center gap-3">
-                <i class="bi bi-telephone-fill h4 mb-0 text-warning"></i>
+                <i
+                  class="bi bi-telephone-fill h4 mb-0 text-warning"
+                  aria-hidden="true"
+                ></i>
+
                 <div>
-                  <small class="d-block opacity-50">Llámanos</small>
-                  <span class="fw-bold">+51 987 654 321</span>
+                  <small class="d-block opacity-50">
+                    Llámanos
+                  </small>
+
+                  <span class="fw-bold">
+                    +51 987 654 321
+                  </span>
                 </div>
               </div>
+
               <div class="d-flex align-items-center gap-3">
-                <i class="bi bi-envelope-at-fill h4 mb-0 text-warning"></i>
+                <i
+                  class="bi bi-envelope-at-fill h4 mb-0 text-warning"
+                  aria-hidden="true"
+                ></i>
+
                 <div>
-                  <small class="d-block opacity-50">Email</small>
-                  <span class="fw-bold">ventas&#64;internetpro.com</span>
+                  <small class="d-block opacity-50">
+                    Email
+                  </small>
+
+                  <span class="fw-bold">
+                    ventas&#64;internetpro.com
+                  </span>
                 </div>
               </div>
+
             </div>
           </div>
 
+          <!-- FORMULARIO -->
           <div class="col-md-7 p-5 bg-white">
-            <h2 class="fw-bold text-primary mb-4">Enviar Mensaje</h2>
 
-            <div *ngIf="exitoMsg()" class="alert alert-success border-0 shadow-sm mb-4 rounded-3">
-              <i class="bi bi-check-circle-fill me-2"></i> {{ exitoMsg() }}
-            </div>
-            <div *ngIf="errorMsg()" class="alert alert-danger border-0 shadow-sm mb-4 rounded-3">
-              <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMsg() }}
+            <h2 class="fw-bold text-primary mb-4">
+              Enviar Mensaje
+            </h2>
+
+            <!-- MENSAJE DE ÉXITO -->
+            <div
+              *ngIf="exitoMsg()"
+              class="alert alert-success border-0 shadow-sm mb-4 rounded-3"
+              role="alert"
+            >
+              <i
+                class="bi bi-check-circle-fill me-2"
+                aria-hidden="true"
+              ></i>
+
+              {{ exitoMsg() }}
             </div>
 
-            <form [formGroup]="consultaForm" (ngSubmit)="onSubmit()">
+            <!-- MENSAJE DE ERROR -->
+            <div
+              *ngIf="errorMsg()"
+              class="alert alert-danger border-0 shadow-sm mb-4 rounded-3"
+              role="alert"
+            >
+              <i
+                class="bi bi-exclamation-triangle-fill me-2"
+                aria-hidden="true"
+              ></i>
+
+              {{ errorMsg() }}
+            </div>
+
+            <form
+              [formGroup]="consultaForm"
+              (ngSubmit)="onSubmit()"
+              novalidate
+            >
               <div class="row g-3">
+
+                <!-- NOMBRE COMPLETO -->
                 <div class="col-md-6">
-                  <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="name" placeholder="Nombre" formControlName="nombre">
-                    <label for="name">Nombre Completo</label>
+                  <div class="form-floating">
+
+                    <input
+                      type="text"
+                      id="name"
+                      class="form-control"
+                      placeholder="Nombre completo"
+                      formControlName="nombre"
+                      maxlength="80"
+                      autocomplete="name"
+                      [class.is-invalid]="
+                        consultaForm.get('nombre')?.invalid &&
+                        (
+                          consultaForm.get('nombre')?.touched ||
+                          consultaForm.get('nombre')?.dirty
+                        )
+                      "
+                      [class.is-valid]="
+                        consultaForm.get('nombre')?.valid &&
+                        consultaForm.get('nombre')?.touched
+                      "
+                    />
+
+                    <label for="name">
+                      Nombre completo
+                    </label>
+
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        consultaForm.get('nombre')?.invalid &&
+                        (
+                          consultaForm.get('nombre')?.touched ||
+                          consultaForm.get('nombre')?.dirty
+                        )
+                      "
+                    >
+                      <span
+                        *ngIf="
+                          consultaForm.get('nombre')?.hasError('required')
+                        "
+                      >
+                        El nombre completo es obligatorio.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm.get('nombre')?.hasError('minlength')
+                        "
+                      >
+                        El nombre debe tener al menos 3 caracteres.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm.get('nombre')?.hasError('maxlength')
+                        "
+                      >
+                        El nombre no puede superar los 80 caracteres.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm.get('nombre')?.hasError('pattern')
+                        "
+                      >
+                        El nombre solo puede contener letras y espacios.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm.get('nombre')?.hasError('soloEspacios')
+                        "
+                      >
+                        El nombre no puede contener únicamente espacios.
+                      </span>
+                    </div>
+
                   </div>
                 </div>
+
+                <!-- DNI -->
                 <div class="col-md-6">
-                  <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="dni" placeholder="DNI" formControlName="dni">
-                    <label for="dni">DNI (8 dígitos)</label>
+                  <div class="form-floating">
+
+                    <input
+                      type="text"
+                      id="dni"
+                      class="form-control"
+                      placeholder="DNI"
+                      formControlName="dni"
+                      maxlength="8"
+                      inputmode="numeric"
+                      autocomplete="off"
+                      [class.is-invalid]="
+                        consultaForm.get('dni')?.invalid &&
+                        (
+                          consultaForm.get('dni')?.touched ||
+                          consultaForm.get('dni')?.dirty
+                        )
+                      "
+                      [class.is-valid]="
+                        consultaForm.get('dni')?.valid &&
+                        consultaForm.get('dni')?.touched
+                      "
+                    />
+
+                    <label for="dni">
+                      DNI (8 dígitos)
+                    </label>
+
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        consultaForm.get('dni')?.invalid &&
+                        (
+                          consultaForm.get('dni')?.touched ||
+                          consultaForm.get('dni')?.dirty
+                        )
+                      "
+                    >
+                      <span
+                        *ngIf="
+                          consultaForm.get('dni')?.hasError('required')
+                        "
+                      >
+                        El DNI es obligatorio.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm.get('dni')?.hasError('pattern')
+                        "
+                      >
+                        El DNI debe contener exactamente 8 números.
+                      </span>
+                    </div>
+
                   </div>
                 </div>
+
+                <!-- CORREO -->
                 <div class="col-12">
-                  <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="email" placeholder="Email" formControlName="email">
-                    <label for="email">Correo Electrónico</label>
+                  <div class="form-floating">
+
+                    <input
+                      type="email"
+                      id="email"
+                      class="form-control"
+                      placeholder="Correo electrónico"
+                      formControlName="email"
+                      maxlength="100"
+                      autocomplete="email"
+                      [class.is-invalid]="
+                        consultaForm.get('email')?.invalid &&
+                        (
+                          consultaForm.get('email')?.touched ||
+                          consultaForm.get('email')?.dirty
+                        )
+                      "
+                      [class.is-valid]="
+                        consultaForm.get('email')?.valid &&
+                        consultaForm.get('email')?.touched
+                      "
+                    />
+
+                    <label for="email">
+                      Correo electrónico
+                    </label>
+
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        consultaForm.get('email')?.invalid &&
+                        (
+                          consultaForm.get('email')?.touched ||
+                          consultaForm.get('email')?.dirty
+                        )
+                      "
+                    >
+                      <span
+                        *ngIf="
+                          consultaForm.get('email')?.hasError('required')
+                        "
+                      >
+                        El correo electrónico es obligatorio.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm.get('email')?.hasError('email')
+                        "
+                      >
+                        Ingresa un correo electrónico válido.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm.get('email')?.hasError('maxlength')
+                        "
+                      >
+                        El correo no puede superar los 100 caracteres.
+                      </span>
+                    </div>
+
                   </div>
                 </div>
+
+                <!-- TELÉFONO OBLIGATORIO -->
                 <div class="col-12">
-                  <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="tel" placeholder="Teléfono" formControlName="telefono">
-                    <label for="tel">Teléfono (opcional)</label>
+                  <div class="form-floating">
+
+                    <input
+                      type="text"
+                      id="tel"
+                      class="form-control"
+                      placeholder="Teléfono"
+                      formControlName="telefono"
+                      maxlength="9"
+                      inputmode="numeric"
+                      autocomplete="tel"
+                      [class.is-invalid]="
+                        consultaForm.get('telefono')?.invalid &&
+                        (
+                          consultaForm.get('telefono')?.touched ||
+                          consultaForm.get('telefono')?.dirty
+                        )
+                      "
+                      [class.is-valid]="
+                        consultaForm.get('telefono')?.valid &&
+                        consultaForm.get('telefono')?.touched
+                      "
+                    />
+
+                    <label for="tel">
+                      Teléfono (9 dígitos)
+                    </label>
+
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        consultaForm.get('telefono')?.invalid &&
+                        (
+                          consultaForm.get('telefono')?.touched ||
+                          consultaForm.get('telefono')?.dirty
+                        )
+                      "
+                    >
+                      <span
+                        *ngIf="
+                          consultaForm.get('telefono')?.hasError('required')
+                        "
+                      >
+                        El teléfono es obligatorio.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm.get('telefono')?.hasError('pattern')
+                        "
+                      >
+                        El teléfono debe contener exactamente 9 números.
+                      </span>
+                    </div>
+
                   </div>
                 </div>
+
+                <!-- MOTIVO DE CONSULTA -->
                 <div class="col-12">
-                  <div class="form-floating mb-4">
-                    <textarea class="form-control" id="msg" style="height: 120px" placeholder="Mensaje" formControlName="motivo_consulta"></textarea>
-                    <label for="msg">Motivo de consulta</label>
+                  <div class="form-floating">
+
+                    <textarea
+                      id="msg"
+                      class="form-control"
+                      placeholder="Motivo de consulta"
+                      formControlName="motivo_consulta"
+                      maxlength="500"
+                      style="height: 120px"
+                      [class.is-invalid]="
+                        consultaForm.get('motivo_consulta')?.invalid &&
+                        (
+                          consultaForm.get('motivo_consulta')?.touched ||
+                          consultaForm.get('motivo_consulta')?.dirty
+                        )
+                      "
+                      [class.is-valid]="
+                        consultaForm.get('motivo_consulta')?.valid &&
+                        consultaForm.get('motivo_consulta')?.touched
+                      "
+                    ></textarea>
+
+                    <label for="msg">
+                      Motivo de consulta
+                    </label>
+
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        consultaForm.get('motivo_consulta')?.invalid &&
+                        (
+                          consultaForm.get('motivo_consulta')?.touched ||
+                          consultaForm.get('motivo_consulta')?.dirty
+                        )
+                      "
+                    >
+                      <span
+                        *ngIf="
+                          consultaForm
+                            .get('motivo_consulta')
+                            ?.hasError('required')
+                        "
+                      >
+                        El motivo de consulta es obligatorio.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm
+                            .get('motivo_consulta')
+                            ?.hasError('minlength')
+                        "
+                      >
+                        El motivo debe contener al menos 10 caracteres.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm
+                            .get('motivo_consulta')
+                            ?.hasError('maxlength')
+                        "
+                      >
+                        El motivo no puede superar los 500 caracteres.
+                      </span>
+
+                      <span
+                        *ngIf="
+                          consultaForm
+                            .get('motivo_consulta')
+                            ?.hasError('soloEspacios')
+                        "
+                      >
+                        El motivo no puede contener únicamente espacios.
+                      </span>
+                    </div>
+
+                  </div>
+
+                  <!-- CONTADOR -->
+                  <div class="contador-caracteres text-end mt-1">
+                    <small
+                      [class.limite-alcanzado]="
+                        (
+                          consultaForm
+                            .get('motivo_consulta')
+                            ?.value
+                            ?.length || 0
+                        ) >= 500
+                      "
+                    >
+                      {{
+                        consultaForm
+                          .get('motivo_consulta')
+                          ?.value
+                          ?.length || 0
+                      }}/500
+                    </small>
                   </div>
                 </div>
+
               </div>
 
-              <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" [disabled]="enviando()">
-                <span *ngIf="!enviando()">ENVIAR SOLICITUD</span>
-                <div *ngIf="enviando()" class="spinner-border spinner-border-sm"></div>
+              <!-- BOTÓN -->
+              <button
+                type="submit"
+                class="btn btn-primary w-100 py-3 mt-4 rounded-pill fw-bold shadow-sm"
+                [disabled]="consultaForm.invalid || enviando()"
+                [attr.aria-disabled]="consultaForm.invalid || enviando()"
+              >
+                <span *ngIf="!enviando()">
+                  <i
+                    class="bi bi-send-fill me-2"
+                    aria-hidden="true"
+                  ></i>
+
+                  ENVIAR SOLICITUD
+                </span>
+
+                <span
+                  *ngIf="enviando()"
+                  class="d-inline-flex align-items-center gap-2"
+                >
+                  <span
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+
+                  ENVIANDO...
+                </span>
               </button>
+
+              <p
+                *ngIf="consultaForm.invalid && !enviando()"
+                class="formulario-pendiente text-center mt-3 mb-0"
+              >
+              
+              </p>
+
             </form>
           </div>
+
         </div>
       </div>
+
     </div>
   </div>
 </main>

@@ -1,10 +1,8 @@
+/* CONTENEDOR GENERAL */
 .consultas-wrapper {
   max-width: 600px;
   margin: 0 auto;
 }
-
-.error { color: #b91c1c; }
-.exito { color: #15803d; }
 
 .consultas-page {
   max-width: 900px;
@@ -17,6 +15,16 @@
   margin-bottom: var(--space-lg);
 }
 
+/* MENSAJES GENERALES */
+.error {
+  color: #b91c1c;
+}
+
+.exito {
+  color: #15803d;
+}
+
+/* DISTRIBUCIÓN ALTERNATIVA */
 .consultas-grid {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
@@ -45,16 +53,18 @@
   margin: var(--space-xs) 0;
 }
 
+/* TARJETA PRINCIPAL */
 .consultas-card {
   background-color: #ffffff;
   border-radius: 16px;
 
-  /* Sombra visible alrededor del formulario */
   box-shadow:
     0 8px 18px rgba(0, 0, 0, 0.18),
     0 20px 45px rgba(0, 0, 0, 0.15) !important;
 
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
 
 .consultas-card:hover {
@@ -63,4 +73,203 @@
   box-shadow:
     0 12px 25px rgba(0, 0, 0, 0.22),
     0 28px 60px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* CAMPOS */
+.form-control {
+  min-height: 58px;
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.form-control:hover:not(:disabled) {
+  border-color: #968bd4;
+}
+
+.form-control:focus {
+  border-color: #4d3bbd;
+  box-shadow: 0 0 0 0.2rem rgba(77, 59, 189, 0.18);
+}
+
+/* ETIQUETAS */
+.form-floating > label {
+  color: #6c757d;
+  font-size: 0.92rem;
+}
+
+.form-floating > .form-control:focus ~ label {
+  color: #4d3bbd;
+}
+
+/* CAMPO INCORRECTO */
+.form-control.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+  padding-right: 0.75rem;
+}
+
+.form-control.is-invalid:hover {
+  border-color: #c82333;
+}
+
+.form-control.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.16);
+}
+
+.form-floating > .form-control.is-invalid ~ label {
+  color: #dc3545;
+}
+
+/* MENSAJES DE ERROR */
+.invalid-feedback {
+  display: block;
+  margin-top: 6px;
+  padding-left: 4px;
+
+  color: #dc3545;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* CAMPO CORRECTO */
+.form-control.is-valid {
+  border-color: #198754;
+  background-image: none;
+  padding-right: 0.75rem;
+}
+
+.form-control.is-valid:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.16);
+}
+
+.form-floating > .form-control.is-valid ~ label {
+  color: #198754;
+}
+
+/* TEXTAREA */
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* CONTADOR */
+.contador-caracteres {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.contador-caracteres .limite-alcanzado {
+  color: #dc3545;
+  font-weight: 700;
+}
+
+/* BOTÓN */
+button[type='submit'] {
+  min-height: 50px;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+button[type='submit']:not(:disabled):hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 16px rgba(13, 110, 253, 0.3) !important;
+}
+
+button[type='submit']:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* BOTÓN DESHABILITADO */
+button[type='submit']:disabled {
+  background-color: #9b95bd;
+  border-color: #9b95bd;
+  color: rgba(255, 255, 255, 0.82);
+
+  cursor: not-allowed;
+  opacity: 0.68;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.formulario-pendiente {
+  color: #6c757d;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* ALERTAS */
+.alert {
+  animation: aparecerMensaje 0.3s ease;
+}
+
+@keyframes aparecerMensaje {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* TABLETS */
+@media (max-width: 767px) {
+  main.container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .consultas-card {
+    border-radius: 14px;
+  }
+
+  .consultas-card:hover {
+    transform: none;
+  }
+
+  .consultas-card .p-5 {
+    padding: 2rem !important;
+  }
+}
+
+/* CELULARES */
+@media (max-width: 480px) {
+  .consultas-card .p-5 {
+    padding: 1.5rem !important;
+  }
+
+  .consultas-card h1 {
+    font-size: 1.8rem;
+  }
+
+  .consultas-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-control {
+    min-height: 56px;
+  }
+
+  button[type='submit'] {
+    font-size: 0.9rem;
+  }
 }

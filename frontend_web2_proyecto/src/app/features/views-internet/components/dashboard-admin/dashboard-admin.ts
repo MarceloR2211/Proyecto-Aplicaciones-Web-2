@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { InternetDataService } from '../../services/internet-data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MetricaServicio, Plan, Ticket } from '../../models/metrica.model';
@@ -46,15 +46,81 @@ export class DashboardAdminComponent implements OnInit {
     this.cargarDatos();
   }
 
+  get ticketsPendientes(): number {
+    return this.tickets.filter(
+      (ticket: any) =>
+        ticket.estado !== 'resuelto' &&
+        ticket.estado !== 'cerrado'
+    ).length;
+  }
+
+  get ticketsFinalizados(): number {
+    return this.tickets.filter(
+      (ticket: any) =>
+        ticket.estado === 'resuelto' ||
+        ticket.estado === 'cerrado'
+    ).length;
+  }
+
+  get consultasAtendidas(): number {
+    return this.consultas.filter((consulta) =>
+      this.esConsultaAtendida(consulta)
+    ).length;
+  }
+
+  get consultasPendientes(): number {
+    return this.consultas.length - this.consultasAtendidas;
+  }
+
+  get porcentajeConsultasAtendidas(): number {
+    if (this.consultas.length === 0) {
+      return 0;
+    }
+
+    return Math.round(
+      (this.consultasAtendidas / this.consultas.length) * 100
+    );
+  }
+
+  get porcentajeTicketsFinalizados(): number {
+    if (this.tickets.length === 0) {
+      return 0;
+    }
+
+    return Math.round(
+      (this.ticketsFinalizados / this.tickets.length) * 100
+    );
+  }
+
+  esConsultaAtendida(consulta: any): boolean {
+    return (
+      consulta?.estado === 'convertido' ||
+      consulta?.estado === 'atendido'
+    );
+  }
+
+
   cargarDatos(): void {
     this.isLoading.set(true);
     forkJoin({
-      metricas: this.dataService.getMetricasAdmin(),
-      planes: this.dataService.getPlanes(),
-      usuarios: this.dataService.getUsers(),
-      tickets: this.dataService.getTicketsAdmin(),
-      consultas: this.dataService.getConsultas(),
-      comentarios: this.dataService.getComentariosPendientes()
+      metricas: this.dataService.getMetricasAdmin().pipe(
+        catchError(() => of(undefined))
+      ),
+      planes: this.dataService.getPlanes().pipe(
+        catchError(() => of([] as Plan[]))
+      ),
+      usuarios: this.dataService.getUsers().pipe(
+        catchError(() => of([] as Usuario[]))
+      ),
+      tickets: this.dataService.getTicketsAdmin().pipe(
+        catchError(() => of([] as Ticket[]))
+      ),
+      consultas: this.dataService.getConsultas().pipe(
+        catchError(() => of([] as any[]))
+      ),
+      comentarios: this.dataService.getComentariosPendientes().pipe(
+        catchError(() => of([] as Comentario[]))
+      )
     }).subscribe({
       next: (res) => {
         this.metricas = res.metricas;
@@ -81,19 +147,65 @@ export class DashboardAdminComponent implements OnInit {
     this.abrirModal('consultaModal');
   }
 
+  marcarConsultaAtendida(consulta: any): void {
+    if (!consulta || this.esConsultaAtendida(consulta)) {
+      return;
+    }
+
+    const confirmado = confirm(
+      `¿Deseas marcar como atendida la consulta de ${consulta.nombre}?`
+    );
+
+    if (!confirmado) {
+      return;
+    }
+
+    this.convertirConsulta(consulta.id);
+  }
+
   convertirConsulta(id: number): void {
+    if (this.isSubmitting()) {
+      return;
+    }
+
     this.isSubmitting.set(true);
-    this.dataService.updateConsultaEstado(id, 'convertido').subscribe({
-       next: () => {
-         this.isSubmitting.set(false);
-         this.cargarDatos();
-         this.mostrarFeedback('Éxito', 'La consulta ha sido marcada como atendida.', true);
-       },
-       error: (err: any) => {
-         this.isSubmitting.set(false);
-         this.mostrarFeedback('Error', err.error?.message || 'Hubo un fallo al actualizar la consulta.', false);
-       }
-    });
+
+    this.dataService
+      .updateConsultaEstado(id, 'convertido')
+      .pipe(
+        finalize(() => this.isSubmitting.set(false))
+      )
+      .subscribe({
+        next: () => {
+          const consulta = this.consultas.find(
+            (item) => item.id === id
+          );
+
+          if (consulta) {
+            consulta.estado = 'convertido';
+          }
+
+          if (this.consultaSeleccionada?.id === id) {
+            this.consultaSeleccionada.estado = 'convertido';
+          }
+
+          this.cerrarModal('consultaModal');
+
+          this.mostrarFeedback(
+            'Consulta atendida',
+            'La consulta fue marcada como atendida correctamente.',
+            true
+          );
+        },
+        error: (err: any) => {
+          this.mostrarFeedback(
+            'Error',
+            err.error?.message ||
+              'No se pudo marcar la consulta como atendida.',
+            false
+          );
+        }
+      });
   }
 
   moderarComentario(id: number, estado: 'aprobado' | 'rechazado'): void {
@@ -129,18 +241,42 @@ export class DashboardAdminComponent implements OnInit {
   }
 
   actualizarEstadoTicket(id: number, estado: string): void {
+    const ticket = this.tickets.find(
+      (item: any) => item.id === id
+    ) as any;
+
+    if (!ticket || ticket.estado === estado) {
+      return;
+    }
+
+    const estadoAnterior = ticket.estado;
+    ticket.estado = estado;
     this.isSubmitting.set(true);
-    this.dataService.updateTicketStatus(id, estado).subscribe({
-      next: () => {
-        this.isSubmitting.set(false);
-        this.cargarDatos();
-        this.mostrarFeedback('Éxito', `Estado del ticket #${id} actualizado a ${estado}.`, true);
-      },
-      error: (err: any) => {
-        this.isSubmitting.set(false);
-        this.mostrarFeedback('Error', err.error?.message || 'No se pudo actualizar el estado del ticket.', false);
-      }
-    });
+
+    this.dataService
+      .updateTicketStatus(id, estado)
+      .pipe(
+        finalize(() => this.isSubmitting.set(false))
+      )
+      .subscribe({
+        next: () => {
+          this.mostrarFeedback(
+            'Ticket actualizado',
+            `El ticket #${id} cambió al estado ${estado.replace('_', ' ')}.`,
+            true
+          );
+        },
+        error: (err: any) => {
+          ticket.estado = estadoAnterior;
+
+          this.mostrarFeedback(
+            'Error',
+            err.error?.message ||
+              'No se pudo actualizar el estado del ticket.',
+            false
+          );
+        }
+      });
   }
 
   crearOActualizarPlan(): void {

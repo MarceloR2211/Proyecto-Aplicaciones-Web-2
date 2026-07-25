@@ -141,6 +141,171 @@
         </div>
 
         <div class="content-section">
+
+          <!-- VISTA: RESUMEN OPERATIVO -->
+          <div
+            *ngIf="activeTab === 'resumen'"
+            class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white fade-in"
+          >
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+              <div>
+                <h4 class="fw-bold text-primary mb-1">Resumen Operativo</h4>
+                <p class="text-muted mb-0">
+                  Vista general del estado actual de la plataforma.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-outline-primary rounded-pill px-4"
+                (click)="cargarDatos()"
+                [disabled]="isLoading()"
+              >
+                <i class="bi bi-arrow-clockwise me-2"></i>
+                Actualizar
+              </button>
+            </div>
+
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-3">
+                <button
+                  type="button"
+                  class="summary-card summary-card-primary"
+                  (click)="setTab('planes')"
+                >
+                  <div class="summary-icon">
+                    <i class="bi bi-wifi"></i>
+                  </div>
+                  <div>
+                    <span class="summary-value">{{ planes.length }}</span>
+                    <span class="summary-label">Planes registrados</span>
+                  </div>
+                </button>
+              </div>
+
+              <div class="col-md-6 col-xl-3">
+                <button
+                  type="button"
+                  class="summary-card summary-card-warning"
+                  (click)="setTab('tickets')"
+                >
+                  <div class="summary-icon">
+                    <i class="bi bi-ticket-perforated"></i>
+                  </div>
+                  <div>
+                    <span class="summary-value">{{ ticketsPendientes }}</span>
+                    <span class="summary-label">Tickets pendientes</span>
+                  </div>
+                </button>
+              </div>
+
+              <div class="col-md-6 col-xl-3">
+                <button
+                  type="button"
+                  class="summary-card summary-card-info"
+                  (click)="setTab('consultas')"
+                >
+                  <div class="summary-icon">
+                    <i class="bi bi-envelope-paper"></i>
+                  </div>
+                  <div>
+                    <span class="summary-value">{{ consultasPendientes }}</span>
+                    <span class="summary-label">Consultas pendientes</span>
+                  </div>
+                </button>
+              </div>
+
+              <div class="col-md-6 col-xl-3">
+                <button
+                  type="button"
+                  class="summary-card summary-card-success"
+                  (click)="setTab('comentarios')"
+                >
+                  <div class="summary-icon">
+                    <i class="bi bi-chat-square-text"></i>
+                  </div>
+                  <div>
+                    <span class="summary-value">{{ comentarios.length }}</span>
+                    <span class="summary-label">Reseñas por moderar</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div class="row g-4 mt-1">
+              <div class="col-lg-7">
+                <div class="operational-panel h-100">
+                  <h6 class="fw-bold text-primary mb-3">
+                    Estado de atención
+                  </h6>
+
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Consultas atendidas</span>
+                    <strong>{{ consultasAtendidas }} / {{ consultas.length }}</strong>
+                  </div>
+
+                  <div class="progress mb-4">
+                    <div
+                      class="progress-bar bg-success"
+                      role="progressbar"
+                      [style.width.%]="porcentajeConsultasAtendidas"
+                    ></div>
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Tickets resueltos o cerrados</span>
+                    <strong>{{ ticketsFinalizados }} / {{ tickets.length }}</strong>
+                  </div>
+
+                  <div class="progress">
+                    <div
+                      class="progress-bar bg-primary"
+                      role="progressbar"
+                      [style.width.%]="porcentajeTicketsFinalizados"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-5">
+                <div class="operational-panel h-100">
+                  <h6 class="fw-bold text-primary mb-3">
+                    Accesos rápidos
+                  </h6>
+
+                  <div class="d-grid gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-light border text-start"
+                      (click)="setTab('tickets')"
+                    >
+                      <i class="bi bi-ticket-perforated me-2 text-primary"></i>
+                      Gestionar tickets
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn btn-light border text-start"
+                      (click)="setTab('consultas')"
+                    >
+                      <i class="bi bi-envelope-check me-2 text-success"></i>
+                      Atender consultas
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn btn-light border text-start"
+                      (click)="setTab('planes')"
+                    >
+                      <i class="bi bi-router me-2 text-warning"></i>
+                      Administrar planes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- VISTA: TICKETS -->
           <div
             *ngIf="activeTab === 'tickets'"
@@ -209,50 +374,18 @@
                       </span>
                     </td>
                     <td class="text-end">
-                      <div class="btn-group">
-                        <button
-                          class="btn btn-sm btn-outline-primary dropdown-toggle rounded-pill px-3"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          Cambiar Estado
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                          <li>
-                            <button
-                              class="dropdown-item"
-                              (click)="actualizarEstadoTicket(t.id, 'abierto')"
-                            >
-                              Abierto
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="dropdown-item"
-                              (click)="actualizarEstadoTicket(t.id, 'en_proceso')"
-                            >
-                              En Proceso
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="dropdown-item"
-                              (click)="actualizarEstadoTicket(t.id, 'resuelto')"
-                            >
-                              Resuelto
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="dropdown-item"
-                              (click)="actualizarEstadoTicket(t.id, 'cerrado')"
-                            >
-                              Cerrado
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
+                      <select
+                        class="form-select form-select-sm ticket-status-select ms-auto"
+                        [ngModel]="t.estado"
+                        (ngModelChange)="actualizarEstadoTicket(t.id, $event)"
+                        [disabled]="isSubmitting()"
+                        aria-label="Cambiar estado del ticket"
+                      >
+                        <option value="abierto">Abierto</option>
+                        <option value="en_proceso">En proceso</option>
+                        <option value="resuelto">Resuelto</option>
+                        <option value="cerrado">Cerrado</option>
+                      </select>
                     </td>
                   </tr>
                 </tbody>
@@ -268,17 +401,23 @@
             </div>
           </div>
 
+
           <!-- VISTA: CONSULTAS -->
           <div
             *ngIf="activeTab === 'consultas'"
             class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white fade-in"
           >
             <div class="d-flex justify-content-between align-items-center mb-4">
-              <h4 class="fw-bold text-primary mb-0">Gestión de Consultas</h4>
-              <span
-                class="badge bg-light text-primary border px-3 py-2 rounded-pill"
-                >{{consultas.length}} Leads en Cola</span
-              >
+              <div>
+                <h4 class="fw-bold text-primary mb-1">Gestión de Consultas</h4>
+                <p class="text-muted small mb-0">
+                  Marca como atendidas las consultas que ya fueron gestionadas.
+                </p>
+              </div>
+
+              <span class="badge bg-light text-primary border px-3 py-2 rounded-pill">
+                {{ consultasPendientes }} pendientes
+              </span>
             </div>
 
             <div class="table-responsive">
@@ -289,44 +428,80 @@
                     <th class="border-0">Correo / Teléfono</th>
                     <th class="border-0 text-center">Fecha</th>
                     <th class="border-0">Asunto</th>
+                    <th class="border-0 text-center">Estado</th>
                     <th class="border-0 text-end">Acciones</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   <tr *ngFor="let c of consultas">
                     <td>
-                      <div class="fw-bold">{{c.nombre}}</div>
-                      <small class="text-muted">DNI: {{c.dni}}</small>
+                      <div class="fw-bold">{{ c.nombre }}</div>
+                      <small class="text-muted">DNI: {{ c.dni }}</small>
                     </td>
+
                     <td>
                       <div class="small">
-                        <i class="bi bi-envelope me-1"></i>{{c.email}}
+                        <i class="bi bi-envelope me-1"></i>{{ c.email }}
                       </div>
                       <div class="small">
-                        <i class="bi bi-telephone me-1"></i>{{c.telefono}}
+                        <i class="bi bi-telephone me-1"></i>{{ c.telefono }}
                       </div>
                     </td>
+
                     <td class="text-center small">
-                      {{c.fecha_creacion | date:'shortDate'}}
+                      {{ c.fecha_creacion | date:'shortDate' }}
                     </td>
+
                     <td>
                       <span
                         class="text-truncate d-inline-block"
-                        style="max-width: 150px"
-                        >{{c.motivo_consulta}}</span
+                        style="max-width: 180px"
+                        [title]="c.motivo_consulta"
                       >
+                        {{ c.motivo_consulta }}
+                      </span>
                     </td>
-                    <td class="text-end">
+
+                    <td class="text-center">
+                      <span
+                        class="badge rounded-pill px-3 py-2"
+                        [class.bg-warning]="!esConsultaAtendida(c)"
+                        [class.text-dark]="!esConsultaAtendida(c)"
+                        [class.bg-success]="esConsultaAtendida(c)"
+                      >
+                        {{ esConsultaAtendida(c) ? 'ATENDIDO' : 'PENDIENTE' }}
+                      </span>
+                    </td>
+
+                    <td class="text-end text-nowrap">
                       <button
+                        type="button"
                         class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm me-2"
                         (click)="verConsulta(c)"
                       >
-                        Ver Detalle
+                        <i class="bi bi-eye me-1"></i>
+                        Ver detalle
                       </button>
+
                       <button
+                        *ngIf="!esConsultaAtendida(c)"
+                        type="button"
                         class="btn btn-sm btn-outline-success rounded-pill px-3"
-                        (click)="convertirConsulta(c.id)"
+                        (click)="marcarConsultaAtendida(c)"
+                        [disabled]="isSubmitting()"
                       >
+                        <i class="bi bi-check-circle me-1"></i>
+                        Atendido
+                      </button>
+
+                      <button
+                        *ngIf="esConsultaAtendida(c)"
+                        type="button"
+                        class="btn btn-sm btn-success rounded-pill px-3"
+                        disabled
+                      >
+                        <i class="bi bi-check-circle-fill me-1"></i>
                         Atendido
                       </button>
                     </td>
@@ -334,11 +509,10 @@
                 </tbody>
               </table>
             </div>
+
             <div *ngIf="consultas.length === 0" class="text-center py-5">
-              <i
-                class="bi bi-inbox fs-1 text-muted opacity-50 d-block mb-3"
-              ></i>
-              <p class="text-muted">
+              <i class="bi bi-inbox fs-1 text-muted opacity-50 d-block mb-3"></i>
+              <p class="text-muted mb-0">
                 No hay consultas registradas actualmente.
               </p>
             </div>
@@ -514,8 +688,13 @@
         </div>
         <div class="mb-0">
           <span class="small fw-bold text-muted d-block">Estado</span>
-          <span class="badge rounded-pill" [class.bg-warning]="consultaSeleccionada.estado === 'pendiente'" [class.bg-success]="consultaSeleccionada.estado === 'convertido'">
-            {{consultaSeleccionada.estado | uppercase}}
+          <span
+            class="badge rounded-pill"
+            [class.bg-warning]="!esConsultaAtendida(consultaSeleccionada)"
+            [class.text-dark]="!esConsultaAtendida(consultaSeleccionada)"
+            [class.bg-success]="esConsultaAtendida(consultaSeleccionada)"
+          >
+            {{ esConsultaAtendida(consultaSeleccionada) ? 'ATENDIDO' : 'PENDIENTE' }}
           </span>
         </div>
       </div>
@@ -528,12 +707,24 @@
           Cerrar
         </button>
         <button
-          *ngIf="consultaSeleccionada && consultaSeleccionada.estado === 'pendiente'"
+          *ngIf="consultaSeleccionada && !esConsultaAtendida(consultaSeleccionada)"
           type="button"
           class="btn btn-success rounded-pill px-4"
-          (click)="convertirConsulta(consultaSeleccionada.id); cerrarModal('consultaModal')"
+          (click)="marcarConsultaAtendida(consultaSeleccionada)"
+          [disabled]="isSubmitting()"
         >
-          Marcar como Atendido
+          <i class="bi bi-check-circle me-2"></i>
+          Marcar como atendido
+        </button>
+
+        <button
+          *ngIf="consultaSeleccionada && esConsultaAtendida(consultaSeleccionada)"
+          type="button"
+          class="btn btn-success rounded-pill px-4"
+          disabled
+        >
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Consulta atendida
         </button>
       </div>
     </div>
@@ -612,6 +803,55 @@
           (click)="crearOActualizarPlan()"
         >
           GUARDAR PLAN
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal de respuesta -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div
+        class="modal-header border-0"
+        [class.bg-success]="isSuccess"
+        [class.bg-danger]="!isSuccess"
+      >
+        <h5 class="modal-title fw-bold text-white">
+          {{ feedbackTitle }}
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4 text-center">
+        <i
+          class="bi fs-1 mb-3 d-block"
+          [class.bi-check-circle-fill]="isSuccess"
+          [class.bi-x-circle-fill]="!isSuccess"
+          [class.text-success]="isSuccess"
+          [class.text-danger]="!isSuccess"
+        ></i>
+
+        <p class="mb-0 fw-medium">{{ feedbackMessage }}</p>
+      </div>
+
+      <div class="modal-footer border-0">
+        <button
+          type="button"
+          class="btn rounded-pill px-4"
+          [class.btn-success]="isSuccess"
+          [class.btn-danger]="!isSuccess"
+          data-bs-dismiss="modal"
+        >
+          Cerrar
         </button>
       </div>
     </div>

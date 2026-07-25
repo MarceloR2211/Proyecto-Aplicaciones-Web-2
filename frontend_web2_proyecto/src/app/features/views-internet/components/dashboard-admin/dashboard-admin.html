@@ -141,6 +141,133 @@
         </div>
 
         <div class="content-section">
+          <!-- VISTA: TICKETS -->
+          <div
+            *ngIf="activeTab === 'tickets'"
+            class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white fade-in"
+          >
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="fw-bold text-primary mb-0">Tickets de Soporte</h4>
+              <span
+                class="badge bg-light text-primary border px-3 py-2 rounded-pill"
+                >{{tickets.length}} Tickets Totales</span
+              >
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="bg-light">
+                  <tr class="small text-muted text-uppercase">
+                    <th class="border-0">ID / Cliente</th>
+                    <th class="border-0">Asunto</th>
+                    <th class="border-0">Descripción</th>
+                    <th class="border-0 text-center">Prioridad</th>
+                    <th class="border-0 text-center">Fecha Creación</th>
+                    <th class="border-0 text-center">Estado</th>
+                    <th class="border-0 text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let t of tickets">
+                    <td>
+                      <div class="fw-bold">#{{t.id}}</div>
+                      <small class="text-muted">{{t.nombre_completo}}</small>
+                    </td>
+                    <td>
+                      <div class="fw-bold text-dark">{{t.titulo}}</div>
+                    </td>
+                    <td>
+                      <span
+                        class="text-secondary text-truncate d-inline-block"
+                        style="max-width: 200px"
+                        title="{{t.descripcion}}"
+                        >{{t.descripcion}}</span
+                      >
+                    </td>
+                    <td class="text-center">
+                      <span
+                        class="badge rounded-pill"
+                        [class.bg-danger]="t.prioridad === 'alta'"
+                        [class.bg-warning]="t.prioridad === 'media'"
+                        [class.bg-info]="t.prioridad === 'baja'"
+                      >
+                        {{t.prioridad | uppercase}}
+                      </span>
+                    </td>
+                    <td class="text-center small">
+                      {{t.fecha_creacion | date:'shortDate'}}
+                    </td>
+                    <td class="text-center">
+                      <span
+                        class="badge rounded-pill"
+                        [class.bg-danger]="t.estado === 'abierto'"
+                        [class.bg-warning]="t.estado === 'en_proceso'"
+                        [class.bg-success]="t.estado === 'resuelto'"
+                        [class.bg-secondary]="t.estado === 'cerrado'"
+                      >
+                        {{t.estado | uppercase}}
+                      </span>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group">
+                        <button
+                          class="btn btn-sm btn-outline-primary dropdown-toggle rounded-pill px-3"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          Cambiar Estado
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                          <li>
+                            <button
+                              class="dropdown-item"
+                              (click)="actualizarEstadoTicket(t.id, 'abierto')"
+                            >
+                              Abierto
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              class="dropdown-item"
+                              (click)="actualizarEstadoTicket(t.id, 'en_proceso')"
+                            >
+                              En Proceso
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              class="dropdown-item"
+                              (click)="actualizarEstadoTicket(t.id, 'resuelto')"
+                            >
+                              Resuelto
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              class="dropdown-item"
+                              (click)="actualizarEstadoTicket(t.id, 'cerrado')"
+                            >
+                              Cerrado
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="tickets.length === 0" class="text-center py-5">
+              <i
+                class="bi bi-ticket-perforated fs-1 text-muted opacity-50 d-block mb-3"
+              ></i>
+              <p class="text-muted">
+                No hay tickets de soporte registrados actualmente.
+              </p>
+            </div>
+          </div>
+
           <!-- VISTA: CONSULTAS -->
           <div
             *ngIf="activeTab === 'consultas'"
@@ -180,7 +307,7 @@
                       </div>
                     </td>
                     <td class="text-center small">
-                      {{c.fecha_consulta | date:'shortDate'}}
+                      {{c.fecha_creacion | date:'shortDate'}}
                     </td>
                     <td>
                       <span
@@ -343,6 +470,76 @@
 
 <!-- (Módulos de Modales intactos abajo) -->
 
+<!-- Modal Detalle de Consulta -->
+<div class="modal fade" id="consultaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header bg-primary text-white border-0">
+        <h5 class="modal-title fw-bold">Detalle de la Consulta</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body p-4" *ngIf="consultaSeleccionada">
+        <div class="mb-3">
+          <span class="small fw-bold text-muted d-block">Cliente</span>
+          <div class="fs-5 fw-bold">{{consultaSeleccionada.nombre}}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6">
+            <span class="small fw-bold text-muted d-block">DNI</span>
+            <div>{{consultaSeleccionada.dni}}</div>
+          </div>
+          <div class="col-6">
+            <span class="small fw-bold text-muted d-block">Teléfono</span>
+            <div>{{consultaSeleccionada.telefono || 'No especificado'}}</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <span class="small fw-bold text-muted d-block">Correo Electrónico</span>
+          <div>{{consultaSeleccionada.email}}</div>
+        </div>
+        <div class="mb-3">
+          <span class="small fw-bold text-muted d-block">Fecha</span>
+          <div>{{consultaSeleccionada.fecha_creacion | date:'medium'}}</div>
+        </div>
+        <div class="mb-3">
+          <span class="small fw-bold text-muted d-block">Motivo / Mensaje</span>
+          <div class="p-3 bg-light rounded-3 text-secondary" style="white-space: pre-wrap;">
+            {{consultaSeleccionada.motivo_consulta}}
+          </div>
+        </div>
+        <div class="mb-0">
+          <span class="small fw-bold text-muted d-block">Estado</span>
+          <span class="badge rounded-pill" [class.bg-warning]="consultaSeleccionada.estado === 'pendiente'" [class.bg-success]="consultaSeleccionada.estado === 'convertido'">
+            {{consultaSeleccionada.estado | uppercase}}
+          </span>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button
+          type="button"
+          class="btn btn-secondary rounded-pill px-4"
+          data-bs-dismiss="modal"
+        >
+          Cerrar
+        </button>
+        <button
+          *ngIf="consultaSeleccionada && consultaSeleccionada.estado === 'pendiente'"
+          type="button"
+          class="btn btn-success rounded-pill px-4"
+          (click)="convertirConsulta(consultaSeleccionada.id); cerrarModal('consultaModal')"
+        >
+          Marcar como Atendido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Planes (Reutilizado) -->
 <div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -390,6 +587,22 @@
             class="form-control"
             [(ngModel)]="nuevoPlan.precio"
           />
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Descripción</label>
+          <textarea
+            class="form-control"
+            rows="3"
+            [(ngModel)]="nuevoPlan.descripcion"
+            placeholder="Descripción detallada del plan..."
+          ></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Estado</label>
+          <select class="form-select" [(ngModel)]="nuevoPlan.estado">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
         </div>
       </div>
       <div class="modal-footer border-0">

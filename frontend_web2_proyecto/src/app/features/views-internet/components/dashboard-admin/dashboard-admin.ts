@@ -128,8 +128,39 @@ export class DashboardAdminComponent implements OnInit {
     }
   }
 
+  actualizarEstadoTicket(id: number, estado: string): void {
+    this.isSubmitting.set(true);
+    this.dataService.updateTicketStatus(id, estado).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.cargarDatos();
+        this.mostrarFeedback('Éxito', `Estado del ticket #${id} actualizado a ${estado}.`, true);
+      },
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        this.mostrarFeedback('Error', err.error?.message || 'No se pudo actualizar el estado del ticket.', false);
+      }
+    });
+  }
+
   crearOActualizarPlan(): void {
-    if (!this.nuevoPlan.nombre_plan || !this.nuevoPlan.precio) return;
+    if (
+      !this.nuevoPlan.nombre_plan ||
+      !this.nuevoPlan.tipo_plan ||
+      !this.nuevoPlan.velocidad ||
+      this.nuevoPlan.precio === undefined ||
+      this.nuevoPlan.precio === null ||
+      this.nuevoPlan.precio <= 0 ||
+      !this.nuevoPlan.descripcion ||
+      !this.nuevoPlan.estado
+    ) {
+      this.mostrarFeedback(
+        'Campos requeridos',
+        'Por favor, complete todos los campos obligatorios del plan: Nombre, Tipo, Velocidad, Precio (mayor a 0), Descripción y Estado antes de guardar.',
+        false
+      );
+      return;
+    }
 
     this.isSubmitting.set(true);
     const obs = this.editandoPlanId
@@ -161,7 +192,7 @@ export class DashboardAdminComponent implements OnInit {
     }
   }
 
-  private cerrarModal(id: string): void {
+  cerrarModal(id: string): void {
     const el = document.getElementById(id);
     if (el && (window as any).bootstrap) {
       const m = (window as any).bootstrap.Modal.getInstance(el);

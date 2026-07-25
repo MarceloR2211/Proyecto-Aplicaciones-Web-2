@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, timeout, catchError, of } from 'rxjs';
+import { Observable, catchError, from, map, of, switchMap, timeout } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { Comentario } from '../models/comentario.model';
 import { MetricaServicio, DatosCliente, Plan, Ticket } from '../models/metrica.model';
@@ -28,7 +28,6 @@ export class InternetDataService {
   }
 
   createPlan(plan: Partial<Plan>): Observable<any> {
-    // El backend espera: nombre_plan, tipo_plan, velocidad, precio, descripcion, estado
     return this.http.post(`${this.baseUrl}/planes`, {
       ...plan,
       estado: plan.estado || 'activo'
@@ -119,12 +118,14 @@ export class InternetDataService {
     );
   }
 
-  createTicket(data: { titulo: string, descripcion: string }): Observable<any> {
-    // El backend puede esperar también 'prioridad'
-    return this.http.post(`${this.baseUrl}/tickets`, {
-      ...data,
-      prioridad: 'baja'
-    }).pipe(timeout(this.REQ_TIMEOUT));
+  createTicket(data: {
+    titulo: string;
+    descripcion: string;
+    prioridad: 'baja' | 'media' | 'alta';
+  }): Observable<any> {
+    return this.http
+      .post(`${this.baseUrl}/tickets`, data)
+      .pipe(timeout(this.REQ_TIMEOUT));
   }
 
   updateTicketStatus(id: number, estado: string): Observable<any> {
@@ -152,34 +153,60 @@ export class InternetDataService {
   }
 
   getDatosCliente(): Observable<DatosCliente> {
-    return this.http.get<{error: boolean, dashboard: any}>(`${this.baseUrl}/dashboard/cliente`).pipe(
-      timeout(this.REQ_TIMEOUT),
-      map(res => ({
-        perfil: {
-          nombre: res.dashboard.servicio?.plan ? 'Cliente Activo' : 'Sin Perfil',
-          email: ''
-        },
-        servicio: {
-          plan: res.dashboard.servicio?.plan || 'Sin Plan',
-          velocidad: res.dashboard.servicio?.velocidad || '0 Mbps',
-          precio: Number(res.dashboard.servicio?.precio) || 0,
-          estado: res.dashboard.servicio?.estado || 'inactivo',
-          fechaInicio: res.dashboard.servicio?.fechaInicio || ''
-        },
-        facturas: (res.dashboard.facturas || []).map((f: any) => ({
-          ...f,
-          monto: Number(f.monto)
-        })),
-        tickets: res.dashboard.tickets || []
-      } as DatosCliente))
-    );
+    return this.http
+      .get<{ error: boolean; dashboard: any }>(
+        `${this.baseUrl}/dashboard/cliente`
+      )
+      .pipe(
+        timeout(this.REQ_TIMEOUT),
+        map((res) => {
+          const dashboard = res.dashboard || {};
+
+          return {
+            perfil: {
+              nombre: dashboard.perfil?.nombre_completo || 'Cliente',
+              email: dashboard.perfil?.email || ''
+            },
+            servicio: {
+              plan: dashboard.servicio?.plan || 'Sin plan contratado',
+              velocidad: dashboard.servicio?.velocidad || '0 Mbps',
+              precio: Number(dashboard.servicio?.precio) || 0,
+              estado: dashboard.servicio?.estado || 'sin_contrato',
+              fechaInicio: dashboard.servicio?.fechaInicio || ''
+            },
+            facturas: (dashboard.facturas || []).map((factura: any) => ({
+              ...factura,
+              monto: Number(factura.monto)
+            })),
+            tickets: dashboard.tickets || []
+          } as DatosCliente;
+        })
+      );
   }
 
   // ===== UPLOAD =====
-  subirComprobantePago(facturaId: number, archivo: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('comprobante', archivo);
-    formData.append('facturaId', String(facturaId));
-    return this.http.post(`${this.baseUrl}/upload/comprobante`, formData).pipe(timeout(this.REQ_TIMEOUT));
+  subirComprobantePago(
+    facturaId: number,
+    archivo: File
+  ): Observable<any> {
+    return from(this.leerArchivoComoDataUrl(archivo)).pipe(
+      switchMap((contenidoBase64) =>
+        this.http.post(`${this.baseUrl}/upload/comprobante`, {
+          facturaId,
+          nombreArchivo: archivo.name,
+          contenidoBase64
+        })
+      ),
+      timeout(this.REQ_TIMEOUT)
+    );
+  }
+
+  private leerArchivoComoDataUrl(archivo: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const lector = new FileReader();
+      lector.onload = () => resolve(String(lector.result || ''));
+      lector.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+      lector.readAsDataURL(archivo);
+    });
   }
 }

@@ -59,8 +59,13 @@
   margin-right: 8px;
 }
 
-.status-online { background-color: #28a745; }
-.status-offline { background-color: #dc3545; }
+.status-online {
+  background-color: #28a745;
+}
+
+.status-offline {
+  background-color: #dc3545;
+}
 
 .util-btn {
   border: 2px solid var(--secondary);
@@ -93,4 +98,43 @@
   font-weight: 700;
   font-size: 1.2rem;
   color: var(--primary);
+}
+
+/* Nombre del usuario de solo lectura */
+.profile-readonly {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* Validaciones dentro del formulario */
+.form-control,
+.form-select {
+  border-radius: 10px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 0.2rem rgba(117, 139, 253, 0.18);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+}
+
+.invalid-feedback {
+  display: block;
+  margin-top: 0.35rem;
+  color: #dc3545;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }

@@ -33,7 +33,7 @@ const crear = async (plan) => {
         tipo_plan, 
         velocidad, 
         precio, 
-        descripcion, 
+        descripcion || '', 
         estado || 'activo' // Estado por defecto en caso de no enviarse
     ]);
     return result.rows[0];
@@ -50,7 +50,7 @@ const actualizar = async (id, plan) => {
         WHERE id = $7 
         RETURNING *;
     `;
-    const result = await pool.query(queryText, [nombre_plan, tipo_plan, velocidad, precio, descripcion, estado, id]);
+    const result = await pool.query(queryText, [nombre_plan, tipo_plan, velocidad, precio, descripcion || '', estado, id]);
     return result.rows.length > 0 ? result.rows[0] : null;
 };
 

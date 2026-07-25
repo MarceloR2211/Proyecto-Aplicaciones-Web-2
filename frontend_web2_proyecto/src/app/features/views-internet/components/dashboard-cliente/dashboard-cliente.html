@@ -7,10 +7,17 @@
 
       <!-- Loader de Página -->
       <div *ngIf="isLoading()" class="text-center py-5">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <div
+          class="spinner-border text-primary"
+          style="width: 3rem; height: 3rem;"
+          role="status"
+        >
           <span class="visually-hidden">Cargando...</span>
         </div>
-        <p class="mt-3 text-muted fw-bold">Sincronizando con el servidor...</p>
+
+        <p class="mt-3 text-muted fw-bold">
+          Sincronizando con el servidor...
+        </p>
       </div>
 
       <!-- Contenido Principal -->
@@ -18,11 +25,19 @@
 
         <header class="mb-5 d-flex justify-content-between align-items-center">
           <div>
-            <h1 class="fw-bold text-primary mb-1">Bienvenido, {{datos.perfil.nombre}}</h1>
-            <p class="text-muted">Gestiona tus servicios de internet y facturación</p>
+            <h1 class="fw-bold text-primary mb-1">
+              Bienvenido, {{ nombreUsuario }}
+            </h1>
+
+            <p class="text-muted">
+              Gestiona tus servicios de internet y facturación
+            </p>
           </div>
+
           <div class="d-none d-md-block">
-            <span class="badge bg-success rounded-pill px-3 py-2">ESTADO: CONECTADO</span>
+            <span class="badge bg-success rounded-pill px-3 py-2">
+              ESTADO: CONECTADO
+            </span>
           </div>
         </header>
 
@@ -34,25 +49,52 @@
             <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
               <div class="row align-items-center">
                 <div class="col-md-7">
-                  <h5 class="fw-bold text-primary mb-3">Tu Plan Actual</h5>
+                  <h5 class="fw-bold text-primary mb-3">
+                    Tu Plan Actual
+                  </h5>
+
                   <div class="d-flex align-items-center gap-4">
                     <div class="bg-primary bg-opacity-10 p-4 rounded-4 text-primary">
                       <i class="bi bi-router fs-1"></i>
                     </div>
+
                     <div>
-                    <h3 class="fw-bold mb-0">{{datos.servicio.plan}}</h3>
-                    <p class="text-muted mb-2">{{datos.servicio.velocidad}} Simétrica</p>
-                    <small class="text-muted d-block">Renta Mensual</small>
-                    <span class="fw-bold">S/. {{datos.servicio.precio}}</span>
+                      <h3 class="fw-bold mb-0">
+                        {{ datos.servicio.plan }}
+                      </h3>
+
+                      <p class="text-muted mb-2">
+                        {{ datos.servicio.velocidad }} Simétrica
+                      </p>
+
+                      <small class="text-muted d-block">
+                        Renta Mensual
+                      </small>
+
+                      <span class="fw-bold">
+                        S/. {{ datos.servicio.precio }}
+                      </span>
                     </div>
                   </div>
                 </div>
+
                 <div class="col-md-5 border-start ps-md-4">
-                <p class="small text-muted mb-4">Activo desde: {{datos.servicio.fechaInicio | date:'dd MMM yyyy'}}</p>
+                  <p class="small text-muted mb-4">
+                    Activo desde:
+                    {{
+                      datos.servicio.fechaInicio |
+                        date:'dd MMM yyyy'
+                    }}
+                  </p>
+
                   <div class="d-grid gap-2">
-                  <button class="btn btn-primary rounded-pill fw-bold shadow-sm" (click)="abrirNuevoTicket()">NUEVO TICKET</button>
-                    <button class="btn btn-warning rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#speedTestModal">
-                      <i class="bi bi-speedometer2 me-2"></i>TEST VELOCIDAD
+                    <button
+                      class="btn btn-warning rounded-pill fw-bold shadow-sm"
+                      data-bs-toggle="modal"
+                      data-bs-target="#speedTestModal"
+                    >
+                      <i class="bi bi-speedometer2 me-2"></i>
+                      TEST VELOCIDAD
                     </button>
                   </div>
                 </div>
@@ -61,7 +103,10 @@
 
             <!-- Facturación -->
             <div class="card border-0 shadow-sm rounded-4 p-4">
-              <h4 class="fw-bold mb-4 text-primary">Estado de Facturación</h4>
+              <h4 class="fw-bold mb-4 text-primary">
+                Estado de Facturación
+              </h4>
+
               <div class="table-responsive">
                 <table class="table table-borderless align-middle">
                   <thead>
@@ -73,166 +118,628 @@
                       <th class="text-end">ACCIÓN</th>
                     </tr>
                   </thead>
+
                   <tbody>
-                    <tr *ngFor="let f of datos.facturas" class="border-bottom">
-                      <td class="fw-bold py-3">#{{f.id}}</td>
-                      <td>{{f.fecha_vencimiento | date:'dd/MM/yyyy'}}</td>
-                      <td class="fw-bold">S/. {{f.monto}}</td>
+                    <tr
+                      *ngFor="let f of datos.facturas"
+                      class="border-bottom"
+                    >
+                      <td class="fw-bold py-3">
+                        #{{ f.id }}
+                      </td>
+
                       <td>
-                        <span class="badge rounded-pill" [class.bg-warning]="f.estado === 'pendiente'" [class.bg-success]="f.estado === 'pagado'">
-                          {{f.estado | uppercase}}
+                        {{
+                          f.fecha_vencimiento |
+                            date:'dd/MM/yyyy'
+                        }}
+                      </td>
+
+                      <td class="fw-bold">
+                        S/. {{ f.monto }}
+                      </td>
+
+                      <td>
+                        <span
+                          class="badge rounded-pill"
+                          [class.bg-warning]="f.estado === 'pendiente'"
+                          [class.text-dark]="f.estado === 'pendiente'"
+                          [class.bg-success]="f.estado === 'pagado'"
+                        >
+                          {{ f.estado | uppercase }}
                         </span>
                       </td>
+
                       <td class="text-end">
-                      <div *ngIf="f.estado === 'pendiente'" class="d-flex justify-content-end gap-2 align-items-center">
-                        <label class="btn btn-outline-primary btn-sm mb-0 shadow-sm">
-                          <i class="bi bi-file-earmark-pdf me-1"></i> REPORTAR PAGO
-                          <input type="file" hidden accept="application/pdf" (change)="onFileSelected($event, f.id)">
-                        </label>
-                      </div>
-                        <button *ngIf="f.estado === 'pagado'" class="btn btn-light btn-sm px-3 border" (click)="descargarComprobante(f.id)">PDF</button>
+                        <div
+                          *ngIf="f.estado === 'pendiente'"
+                          class="d-flex justify-content-end gap-2 align-items-center"
+                        >
+                          <label class="btn btn-outline-primary btn-sm mb-0 shadow-sm">
+                            <i class="bi bi-file-earmark-pdf me-1"></i>
+                            REPORTAR PAGO
+
+                            <input
+                              type="file"
+                              hidden
+                              accept="application/pdf"
+                              (change)="onFileSelected($event, f.id)"
+                            >
+                          </label>
+                        </div>
+
+                        <button
+                          *ngIf="f.estado === 'pagado'"
+                          class="btn btn-light btn-sm px-3 border"
+                          (click)="descargarComprobante(f.id)"
+                        >
+                          PDF
+                        </button>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div *ngIf="datos?.facturas?.length === 0" class="text-center py-4 text-muted">No hay facturas registradas.</div>
+
+              <div
+                *ngIf="datos.facturas.length === 0"
+                class="text-center py-4 text-muted"
+              >
+                No hay facturas registradas.
+              </div>
             </div>
           </div>
 
           <!-- Columna Lateral - Perfil y Tickets -->
           <div class="col-lg-4">
+
+            <!-- Perfil de solo lectura -->
             <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-primary text-white">
-              <h5 class="fw-bold mb-3">Tu Perfil</h5>
+              <h5 class="fw-bold mb-3">
+                Tu Perfil
+              </h5>
+
               <div class="mb-3">
-                <label class="small opacity-75 d-block mb-1">Nombre Completo</label>
-                <input type="text" class="form-control form-control-sm bg-white bg-opacity-10 text-white border-0" [(ngModel)]="datos.perfil.nombre">
+                <label class="small opacity-75 d-block mb-1">
+                  Nombre Completo
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control form-control-sm profile-readonly"
+                  [value]="nombreUsuario"
+                  readonly
+                  aria-readonly="true"
+                >
+
+                <small class="d-block mt-2 opacity-75">
+                  El nombre completo no puede modificarse desde este panel.
+                </small>
               </div>
-              <p class="small opacity-75 mb-0">{{datos.perfil.email}}</p>
+
+              <p class="small opacity-75 mb-0">
+                {{ datos.perfil.email }}
+              </p>
+
               <hr class="opacity-25">
-              <button class="btn btn-light btn-sm w-100 rounded-pill fw-bold mb-2 shadow-sm" (click)="actualizarPerfil(datos)" [disabled]="isSubmitting()">
-                <span *ngIf="!isSubmitting()">GUARDAR CAMBIOS</span>
-                <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm"></span>
+
+              <button
+                class="btn btn-outline-light btn-sm w-100 rounded-pill fw-bold shadow-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#passwordModal"
+              >
+                CAMBIAR CONTRASEÑA
               </button>
-              <button class="btn btn-outline-light btn-sm w-100 rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#passwordModal">CAMBIAR CONTRASEÑA</button>
             </div>
 
+            <!-- Mis Tickets -->
             <div class="card border-0 shadow-sm rounded-4 p-4">
-              <h5 class="fw-bold mb-4 text-primary">Mis Tickets</h5>
-              <div *ngIf="datos.tickets.length === 0" class="text-center py-4">
-                <p class="text-muted small">No tienes solicitudes de soporte.</p>
+              <h5 class="fw-bold mb-4 text-primary">
+                Mis Tickets
+              </h5>
+
+              <div
+                *ngIf="datos.tickets.length === 0"
+                class="text-center py-4"
+              >
+                <p class="text-muted small">
+                  No tienes solicitudes de soporte.
+                </p>
               </div>
-              <div *ngFor="let t of datos.tickets" class="mb-3 p-3 bg-light rounded-3 border-start border-primary border-4">
+
+              <div
+                *ngFor="let t of datos.tickets"
+                class="mb-3 p-3 bg-light rounded-3 border-start border-primary border-4"
+              >
                 <div class="d-flex justify-content-between mb-1">
-                  <span class="fw-bold small">{{t.titulo}}</span>
-                  <span class="badge bg-secondary" style="font-size: 0.6rem;">{{t.estado | uppercase}}</span>
+                  <span class="fw-bold small">
+                    {{ t.titulo }}
+                  </span>
+
+                  <span
+                    class="badge bg-secondary"
+                    style="font-size: 0.6rem;"
+                  >
+                    {{ t.estado | uppercase }}
+                  </span>
                 </div>
-                <p class="small text-muted mb-0 text-truncate">{{t.descripcion}}</p>
+
+                <p class="small text-muted mb-0 text-truncate">
+                  {{ t.descripcion }}
+                </p>
               </div>
-              <button class="btn btn-outline-primary w-100 rounded-pill fw-bold mt-2" (click)="abrirNuevoTicket()">NUEVO TICKET</button>
+
+              <button
+                class="btn btn-outline-primary w-100 rounded-pill fw-bold mt-2"
+                (click)="abrirNuevoTicket()"
+              >
+                NUEVO TICKET
+              </button>
             </div>
           </div>
-        </div> <!-- Fin row -->
-      </div> <!-- Fin !isLoading -->
-    </div> <!-- Fin container -->
+        </div>
+      </div>
+    </div>
   </main>
 
   <app-footer></app-footer>
 </div>
 
 <!-- Modal de Feedback -->
-<div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+<div
+  class="modal fade"
+  id="feedbackModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4 shadow">
-      <div class="modal-header border-0" [class.bg-success]="isSuccess" [class.bg-danger]="!isSuccess">
-        <h5 class="modal-title fw-bold text-white">{{feedbackTitle}}</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div
+        class="modal-header border-0"
+        [class.bg-success]="isSuccess"
+        [class.bg-danger]="!isSuccess"
+      >
+        <h5 class="modal-title fw-bold text-white">
+          {{ feedbackTitle }}
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
       </div>
+
       <div class="modal-body p-4 text-center">
-        <i class="bi fs-1 mb-3 d-block" [class.bi-check-circle-fill]="isSuccess" [class.bi-x-circle-fill]="!isSuccess" [class.text-success]="isSuccess" [class.text-danger]="!isSuccess"></i>
-        <p class="mb-0 fw-medium">{{feedbackMessage}}</p>
+        <i
+          class="bi fs-1 mb-3 d-block"
+          [class.bi-check-circle-fill]="isSuccess"
+          [class.bi-x-circle-fill]="!isSuccess"
+          [class.text-success]="isSuccess"
+          [class.text-danger]="!isSuccess"
+        ></i>
+
+        <p class="mb-0 fw-medium">
+          {{ feedbackMessage }}
+        </p>
       </div>
+
       <div class="modal-footer border-0">
-        <button type="button" class="btn rounded-pill px-4" [class.btn-success]="isSuccess" [class.btn-danger]="!isSuccess" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn rounded-pill px-4"
+          [class.btn-success]="isSuccess"
+          [class.btn-danger]="!isSuccess"
+          data-bs-dismiss="modal"
+        >
+          Cerrar
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Modal Ticket -->
-<div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
+<div
+  class="modal fade"
+  id="ticketModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 rounded-4 shadow">
+    <form
+      class="modal-content border-0 rounded-4 shadow"
+      #ticketForm="ngForm"
+      (ngSubmit)="crearTicket(ticketForm)"
+      novalidate
+    >
       <div class="modal-header bg-primary text-white border-0">
-        <h5 class="modal-title fw-bold">Generar Nuevo Ticket</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title fw-bold">
+          Generar Nuevo Ticket
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
       </div>
+
       <div class="modal-body p-4">
+        <!-- Asunto -->
         <div class="mb-3">
-          <label class="form-label small fw-bold">Asunto</label>
-          <input type="text" class="form-control" [(ngModel)]="nuevoTicket.titulo">
+          <label
+            for="ticket-titulo"
+            class="form-label small fw-bold"
+          >
+            Asunto
+          </label>
+
+          <input
+            id="ticket-titulo"
+            type="text"
+            class="form-control"
+            name="titulo"
+            [(ngModel)]="nuevoTicket.titulo"
+            required
+            minlength="5"
+            maxlength="200"
+            placeholder="Ejemplo: Problemas con la conexión"
+            #tituloTicket="ngModel"
+            [class.is-invalid]="
+              tituloTicket.invalid &&
+              tituloTicket.touched
+            "
+          >
+
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              tituloTicket.invalid &&
+              tituloTicket.touched
+            "
+          >
+            <span *ngIf="tituloTicket.errors?.['required']">
+              El asunto es obligatorio.
+            </span>
+
+            <span *ngIf="tituloTicket.errors?.['minlength']">
+              El asunto debe contener al menos 5 caracteres.
+            </span>
+          </div>
         </div>
+
+        <!-- Prioridad -->
+        <div class="mb-3">
+          <label
+            for="ticket-prioridad"
+            class="form-label small fw-bold"
+          >
+            Prioridad
+          </label>
+
+          <select
+            id="ticket-prioridad"
+            class="form-select"
+            name="prioridad"
+            [(ngModel)]="nuevoTicket.prioridad"
+            required
+          >
+            <option value="baja">Baja</option>
+            <option value="media">Media</option>
+            <option value="alta">Alta</option>
+          </select>
+        </div>
+
+        <!-- Descripción -->
         <div class="mb-0">
-          <label class="form-label small fw-bold">Descripción del problema</label>
-          <textarea class="form-control" rows="4" [(ngModel)]="nuevoTicket.descripcion"></textarea>
+          <label
+            for="ticket-descripcion"
+            class="form-label small fw-bold"
+          >
+            Descripción del problema
+          </label>
+
+          <textarea
+            id="ticket-descripcion"
+            class="form-control"
+            rows="4"
+            name="descripcion"
+            [(ngModel)]="nuevoTicket.descripcion"
+            required
+            minlength="10"
+            maxlength="1000"
+            placeholder="Describe el problema con el mayor detalle posible"
+            #descripcionTicket="ngModel"
+            [class.is-invalid]="
+              descripcionTicket.invalid &&
+              descripcionTicket.touched
+            "
+          ></textarea>
+
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              descripcionTicket.invalid &&
+              descripcionTicket.touched
+            "
+          >
+            <span *ngIf="descripcionTicket.errors?.['required']">
+              La descripción es obligatoria.
+            </span>
+
+            <span *ngIf="descripcionTicket.errors?.['minlength']">
+              La descripción debe contener al menos 10 caracteres.
+            </span>
+          </div>
+
+          <div class="text-end small text-muted mt-1">
+            {{ nuevoTicket.descripcion.length }}/1000
+          </div>
         </div>
       </div>
+
       <div class="modal-footer border-0">
-        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary rounded-pill px-4" (click)="crearTicket()" [disabled]="isSubmitting()">
-          <span *ngIf="!isSubmitting()">Enviar Ticket</span>
-          <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm"></span>
+        <button
+          type="button"
+          class="btn btn-secondary rounded-pill"
+          data-bs-dismiss="modal"
+          [disabled]="isSubmitting()"
+        >
+          Cerrar
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary rounded-pill px-4"
+          [disabled]="ticketForm.invalid || isSubmitting()"
+        >
+          <span *ngIf="!isSubmitting()">
+            Enviar Ticket
+          </span>
+
+          <span
+            *ngIf="isSubmitting()"
+            class="spinner-border spinner-border-sm"
+          ></span>
         </button>
       </div>
-    </div>
+    </form>
   </div>
 </div>
 
 <!-- Modal Password -->
-<div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
+<div
+  class="modal fade"
+  id="passwordModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 rounded-4 shadow">
+    <form
+      class="modal-content border-0 rounded-4 shadow"
+      #passwordForm="ngForm"
+      (ngSubmit)="confirmarCambioPassword(passwordForm)"
+      novalidate
+    >
       <div class="modal-header bg-dark text-white border-0">
-        <h5 class="modal-title fw-bold">Cambiar Contraseña</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title fw-bold">
+          Cambiar Contraseña
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
       </div>
+
       <div class="modal-body p-4">
+        <!-- Contraseña actual -->
         <div class="mb-3">
-          <label class="form-label small fw-bold">Contraseña Actual</label>
-          <input type="password" class="form-control" [(ngModel)]="passUpdate.actual">
+          <label
+            for="password-actual"
+            class="form-label small fw-bold"
+          >
+            Contraseña Actual
+          </label>
+
+          <input
+            id="password-actual"
+            type="password"
+            class="form-control"
+            name="actual"
+            [(ngModel)]="passUpdate.actual"
+            required
+            minlength="6"
+            autocomplete="current-password"
+            #passwordActual="ngModel"
+            [class.is-invalid]="
+              passwordActual.invalid &&
+              passwordActual.touched
+            "
+          >
+
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              passwordActual.invalid &&
+              passwordActual.touched
+            "
+          >
+            <span *ngIf="passwordActual.errors?.['required']">
+              La contraseña actual es obligatoria.
+            </span>
+
+            <span *ngIf="passwordActual.errors?.['minlength']">
+              La contraseña actual debe tener al menos 6 caracteres.
+            </span>
+          </div>
         </div>
+
+        <!-- Nueva contraseña -->
         <div class="mb-3">
-          <label class="form-label small fw-bold">Nueva Contraseña</label>
-          <input type="password" class="form-control" [(ngModel)]="passUpdate.nueva">
+          <label
+            for="password-nueva"
+            class="form-label small fw-bold"
+          >
+            Nueva Contraseña
+          </label>
+
+          <input
+            id="password-nueva"
+            type="password"
+            class="form-control"
+            name="nueva"
+            [(ngModel)]="passUpdate.nueva"
+            required
+            minlength="8"
+            maxlength="100"
+            autocomplete="new-password"
+            #passwordNueva="ngModel"
+            [class.is-invalid]="
+              passwordNueva.invalid &&
+              passwordNueva.touched
+            "
+          >
+
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              passwordNueva.invalid &&
+              passwordNueva.touched
+            "
+          >
+            <span *ngIf="passwordNueva.errors?.['required']">
+              La nueva contraseña es obligatoria.
+            </span>
+
+            <span *ngIf="passwordNueva.errors?.['minlength']">
+              La nueva contraseña debe tener al menos 8 caracteres.
+            </span>
+          </div>
         </div>
+
+        <!-- Confirmar contraseña -->
         <div class="mb-0">
-          <label class="form-label small fw-bold">Confirmar Nueva Contraseña</label>
-          <input type="password" class="form-control" [(ngModel)]="passUpdate.confirmar">
+          <label
+            for="password-confirmar"
+            class="form-label small fw-bold"
+          >
+            Confirmar Nueva Contraseña
+          </label>
+
+          <input
+            id="password-confirmar"
+            type="password"
+            class="form-control"
+            name="confirmar"
+            [(ngModel)]="passUpdate.confirmar"
+            required
+            autocomplete="new-password"
+            #passwordConfirmar="ngModel"
+            [class.is-invalid]="
+              (
+                passwordConfirmar.invalid ||
+                passwordNoCoincide
+              ) &&
+              passwordConfirmar.touched
+            "
+          >
+
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              (
+                passwordConfirmar.invalid ||
+                passwordNoCoincide
+              ) &&
+              passwordConfirmar.touched
+            "
+          >
+            <span *ngIf="passwordConfirmar.errors?.['required']">
+              Confirma la nueva contraseña.
+            </span>
+
+            <span
+              *ngIf="
+                !passwordConfirmar.errors?.['required'] &&
+                passwordNoCoincide
+              "
+            >
+              Las contraseñas no coinciden.
+            </span>
+          </div>
         </div>
       </div>
+
       <div class="modal-footer border-0">
-        <button type="button" class="btn btn-primary rounded-pill px-4" (click)="confirmarCambioPassword()" [disabled]="isSubmitting()">
-          <span *ngIf="!isSubmitting()">Actualizar</span>
-          <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm"></span>
+        <button
+          type="submit"
+          class="btn btn-primary rounded-pill px-4"
+          [disabled]="
+            passwordForm.invalid ||
+            passwordNoCoincide ||
+            isSubmitting()
+          "
+        >
+          <span *ngIf="!isSubmitting()">
+            Actualizar
+          </span>
+
+          <span
+            *ngIf="isSubmitting()"
+            class="spinner-border spinner-border-sm"
+          ></span>
         </button>
       </div>
-    </div>
+    </form>
   </div>
 </div>
 
 <!-- Modal Speed Test -->
-<div class="modal fade" id="speedTestModal" tabindex="-1" aria-hidden="true">
+<div
+  class="modal fade"
+  id="speedTestModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
       <div class="modal-header bg-primary text-white border-0">
-        <h5 class="modal-title fw-bold"><i class="bi bi-speedometer2 me-2"></i>Test de Velocidad Real</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title fw-bold">
+          <i class="bi bi-speedometer2 me-2"></i>
+          Test de Velocidad Real
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
       </div>
-      <div class="modal-body p-0" style="height: 600px;">
-        <iframe src="https://fast.com/es/" width="100%" height="100%" frameborder="0"></iframe>
+
+      <div
+        class="modal-body p-0"
+        style="height: 600px;"
+      >
+        <iframe
+          src="https://fast.com/es/"
+          width="100%"
+          height="100%"
+          frameborder="0"
+          title="Test de velocidad FAST"
+        ></iframe>
       </div>
+
       <div class="modal-footer bg-light border-0">
-        <p class="small text-muted mb-0">Benchmark impulsado por FAST.com para su conexión de fibra óptica.</p>
+        <p class="small text-muted mb-0">
+          Benchmark impulsado por FAST.com para su conexión de fibra óptica.
+        </p>
       </div>
     </div>
   </div>

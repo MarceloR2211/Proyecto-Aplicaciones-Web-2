@@ -28,10 +28,10 @@ const obtenerPorId = async (req, res) => {
 
 // Crear un nuevo plan (Solo Administrador)
 const crear = async (req, res) => {
-    const { nombre_plan, tipo_plan, velocidad, precio, descripcion, estado } = req.body;
+    const { nombre_plan, tipo_plan, velocidad, precio, estado } = req.body;
 
     // Validación básica preventiva
-    if (!nombre_plan || !tipo_plan || !velocidad || !precio || !descripcion || !estado) {
+    if (!nombre_plan || !tipo_plan || !velocidad || !precio || !estado) {
         return res.status(400).json({ 
             error: true, 
             message: 'Todos los campos son obligatorios.' 
@@ -54,9 +54,9 @@ const crear = async (req, res) => {
 // Actualizar un plan existente (Solo Administrador)
 const actualizar = async (req, res) => {
     const { id } = req.params;
-    const { nombre_plan, tipo_plan, velocidad, precio, descripcion, estado } = req.body;
+    const { nombre_plan, tipo_plan, velocidad, precio, estado } = req.body;
 
-    if (!nombre_plan || !tipo_plan || !velocidad || !precio || !descripcion || !estado) {
+    if (!nombre_plan || !tipo_plan || !velocidad || !precio || !estado) {
         return res.status(400).json({ 
             error: true, 
             message: 'Todos los campos son requeridos para actualizar el plan.' 

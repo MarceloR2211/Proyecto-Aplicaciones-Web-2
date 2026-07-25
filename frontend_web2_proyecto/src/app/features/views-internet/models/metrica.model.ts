@@ -44,15 +44,18 @@ export interface Factura {
   monto: number;
   fecha_emision: string;
   fecha_vencimiento: string;
-  estado: 'pendiente' | 'pagado';
+  estado: 'pendiente' | 'pagado' | 'vencido';
+  comprobante_pdf?: string | null;
 }
 
 export interface Ticket {
   id: number;
   titulo: string;
-  descripcion: string;
-  estado: string;
+  descripcion?: string;
+  estado: 'abierto' | 'en_proceso' | 'resuelto' | 'cerrado';
+  prioridad?: 'baja' | 'media' | 'alta';
   fecha_creacion: string;
+  fecha_actualizacion?: string;
 }
 
 /**
@@ -64,7 +67,7 @@ export interface Plan {
   tipo_plan: string;
   velocidad: string;
   precio: number;
-  descripcion: string;
+  descripcion?: string;
   estado: string;
   destacado?: boolean;
 }

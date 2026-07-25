@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 // Importar rutas unificadas y corregidas
@@ -23,7 +24,8 @@ app.use(cors({
 }));
 
 // Middlewares globales
-app.use(express.json());
+app.use(express.json({ limit: '8mb' }));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Ruta de salud del servidor (Health Check)
 app.get('/', (req, res) => {

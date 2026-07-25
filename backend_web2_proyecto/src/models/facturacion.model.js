@@ -67,6 +67,20 @@ const actualizarEstadoYComprobante = async (facturaId, nuevoEstado, nombreCompro
 };
 
 
+
+const registrarComprobante = async (facturaId, usuarioId, ruta) => {
+    const queryText = `
+        UPDATE public.facturas
+        SET comprobante_pdf = $1
+        WHERE id = $2
+          AND usuario_id = $3
+          AND estado IN ('pendiente', 'vencido')
+        RETURNING id, usuario_id, monto, fecha_vencimiento, estado, comprobante_pdf;
+    `;
+    const result = await pool.query(queryText, [ruta, facturaId, usuarioId]);
+    return result.rows[0] || null;
+};
+
 /**
  * =========================================================================
  * 2. FUNCIONES AUTOMÁTICAS (Para el uso exclusivo del billingCron Job)
@@ -121,6 +135,7 @@ module.exports = {
     obtenerFacturasDelCliente,
     obtenerFacturaPorId,
     actualizarEstadoYComprobante,
+    registrarComprobante,
     // Métodos Cron Job
     obtenerContratosActivos,
     verificarFacturaMesActual,

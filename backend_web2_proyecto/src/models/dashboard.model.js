@@ -39,8 +39,16 @@ const getAdminDashboard = async () => {
  */
 const getClientDashboard = async (usuarioId) => {
     try {
-        const [contratoResult, facturasResult, ticketsResult] = await Promise.all([
-            // 1. Contrato activo (Corregido a usuario_id)
+        const [perfilResult, contratoResult, facturasResult, ticketsResult] = await Promise.all([
+            // 1. Perfil del usuario autenticado
+            pool.query(`
+                SELECT id, username, nombre_completo, email
+                FROM public.usuarios
+                WHERE id = $1
+                LIMIT 1
+            `, [usuarioId]),
+
+            // 2. Contrato activo
             pool.query(`
                 SELECT c.estado_contrato, c.fecha_inicio, p.nombre_plan, p.velocidad, p.precio
                 FROM public.contratos c
@@ -49,18 +57,18 @@ const getClientDashboard = async (usuarioId) => {
                 LIMIT 1
             `, [usuarioId]),
 
-            // 2. Últimas 5 facturas (Corregido a usuario_id)
+            // 3. Últimas 5 facturas
             pool.query(`
-                SELECT id, monto, fecha_emision, fecha_vencimiento, estado
+                SELECT id, monto, fecha_emision, fecha_vencimiento, estado, comprobante_pdf
                 FROM public.facturas
                 WHERE usuario_id = $1
                 ORDER BY fecha_emision DESC
                 LIMIT 5
             `, [usuarioId]),
 
-            // 3. Últimos 10 tickets (Corregido asunto -> titulo)
+            // 4. Últimos 10 tickets
             pool.query(`
-                SELECT id, titulo, descripcion, estado, fecha_creacion
+                SELECT id, titulo, descripcion, prioridad, estado, fecha_creacion, fecha_actualizacion
                 FROM public.tickets
                 WHERE usuario_id = $1
                 ORDER BY fecha_creacion DESC
@@ -68,9 +76,11 @@ const getClientDashboard = async (usuarioId) => {
             `, [usuarioId])
         ]);
 
+        const perfil = perfilResult.rows[0] || null;
         const contrato = contratoResult.rows.length > 0 ? contratoResult.rows[0] : null;
 
         return {
+            perfil,
             servicio: contrato ? {
                 estado: contrato.estado_contrato,
                 fechaInicio: contrato.fecha_inicio,

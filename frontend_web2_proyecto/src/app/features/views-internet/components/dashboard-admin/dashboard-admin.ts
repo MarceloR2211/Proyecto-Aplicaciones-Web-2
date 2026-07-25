@@ -34,7 +34,7 @@ export class DashboardAdminComponent implements OnInit {
   isLoading = signal(true);
   isSubmitting = signal(false);
 
-  nuevoPlan: Partial<Plan> = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '', estado: 'activo' };
+  nuevoPlan: Partial<Plan> = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, estado: 'activo' };
   editandoPlanId: number | null = null;
 
   // Estado para modales de feedback
@@ -287,12 +287,11 @@ export class DashboardAdminComponent implements OnInit {
       this.nuevoPlan.precio === undefined ||
       this.nuevoPlan.precio === null ||
       this.nuevoPlan.precio <= 0 ||
-      !this.nuevoPlan.descripcion ||
       !this.nuevoPlan.estado
     ) {
       this.mostrarFeedback(
         'Campos requeridos',
-        'Por favor, complete todos los campos obligatorios del plan: Nombre, Tipo, Velocidad, Precio (mayor a 0), Descripción y Estado antes de guardar.',
+        'Por favor, complete todos los campos obligatorios del plan: Nombre, Tipo, Velocidad, Precio (mayor a 0) y Estado antes de guardar.',
         false
       );
       return;
@@ -308,7 +307,7 @@ export class DashboardAdminComponent implements OnInit {
         this.isSubmitting.set(false);
         this.cargarDatos();
         this.mostrarFeedback('Guardado', 'Los cambios en el plan se han persistido en la BD.', true);
-        this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, descripcion: '', estado: 'activo' };
+        this.nuevoPlan = { nombre_plan: '', tipo_plan: 'residencial', velocidad: '', precio: 0, estado: 'activo' };
         this.editandoPlanId = null;
         this.cerrarModal('planModal');
       },

@@ -1,38 +1,68 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+
+require('dotenv').config({
+    path: path.resolve(__dirname, 'config', '.env')
+});
+
 const app = express();
 
-// Importar rutas unificadas y corregidas
+// Importar rutas
 const authRoutes = require('./routes/auth.routes');
-const usuariosRoutes = require('./routes/usuarios.routes'); // Absorbió clientes.routes
+const usuariosRoutes = require('./routes/usuarios.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const consultasRoutes = require('./routes/consultas.routes');
 const planesRoutes = require('./routes/planes.routes');
 const comentariosRoutes = require('./routes/comentarios.routes');
-const ticketRoutes = require('./routes/ticket.routes'); // Centralizado a la convención .routes.js
-const facturacionRoutes = require('./routes/facturacion.routes'); // Centralizado a la convención .routes.js
-const uploadRoutes = require('./routes/upload.routes'); // Centralizado a la convención .routes.js
+const ticketRoutes = require('./routes/ticket.routes');
+const facturacionRoutes = require('./routes/facturacion.routes');
+const uploadRoutes = require('./routes/upload.routes');
 
-// Importar cron job de facturación automática
+// Facturación automática
 require('./cron/billingCron');
 
-// Configuración de CORS para permitir solicitudes desde el frontend
+// CORS
+const allowedOrigins = [
+    'http://localhost:4200',
+    process.env.FRONTEND_URL
+]
+    .filter(Boolean)
+    .map(origin => origin.replace(/\/$/, ''));
+
 app.use(cors({
-    origin: 'http://localhost:4200',
+    origin: (origin, callback) => {
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        const normalizedOrigin = origin.replace(/\/$/, '');
+
+        if (allowedOrigins.includes(normalizedOrigin)) {
+            return callback(null, true);
+        }
+
+        return callback(
+            new Error(`Origen no permitido por CORS: ${origin}`)
+        );
+    },
     credentials: true
 }));
 
-// Middlewares globales
+// Middlewares
 app.use(express.json({ limit: '8mb' }));
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// Ruta de salud del servidor (Health Check)
+app.use(
+    '/uploads',
+    express.static(path.join(process.cwd(), 'uploads'))
+);
+
+// Health Check
 app.get('/', (req, res) => {
-    res.send('Servidor funcionando');
+    res.status(200).send('Servidor funcionando');
 });
 
-// Montar rutas con sus respectivos prefijos API
+// Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -43,7 +73,13 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/facturas', facturacionRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// Inicialización del servidor
-app.listen(3000, () => { 
-    console.log('Servidor ejecutándose en http://localhost:3000'); 
+// Servidor
+const PORT = Number(process.env.PORT) || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor ejecutándose en el puerto ${PORT}`);
+    console.log(
+        'Frontend autorizado:',
+        process.env.FRONTEND_URL || 'solo localhost'
+    );
 });
